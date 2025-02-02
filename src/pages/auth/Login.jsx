@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { loginUser } from "../../api/auth";
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -8,6 +11,7 @@ const Login = () => {
     password: "",
   });
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -18,9 +22,23 @@ const Login = () => {
     setShowPassword(!showPassword);
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Login data submitted:", formData);
+  const navigate = useNavigate();
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setLoading(true);
+
+    try {
+      const response = await loginUser(formData);
+      toast.success("Login successful!");
+      console.log("Login Successful:", response);
+      navigate('/studentProfile'); 
+    } catch (error) {
+      toast.error(error.message || "Login failed!");
+      console.error("Login Error:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -87,7 +105,7 @@ const Login = () => {
               </label>
             </div>
             <div className="text-sm">
-              <a href="#" className="font-medium text-primary-purple hover:text-purple-700 dark:text-accent-skyblue dark:hover:text-blue-300">
+              <a href="forgot" className="font-medium text-primary-purple hover:text-purple-700 dark:text-accent-skyblue dark:hover:text-blue-300">
                 Forgot your password?
               </a>
             </div>
@@ -97,9 +115,10 @@ const Login = () => {
           <div>
             <button
               type="submit"
-              className="w-full py-2 px-4 text-white bg-primary-purple hover:bg-purple-700 rounded-lg font-semibold transition"
+              className="w-full py-2 px-4 text-white bg-primary-purple hover:bg-purple-700 rounded-lg font-semibold transition flex justify-center items-center"
+              disabled={loading}
             >
-              Log In
+              {loading ? "Logging in..." : "Log In"}
             </button>
           </div>
 

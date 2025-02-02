@@ -2,11 +2,29 @@ import React, { useContext } from "react";
 import { ThemeContext } from "../context/ThemeContext";
 import { GraduationCap, Moon, Sun } from "lucide-react";
 
-export const Navbar = () => {
+export const Navbar = ({ role }) => {
   const { theme, toggleTheme } = useContext(ThemeContext);
 
+  const navLinks = {
+    Teacher: [
+      { name: "Profile", href: "/teacherProfile" },
+      { name: "Dashboard", href: "/teacherDashboard" },
+      { name: "Students", href: "/teacherStudents" },
+    ],
+    Student: [
+      { name: "Profile", href: "/studentProfile" },
+      { name: "Test", href: "/studentTest" },
+      { name: "Class", href: "/studentClass" },
+    ],
+    Admin: [
+      { name: "Students", href: "/adminStudents" },
+      { name: "Teacher", href: "/adminTeacher" },
+      { name: "New Registration", href: "/adminRegister" },
+    ],
+  };
+
   return (
-    <header className="sticky top-0 z-50 border-b dark:border-primary-purple/20 bg-primary-white dark:bg-primary-purple">
+    <header className="sticky top-0 z-50 border-b px-16 dark:border-primary-purple/20 bg-primary-white dark:bg-primary-purple">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo Section */}
@@ -21,24 +39,15 @@ export const Navbar = () => {
 
           {/* Navigation Links */}
           <nav className="hidden md:flex items-center space-x-8">
-            <a
-              href="#"
-              className="dark:text-secondary-gray hover:text-primary-purple dark:text-primary-white/80 dark:hover:text-accent-yellow transition-colors"
-            >
-              Courses
-            </a>
-            <a
-              href="#"
-              className="dark:text-secondary-gray hover:text-primary-purple dark:text-primary-white/80 dark:hover:text-accent-yellow transition-colors"
-            >
-              About
-            </a>
-            <a
-              href="#"
-              className="dark:text-secondary-gray hover:text-primary-purple dark:text-primary-white/80 dark:hover:text-accent-yellow transition-colors"
-            >
-              Contact
-            </a>
+            {navLinks[role]?.map((link) => (
+              <a
+                key={link.name}
+                href={link.href}
+                className="dark:text-secondary-gray hover:text-primary-purple dark:text-primary-white/80 dark:hover:text-accent-yellow transition-colors"
+              >
+                {link.name}
+              </a>
+            ))}
           </nav>
 
           {/* Theme Toggle Button */}

@@ -34,8 +34,8 @@ const LandingPage = () => {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col bg-primary-white dark:bg-primary-purple transition-colors">
-      <main className="flex-grow">
+    <div className="min-h-screen flex flex-col px-20  bg-primary-white dark:bg-primary-purple transition-colors">
+      <main className="flex-grow ">
         {/* Hero Section */}
         <section className="relative min-h-[90vh] flex items-center py-20 px-4 overflow-hidden">
           {/* Background Pattern */}

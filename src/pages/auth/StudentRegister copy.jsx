@@ -9,7 +9,7 @@ function Register() {
   const [otpSent, setOtpSent] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [formData, setFormData] = useState({
-    name: "", 
+    fullName: "", 
     phoneNumber: "",
     dob: "",
     email: "",
@@ -21,6 +21,7 @@ function Register() {
     state: "",
     marks10: "",  // Added for 10th marks
     marks12: "",  // Added for 12th marks
+    graduationCGPA: "",
     profilePicture: null,
     pdf10th: null,
     pdf12th: null,
@@ -29,7 +30,7 @@ function Register() {
     otp: "",  // OTP input
     examRegisteredFor: "",  // Added to track the exam user is registering for
     higherDegreeScore: "",  // For higher degree score
-    previousYearScore: 20,  // For previous year score
+    previousYearScore: "",  // For previous year score
     is_email_verified: false,  // Default to false until OTP is verified
   });
   
@@ -66,7 +67,6 @@ function Register() {
       toast.success("OTP sent to your email!");
     } catch (error) {
       toast.error("Error sending OTP: " + error.message);
-      console.log(error.message)
     }
   };
 
@@ -82,8 +82,6 @@ function Register() {
       toast.success("OTP verified successfully!");
     } catch (error) {
       toast.error("Error verifying OTP: " + error.message);
-      console.log(error.message)
-
     }
   };
   
@@ -108,7 +106,6 @@ function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData)
     const form = new FormData();
     // Log formData before appending to FormData
     console.log("Form data before appending:", formData);
@@ -217,8 +214,8 @@ function Register() {
                     </label>
                     <input
                       type="text"
-                      name="name"
-                      value={formData.name}
+                      name="fullName"
+                      value={formData.fullName}
                       onChange={handleInputChange}
                       className="w-full px-4 py-2 rounded-lg border border-primary-purple bg-secondary-gray dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-primary-purple focus:border-primary-purple"
                       required
@@ -233,19 +230,6 @@ function Register() {
                       type="date"
                       name="dob"
                       value={formData.dob}
-                      onChange={handleInputChange}
-                      className="w-full px-4 py-2 rounded-lg border border-primary-purple bg-secondary-gray dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-primary-purple focus:border-primary-purple"
-                      required
-                    />
-                  </div>
-                  <div className="w-full" >
-                    <label className="block text-sm font-medium text-primary-purple dark:text-accent-yellow mb-1">
-                     Exam registered for 
-                    </label>
-                    <input
-                      type="text"
-                      name="examRegisteredFor"
-                      value={formData.examRegisteredFor}
                       onChange={handleInputChange}
                       className="w-full px-4 py-2 rounded-lg border border-primary-purple bg-secondary-gray dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-primary-purple focus:border-primary-purple"
                       required
@@ -426,8 +410,8 @@ function Register() {
                   </label>
                   <input
                     type="text"
-                    name="pincode"
-                    value={formData.pincode}
+                    name="pinCode"
+                    value={formData.pinCode}
                     onChange={handleInputChange}
                     className="w-full px-4 py-2 rounded-lg border border-primary-purple bg-secondary-gray dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-primary-purple focus:border-primary-purple"
                     required
@@ -441,8 +425,8 @@ function Register() {
                     </label>
                     <input
                       type="text"
-                      name="marks10"
-                      value={formData.marks10}
+                      name="tenthPercentage"
+                      value={formData.tenthPercentage}
                       onChange={handleInputChange}
                       className="w-full px-4 py-2 rounded-lg border border-primary-purple bg-secondary-gray dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-primary-purple focus:border-primary-purple"
                       required
@@ -454,8 +438,8 @@ function Register() {
                     </label>
                     <input
                       type="text"
-                      name="marks12"
-                      value={formData.marks12}
+                      name="twelfthPercentage"
+                      value={formData.twelfthPercentage}
                       onChange={handleInputChange}
                       className="w-full px-4 py-2 rounded-lg border border-primary-purple bg-secondary-gray dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-primary-purple focus:border-primary-purple"
                       required
@@ -467,8 +451,8 @@ function Register() {
                     </label>
                     <input
                       type="text"
-                      name="higherDegreeScore"
-                      value={formData.higherDegreeScore}
+                      name="graduationCGPA"
+                      value={formData.graduationCGPA}
                       onChange={handleInputChange}
                       className="w-full px-4 py-2 rounded-lg border border-primary-purple bg-secondary-gray dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-primary-purple focus:border-primary-purple"
                       required
@@ -487,7 +471,7 @@ function Register() {
                   </label>
                   <input
                     type="file"
-                    name="profilePicture"
+                    name="tenthCertificate"
                     onChange={handleFileChange}
                     className="w-full px-4 py-2 rounded-lg border border-primary-purple bg-secondary-gray dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-primary-purple focus:border-primary-purple"
                     required
@@ -501,7 +485,7 @@ function Register() {
                   </label>
                   <input
                     type="file"
-                    name="pdf10th"
+                    name="tenthCertificate"
                     onChange={handleFileChange}
                     className="w-full px-4 py-2 rounded-lg border border-primary-purple bg-secondary-gray dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-primary-purple focus:border-primary-purple"
                     required
@@ -515,7 +499,7 @@ function Register() {
                   </label>
                   <input
                     type="file"
-                    name="pdf12th"
+                    name="twelfthCertificate"
                     onChange={handleFileChange}
                     className="w-full px-4 py-2 rounded-lg border border-primary-purple bg-secondary-gray dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-primary-purple focus:border-primary-purple"
                     required
@@ -529,7 +513,7 @@ function Register() {
                   </label>
                   <input
                     type="file"
-                    name="pdfHigherDegrees"
+                    name="graduationCertificate"
                     onChange={handleFileChange}
                     className="w-full px-4 py-2 rounded-lg border border-primary-purple bg-secondary-gray dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-primary-purple focus:border-primary-purple"
                     required
@@ -561,7 +545,7 @@ function Register() {
                     </label>
                     <input
                       type="file"
-                      name="pdfPreviousYear"
+                      name="lastYearCertificate"
                       onChange={handleFileChange}
                       className="w-full px-4 py-2 rounded-lg border border-primary-purple bg-secondary-gray dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-primary-purple focus:border-primary-purple"
                     />
@@ -603,6 +587,9 @@ function Register() {
                 </button>
               )}
             </div>
+
+
+
           </form>
         </div>
       </div>

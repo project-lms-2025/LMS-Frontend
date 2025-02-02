@@ -1,40 +1,27 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { User, BookOpen, Award, Calendar, MapPin, Phone, Mail, School, FileText, Clock } from 'lucide-react';
+import { getUserByEmail } from '../../api/auth';
 
 export const StudentProfile = () => {
   const [activeTab, setActiveTab] = useState('overview');
+  const [studentData, setStudentData] = useState(null);
 
-  const studentData = {
-    personalInfo: {
-      name: "Rahul Kumar",
-      rollNumber: "2024CS0123",
-      dateOfBirth: "15 August 2003",
-      gender: "Male",
-      bloodGroup: "B+",
-      address: "123, Park Street, Bangalore, Karnataka - 560001",
-      phone: "+91 98765 43210",
-      email: "rahul.kumar@example.com",
-      parentName: "Rajesh Kumar",
-      parentPhone: "+91 98765 43211"
-    },
-    academicInfo: {
-      branch: "Computer Science Engineering",
-      semester: "4th Semester",
-      batch: "2022-2026",
-      cgpa: "8.9",
-      attendance: "92%",
-      currentCourses: [
-        { code: "CS201", name: "Data Structures", credits: 4, grade: "A" },
-        { code: "CS202", name: "Computer Networks", credits: 3, grade: "A+" },
-        { code: "CS203", name: "Database Systems", credits: 4, grade: "A" }
-      ]
-    },
-    achievements: [
-      "First Prize in National Coding Competition 2023",
-      "Member of College Technical Club",
-      "Published paper in International Conference on ML"
-    ]
-  };
+  // Fetch user data when the component mounts
+  useEffect(() => {
+    // Replace getUserByEmail with your actual API call function
+    getUserByEmail("alok953280@gmail.com")
+      .then((data) => {
+        console.log("User Data:", data);
+        // Save the data to state
+        setStudentData(data);
+      })
+      .catch((error) => console.error("Error fetching user:", error));
+  }, []); // Empty dependency array to run the effect only once when the component mounts
+
+  if (!studentData) {
+    return <div>Loading...</div>;
+  }
+
 
   return (
     <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
@@ -42,27 +29,31 @@ export const StudentProfile = () => {
       <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
         <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
           <div className="w-32 h-32 bg-blue-100 rounded-full flex items-center justify-center">
-            <User className="w-16 h-16 text-blue-600" />
+            <img
+              src={studentData.userDocs.profile_picture_url.S}
+              alt="Profile"
+              className="w-16 h-16 object-cover rounded-full"
+            />
           </div>
           <div className="flex-1">
-            <h1 className="text-2xl font-bold text-gray-900">{studentData.personalInfo.name}</h1>
+            <h1 className="text-2xl font-bold text-gray-900">{studentData.userData.name.S}</h1>
             <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               <div className="flex items-center text-gray-600">
                 <BookOpen className="w-5 h-5 mr-2" />
-                <span>{studentData.academicInfo.branch}</span>
+                <span>Exam registered : {studentData.authData.exam_registered_for.S}</span>
               </div>
-              <div className="flex items-center text-gray-600">
+              {/* <div className="flex items-center text-gray-600">
                 <Award className="w-5 h-5 mr-2" />
-                <span>CGPA: {studentData.academicInfo.cgpa}</span>
+                <span>CGPA: N/A</span> 
               </div>
               <div className="flex items-center text-gray-600">
                 <Calendar className="w-5 h-5 mr-2" />
-                <span>{studentData.academicInfo.batch}</span>
+                <span>Batch: N/A</span> 
               </div>
               <div className="flex items-center text-gray-600">
                 <Clock className="w-5 h-5 mr-2" />
-                <span>{studentData.academicInfo.semester}</span>
-              </div>
+                <span>Semester: N/A</span> 
+              </div> */}
             </div>
           </div>
         </div>
@@ -76,11 +67,10 @@ export const StudentProfile = () => {
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`py-4 px-1 border-b-2 font-medium text-sm ${
-                  activeTab === tab
+                className={`py-4 px-1 border-b-2 font-medium text-sm ${activeTab === tab
                     ? 'border-blue-500 text-blue-600'
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
+                  }`}
               >
                 {tab.charAt(0).toUpperCase() + tab.slice(1)}
               </button>
@@ -99,24 +89,24 @@ export const StudentProfile = () => {
                 <h2 className="text-lg font-semibold mb-4">Personal Information</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className="text-sm text-gray-500">Roll Number</label>
-                    <p className="font-medium">{studentData.personalInfo.rollNumber}</p>
+                    <label className="text-sm text-gray-500">Email Registered</label>
+                    <p className="font-medium">{studentData.userData.email.S}</p>
                   </div>
                   <div>
                     <label className="text-sm text-gray-500">Date of Birth</label>
-                    <p className="font-medium">{studentData.personalInfo.dateOfBirth}</p>
+                    <p className="font-medium">{studentData.userData.dob.S}</p> 
                   </div>
                   <div>
                     <label className="text-sm text-gray-500">Gender</label>
-                    <p className="font-medium">{studentData.personalInfo.gender}</p>
+                    <p className="font-medium">{studentData.userData.gender.S}</p> {/* Add Gender if available */}
                   </div>
                   <div>
-                    <label className="text-sm text-gray-500">Blood Group</label>
-                    <p className="font-medium">{studentData.personalInfo.bloodGroup}</p>
+                    <label className="text-sm text-gray-500"> Pincode</label>
+                    <p className="font-medium"> {studentData.userData.pincode.S} </p> 
                   </div>
                   <div className="md:col-span-2">
                     <label className="text-sm text-gray-500">Address</label>
-                    <p className="font-medium">{studentData.personalInfo.address}</p>
+                    <p className="font-medium">{studentData.userData.address.S}</p>
                   </div>
                 </div>
               </div>
@@ -130,22 +120,14 @@ export const StudentProfile = () => {
                   <Phone className="w-5 h-5 text-gray-400 mr-3" />
                   <div>
                     <p className="text-sm text-gray-500">Phone</p>
-                    <p className="font-medium">{studentData.personalInfo.phone}</p>
+                    <p className="font-medium">{studentData.userData.phoneNumber.S}</p> {/* Add Phone if available */}
                   </div>
                 </div>
                 <div className="flex items-center">
                   <Mail className="w-5 h-5 text-gray-400 mr-3" />
                   <div>
                     <p className="text-sm text-gray-500">Email</p>
-                    <p className="font-medium">{studentData.personalInfo.email}</p>
-                  </div>
-                </div>
-                <div className="flex items-center">
-                  <User className="w-5 h-5 text-gray-400 mr-3" />
-                  <div>
-                    <p className="text-sm text-gray-500">Parent/Guardian</p>
-                    <p className="font-medium">{studentData.personalInfo.parentName}</p>
-                    <p className="text-sm text-gray-600">{studentData.personalInfo.parentPhone}</p>
+                    <p className="font-medium">{studentData.userData.email.S}</p>
                   </div>
                 </div>
               </div>
@@ -155,94 +137,61 @@ export const StudentProfile = () => {
 
         {activeTab === 'academic' && (
           <>
-            {/* Current Semester Courses */}
+            {/* Academic Statistics */}
             <div className="lg:col-span-2">
-              <div className="bg-white rounded-lg shadow-lg p-6">
-                <h2 className="text-lg font-semibold mb-4">Current Semester Courses</h2>
-                <div className="overflow-x-auto">
-                  <table className="min-w-full divide-y divide-gray-200">
-                    <thead>
-                      <tr>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Course Code
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Course Name
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Credits
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Grade
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
-                      {studentData.academicInfo.currentCourses.map((course) => (
-                        <tr key={course.code}>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                            {course.code}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {course.name}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {course.credits}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {course.grade}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-
-            {/* Academic Stats */}
-            <div className="space-y-6">
               <div className="bg-white rounded-lg shadow-lg p-6">
                 <h2 className="text-lg font-semibold mb-4">Academic Statistics</h2>
                 <div className="space-y-4">
                   <div>
                     <div className="flex justify-between mb-1">
-                      <span className="text-sm font-medium text-gray-700">Attendance</span>
-                      <span className="text-sm font-medium text-gray-700">{studentData.academicInfo.attendance}</span>
+                      <span className="text-sm font-medium text-gray-700">Previous Year Score</span>
+                      <span className="text-sm font-medium text-gray-700">{studentData.userData.previous_year_score.N}%</span>
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-2">
                       <div
-                        className="bg-blue-600 h-2 rounded-full"
-                        style={{ width: studentData.academicInfo.attendance }}
+                        className="bg-green-600 h-2 rounded-full"
+                        style={{ width: `${studentData.userData.previous_year_score.N}%` }}
                       ></div>
                     </div>
                   </div>
                   <div>
                     <div className="flex justify-between mb-1">
-                      <span className="text-sm font-medium text-gray-700">CGPA</span>
-                      <span className="text-sm font-medium text-gray-700">{studentData.academicInfo.cgpa}/10</span>
+                      <span className="text-sm font-medium text-gray-700">12th Marks</span>
+                      <span className="text-sm font-medium text-gray-700">{studentData.userData.marks12.N}%</span>
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-2">
                       <div
-                        className="bg-green-600 h-2 rounded-full"
-                        style={{ width: `${(parseFloat(studentData.academicInfo.cgpa) / 10) * 100}%` }}
+                        className="bg-blue-600 h-2 rounded-full"
+                        style={{ width: `${studentData.userData.marks12.N}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                  <div>
+                    <div className="flex justify-between mb-1">
+                      <span className="text-sm font-medium text-gray-700">10th Marks</span>
+                      <span className="text-sm font-medium text-gray-700">{studentData.userData.marks10.N}%</span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div
+                        className="bg-yellow-600 h-2 rounded-full"
+                        style={{ width: `${studentData.userData.marks10.N}%` }}
                       ></div>
                     </div>
                   </div>
                 </div>
               </div>
+            </div>
 
-              <div className="bg-white rounded-lg shadow-lg p-6">
-                <h2 className="text-lg font-semibold mb-4">Achievements</h2>
-                <ul className="space-y-3">
-                  {studentData.achievements.map((achievement, index) => (
-                    <li key={index} className="flex items-start">
-                      <Award className="w-5 h-5 text-yellow-500 mr-2 mt-0.5" />
-                      <span className="text-sm text-gray-600">{achievement}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+            {/* Achievements */}
+            <div className="bg-white rounded-lg shadow-lg p-6">
+              <h2 className="text-lg font-semibold mb-4">Achievements</h2>
+              <ul className="space-y-3">
+                <li className="flex items-start">
+                  <Award className="w-5 h-5 text-yellow-500 mr-2 mt-0.5" />
+                  <span className="text-sm text-gray-600">Achieved high marks in 12th: {studentData.userData.marks12.N}%</span>
+                </li>
+                {/* Add more achievements if available */}
+              </ul>
             </div>
           </>
         )}
@@ -252,22 +201,35 @@ export const StudentProfile = () => {
             <div className="bg-white rounded-lg shadow-lg p-6">
               <h2 className="text-lg font-semibold mb-4">Academic Documents</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {[
-                  { name: '10th Marksheet', type: 'PDF', size: '2.3 MB' },
-                  { name: '12th Marksheet', type: 'PDF', size: '1.8 MB' },
-                  { name: 'Aadhar Card', type: 'PDF', size: '1.2 MB' },
-                  { name: 'Transfer Certificate', type: 'PDF', size: '956 KB' },
-                  { name: 'Last Semester Marksheet', type: 'PDF', size: '1.5 MB' },
-                  { name: 'Bonafide Certificate', type: 'PDF', size: '890 KB' }
-                ].map((doc, index) => (
-                  <div key={index} className="flex items-center p-4 border rounded-lg hover:bg-gray-50">
-                    <FileText className="w-8 h-8 text-blue-600 mr-3" />
-                    <div>
-                      <p className="font-medium text-gray-900">{doc.name}</p>
-                      <p className="text-sm text-gray-500">{doc.type} • {doc.size}</p>
-                    </div>
+                {/* List of Documents */}
+                <div className="flex items-center p-4 border rounded-lg hover:bg-gray-50">
+                  <FileText className="w-8 h-8 text-blue-600 mr-3" />
+                  <div>
+                    <p className="font-medium text-gray-900">10th Marksheet</p>
+                    {/* <a href={studentData.userDocs.pdf10.S} className="text-sm text-gray-500">PDF</a> */}
                   </div>
-                ))}
+                </div>
+                <div className="flex items-center p-4 border rounded-lg hover:bg-gray-50">
+                  <FileText className="w-8 h-8 text-blue-600 mr-3" />
+                  <div>
+                    <p className="font-medium text-gray-900">12th Marksheet</p>
+                    {/* <a href={studentData.userDocs.pdf12th.S} className="text-sm text-gray-500">PDF</a> */}
+                  </div>
+                </div>
+                <div className="flex items-center p-4 border rounded-lg hover:bg-gray-50">
+                  <FileText className="w-8 h-8 text-blue-600 mr-3" />
+                  <div>
+                    <p className="font-medium text-gray-900">Previous Year Scorecard</p>
+                    {/* <a href={studentData.userDocs.previous_year_scorecard_url.S} className="text-sm text-gray-500">PDF</a> */}
+                  </div>
+                </div>
+                <div className="flex items-center p-4 border rounded-lg hover:bg-gray-50">
+                  <FileText className="w-8 h-8 text-blue-600 mr-3" />
+                  <div>
+                    <p className="font-medium text-gray-900">Higher Degree Document</p>
+                    {/* <a href={studentData.userDocs.higher_degree_urls.L[0].S} className="text-sm text-gray-500">PDF</a> */}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
