@@ -1,38 +1,69 @@
 import React, { useState } from "react";
-import { Eye, EyeOff } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { loginUser } from "../../api/auth";
+import { loginUser, sendLoginOtp } from "../../api/auth";
 
 const Login = () => {
   const [formData, setFormData] = useState({
-    email: "",
-    password: "",
+    phoneNumber: "",
+    email:"",
+    otp: "",
+    deviceType: "mobile",
   });
-  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [otpSent, setOtpSent] = useState(false);
+  const [isOtpSending, setIsOtpSending] = useState(false);
+
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
+  const sendOtpToPhone = async () => {
+    if (!formData.phoneNumber.trim()) {
+      toast.error("Please enter a valid phone number");
+      return;
+    }
+    try {
+      setIsOtpSending(true);
+      const data = await sendLoginOtp(formData.phoneNumber);
+  
+      if (data.success && data.email) {
+        setFormData((prev) => ({ ...prev, email: data.email })); // Update email in formData
+        setOtpSent(true);
+        toast.success(`OTP sent successfully to ${data.email}!`);
+      } else {
+        toast.error(data.message || "Failed to send OTP.");
+      }
+    } catch (error) {
+      toast.error(error.message || "Error sending OTP");
+      console.error("OTP Error:", error);
+    } finally {
+      setIsOtpSending(false);
+    }
   };
-
-  const navigate = useNavigate();
+  
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    setLoading(true);
+    if (!formData.otp.trim()) {
+      toast.error("Please enter OTP");
+      return;
+    }
 
+    setLoading(true);
     try {
       const response = await loginUser(formData);
-      toast.success("Login successful!");
-      console.log("Login Successful:", response);
-      navigate('/studentProfile'); 
+      if (response.success && response.authToken) {
+        localStorage.setItem("authToken", response.authToken);
+        toast.success("Login successful!");
+        navigate("/");
+      } else {
+        toast.error(response.message || "Login failed!");
+      }
     } catch (error) {
       toast.error(error.message || "Login failed!");
       console.error("Login Error:", error);
@@ -54,60 +85,42 @@ const Login = () => {
         </div>
         <form className="space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-4">
-            {/* Email Input */}
+            {/* Phone Number Input */}
             <div>
               <input
-                id="email"
-                name="email"
-                type="email"
+                id="phoneNumber"
+                name="phoneNumber"
+                type="tel"
                 required
-                placeholder="Email Address"
-                value={formData.email}
+                placeholder="Phone Number"
+                value={formData.phoneNumber}
                 onChange={handleChange}
                 className="w-full px-4 py-2 border rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-primary-purple focus:border-primary-purple"
               />
             </div>
 
-            {/* Password Input with Eye Toggle */}
-            <div className="relative">
-              <input
-                id="password"
-                name="password"
-                type={showPassword ? "text" : "password"}
-                required
-                placeholder="Password"
-                value={formData.password}
-                onChange={handleChange}
-                className="w-full px-4 py-2 border rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-primary-purple focus:border-primary-purple pr-10"
-              />
-              <button
-                type="button"
-                onClick={togglePasswordVisibility}
-                className="absolute inset-y-0 right-3 flex items-center text-gray-500 dark:text-gray-300"
-                aria-label="Toggle password visibility"
-              >
-                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-              </button>
-            </div>
-          </div>
-
-          {/* Remember Me & Forgot Password */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <input
-                id="remember-me"
-                name="remember-me"
-                type="checkbox"
-                className="h-4 w-4 text-primary-purple focus:ring-primary-purple border-gray-300 rounded"
-              />
-              <label htmlFor="remember-me" className="ml-2 text-sm text-gray-900 dark:text-gray-300">
-                Remember me
-              </label>
-            </div>
-            <div className="text-sm">
-              <a href="forgot" className="font-medium text-primary-purple hover:text-purple-700 dark:text-accent-skyblue dark:hover:text-blue-300">
-                Forgot your password?
-              </a>
+            {/* OTP Input */}
+            <div className="flex items-center gap-2">
+              {!otpSent ? (
+                <button
+                  type="button"
+                  onClick={sendOtpToPhone}
+                  className="w-full bg-primary-purple text-white h-[2.6rem] rounded-lg flex justify-center items-center"
+                  disabled={isOtpSending}
+                >
+                  {isOtpSending ? "Sending..." : "Send OTP"}
+                </button>
+              ) : (
+                <input
+                  type="text"
+                  name="otp"
+                  value={formData.otp}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 rounded-lg border border-primary-purple bg-secondary-gray dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-primary-purple focus:border-primary-purple"
+                  placeholder="Enter OTP"
+                  required
+                />
+              )}
             </div>
           </div>
 
