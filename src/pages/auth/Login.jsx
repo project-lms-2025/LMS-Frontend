@@ -3,18 +3,19 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { loginUser, sendLoginOtp } from "../../api/auth";
+import { useAuth } from "../../context/AuthContext";
 
 const Login = () => {
   const [formData, setFormData] = useState({
     phoneNumber: "",
-    email:"",
+    email: "",
     otp: "",
     deviceType: "mobile",
   });
   const [loading, setLoading] = useState(false);
   const [otpSent, setOtpSent] = useState(false);
   const [isOtpSending, setIsOtpSending] = useState(false);
-
+  const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -30,8 +31,9 @@ const Login = () => {
     try {
       setIsOtpSending(true);
       const data = await sendLoginOtp(formData.phoneNumber);
-  
+
       if (data.success && data.email) {
+        localStorage.setItem("email", data.email);
         setFormData((prev) => ({ ...prev, email: data.email })); // Update email in formData
         setOtpSent(true);
         toast.success(`OTP sent successfully to ${data.email}!`);
@@ -45,7 +47,7 @@ const Login = () => {
       setIsOtpSending(false);
     }
   };
-  
+
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -53,12 +55,15 @@ const Login = () => {
       toast.error("Please enter OTP");
       return;
     }
-
+  
     setLoading(true);
     try {
       const response = await loginUser(formData);
+      console.log(response);
       if (response.success && response.authToken) {
         localStorage.setItem("authToken", response.authToken);
+        localStorage.setItem("role", response.role);
+        login(response.role); // Update role in AuthContext
         toast.success("Login successful!");
         navigate("/");
       } else {
@@ -71,6 +76,7 @@ const Login = () => {
       setLoading(false);
     }
   };
+  
 
   return (
     <div className="min-h-[92.2vh] w-full flex items-center justify-center bg-secondary-gray dark:bg-gray-900">

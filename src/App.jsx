@@ -1,5 +1,5 @@
 import './App.css'
-import LandingPage  from './pages/LandingPage'
+import LandingPage from './pages/LandingPage'
 import { Navbar } from './components/Navbar'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './pages/auth/Login';
@@ -15,16 +15,16 @@ import { ToastContainer } from "react-toastify";
 import Forgot from './pages/auth/Forgot';
 import ResetPassword from './pages/auth/ResetPassword';
 import AdminRegister from './pages/auth/AdminRegister';
-const user = {
-  isAuthenticated: true, 
-  role: 'Teacher', 
-};
+import { useAuth } from './context/AuthContext';
+import Classes from './pages/Dashboard/Classes';
+
 
 function App() {
+  const { role } = useAuth();
   return (
     <Router className="h-screen" >
       <ToastContainer position="top-right" autoClose={3000} />
-      <Navbar role={user.role} />
+      <Navbar role={role} />
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/signin" element={<Login />} />
@@ -40,6 +40,7 @@ function App() {
         <Route path="/teacherRegister" element={<AdminRegister />} />
         <Route path="/teacherDashboard" element={<Teacher />} />
         <Route path="/teacherProfile" element={<TeacherProfile />} />
+        <Route path="/classes" element={<Classes />} />
 
         <Route path="/Ques" element={<Quiz />} />
       </Routes>

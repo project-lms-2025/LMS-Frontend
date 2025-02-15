@@ -69,6 +69,12 @@ export const loginUser = async (credentials) => {
     return fetchAPI("/auth/login", "POST", credentials);
 };
 
+export const logoutUser = async (email, deviceType = "mobile") => {
+    const authToken = localStorage.getItem("authToken"); // Retrieve token from localStorage
+    return fetchAPI("/auth/logout", "POST", { email, deviceType }, false, authToken);
+};
+
+
 export const forgotPassword = async (email) => {
     return fetchAPI("/auth/forgot-password", "POST", { email });
 };
@@ -104,13 +110,49 @@ export const deleteBatchById = async (batchId) => {
 
 // Course APIs
 export const createCourse = async (courseData) => {
-    const authToken = localStorage.getItem("authToken"); // Retrieve token from localStorage
-    return fetchAPI("/course", "POST", courseData, false, authToken);
+    const authToken = localStorage.getItem("authToken");
+    return fetchAPI("/course", "POST", { ...courseData, allow_notes_download: true }, false, authToken);
 };
 
 export const getCourseById = async (courseId) => {
     return fetchAPI(`/course/${courseId}`);
 };
+
+export const updateCourse = async (courseId, courseData) => {
+    const authToken = localStorage.getItem("authToken"); // Retrieve token from localStorage
+    return fetchAPI(`/course/${courseId}`, "PUT", courseData, false, authToken);
+};
+
+export const deleteCourse = async (courseId) => {
+    const authToken = localStorage.getItem("authToken"); // Retrieve token from localStorage
+    return fetchAPI(`/course/${courseId}`, "DELETE", null, false, authToken);
+};
+
+export const getCoursesByBatchId = async (batchId) => {
+    return fetchAPI(`/course/batch/${batchId}`);
+};
+
+// Class APIs
+export const createClass = async (classData, authToken) => {
+    return fetchAPI("/class", "POST", classData, false, authToken);
+};
+
+export const getClassById = async (classId) => {
+    return fetchAPI(`/class/${classId}`, "GET");
+};
+
+export const updateClass = async (classId, updatedData, authToken) => {
+    return fetchAPI(`/class/${classId}`, "PUT", updatedData, false, authToken);
+};
+
+export const getClassesByCourseId = async (courseId) => {
+    return fetchAPI(`/class/course/${courseId}`, "GET");
+};
+
+export const deleteClass = async (classId, authToken) => {
+    return fetchAPI(`/class/${classId}`, "DELETE", null, false, authToken);
+};
+
 
 
 // User APIs
