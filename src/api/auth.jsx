@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://15.206.151.93:5000/api"; // Added /api prefix
+const API_BASE_URL = "https://testapi.teachertech.in/api"; // Added /api prefix
 
 // Helper function to handle API requests
 const fetchAPI = async (endpoint, method = "GET", body = null, isFormData = false, authToken = null) => {
@@ -157,7 +157,12 @@ export const deleteClass = async (classId, authToken) => {
 
 // User APIs
 export const getUserByEmail = async (email) => {
-    return fetchAPI(`/user/${encodeURIComponent(email)}`);
+    const authToken = localStorage.getItem("authToken"); // Retrieve token from localStorage
+    if (!authToken) {
+        throw new Error("Authorization token is missing");
+    }
+
+    return fetchAPI(`/user/${encodeURIComponent(email)}`, "GET", null, false, authToken);
 };
 
 export const updateUserProfile = async (userData) => {

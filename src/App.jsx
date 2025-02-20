@@ -17,6 +17,10 @@ import ResetPassword from './pages/auth/ResetPassword';
 import AdminRegister from './pages/auth/AdminRegister';
 import { useAuth } from './context/AuthContext';
 import Classes from './pages/Dashboard/Classes';
+import StudentList from './pages/StudentList';
+import TeacherList from './pages/TeacherList';
+import BatchOverview from './pages/BatchOverview';
+import TeacherDetail from './pages/TeacherDetail';
 
 
 function App() {
@@ -41,6 +45,11 @@ function App() {
         <Route path="/teacherDashboard" element={<Teacher />} />
         <Route path="/teacherProfile" element={<TeacherProfile />} />
         <Route path="/classes" element={<Classes />} />
+
+        <Route path="/StudentList" element={<StudentList/>} />
+        <Route path="/TeacherList" element={<TeacherList/>} />
+        <Route path="/BatchOverview" element={<BatchOverview/>} />
+        <Route path="/TeacherDetail" element={<TeacherDetail/>} />
 
         <Route path="/Ques" element={<Quiz />} />
       </Routes>

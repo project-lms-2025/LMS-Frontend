@@ -1,119 +1,142 @@
-import { useState } from "react";
-import { User, Book, FileText, ChevronDown, ChevronUp } from "lucide-react";
+import React from 'react';
+import { Edit, MapPin, CheckCircle } from 'lucide-react';
 
-const TeacherProfile = () => {
-  const [activeTab, setActiveTab] = useState("overview");
-  const [isExpanded, setIsExpanded] = useState(false);
-
-  const teacher = {
-    name: "Dr. John Doe",
-    designation: "Professor of Computer Science",
-    email: "johndoe@example.com",
-    phone: "+91 98765 43210",
-    department: "Computer Science",
-    experience: "15+ years",
-    courses: [
-      { code: "CS101", name: "Data Structures" },
-      { code: "CS102", name: "Algorithms" },
-      { code: "CS103", name: "Artificial Intelligence" },
-    ],
-    publications: 25,
-    achievements: [
-      "Best Researcher Award 2022",
-      "Published 5 papers in IEEE Transactions",
-      "Developed AI-based learning models",
-    ],
-    documents: [
-      { name: "PhD Certificate", type: "PDF", size: "1.2 MB" },
-      { name: "Teaching Experience Letter", type: "PDF", size: "900 KB" },
-    ],
-  };
-
+export default function FacultyProfile() {
   return (
-    <div className="max-w-6xl mt-4 mx-auto p-6 bg-white rounded-xl shadow-lg">
-      <div className="flex items-center mb-6">
-        <User className="w-10 h-10 text-gray-500 mr-4" />
-        <div>
-          <h2 className="text-xl font-semibold">{teacher.name}</h2>
-          <p className="text-gray-600">{teacher.designation}</p>
+    <div className="max-w-6xl mx-auto my-8">
+      {/* Top Section (Header) */}
+      <div className="bg-purple-700 rounded-t-lg p-6 flex flex-col md:flex-row items-center relative">
+        {/* Avatar */}
+        <div className="flex-shrink-0 mb-4 md:mb-0 md:mr-6">
+          {/* Replace this with the faculty's actual avatar/image */}
+          <img
+            src="https://img.freepik.com/premium-vector/man-avatar-profile-picture-vector-illustration_268834-538.jpg?w=1380"
+            alt="Faculty Avatar"
+            className="w-24 h-24 rounded-full border-4 border-purple-300"
+          />
         </div>
-      </div>
 
-      <div className="flex border-b mb-4">
-        {[
-          { key: "overview", label: "Overview", icon: <User className="w-5 h-5" /> },
-          { key: "academic", label: "Academic", icon: <Book className="w-5 h-5" /> },
-          { key: "documents", label: "Documents", icon: <FileText className="w-5 h-5" /> },
-        ].map((tab) => (
-          <button
-            key={tab.key}
-            onClick={() => setActiveTab(tab.key)}
-            className={`flex items-center px-4 py-2 text-sm font-medium border-b-2 transition-all duration-300 ${
-              activeTab === tab.key ? "border-blue-500 text-blue-600" : "border-transparent text-gray-600"
-            }`}
-          >
-            {tab.icon}
-            <span className="ml-2">{tab.label}</span>
-          </button>
-        ))}
-      </div>
-
-      <div>
-        {activeTab === "overview" && (
-          <div>
-            <p className="text-gray-700 mb-2"><strong>Email:</strong> {teacher.email}</p>
-            <p className="text-gray-700 mb-2"><strong>Phone:</strong> {teacher.phone}</p>
-            <p className="text-gray-700 mb-2"><strong>Department:</strong> {teacher.department}</p>
-            <p className="text-gray-700 mb-2"><strong>Experience:</strong> {teacher.experience}</p>
+        {/* Faculty Info */}
+        <div className="text-white">
+          <h1 className="text-2xl font-bold">Manoj kumar</h1>
+          <p className="text-sm">GATE AIR-13</p>
+          <div className="flex items-center gap-1 text-sm mt-1">
+            <MapPin className="w-4 h-4" />
+            <span>Delhi</span>
           </div>
-        )}
+        </div>
 
-        {activeTab === "academic" && (
-          <div>
-            <h3 className="text-lg font-semibold mb-2">Assigned Courses</h3>
-            <ul className="mb-4">
-              {teacher.courses.map((course) => (
-                <li key={course.code} className="text-gray-700">{course.code} - {course.name}</li>
-              ))}
-            </ul>
-            <h3 className="text-lg font-semibold mb-2">Achievements</h3>
-            <div className="relative">
-              <ul className={`${isExpanded ? "max-h-full" : "max-h-24 overflow-hidden"} transition-all duration-300`}>
-                {teacher.achievements.map((achievement, index) => (
-                  <li key={index} className="text-gray-700">• {achievement}</li>
-                ))}
-              </ul>
-              <button
-                className="mt-2 text-blue-600 flex items-center text-sm"
-                onClick={() => setIsExpanded(!isExpanded)}
-              >
-                {isExpanded ? "Show Less" : "Show More"}
-                {isExpanded ? <ChevronUp className="w-4 h-4 ml-1" /> : <ChevronDown className="w-4 h-4 ml-1" />}
-              </button>
+        {/* Edit Profile Button */}
+        <button
+          className="absolute top-6 right-6 flex items-center gap-1 text-white hover:text-gray-200"
+          title="Edit Profile"
+        >
+          <Edit className="w-4 h-4" />
+          Edit Profile
+        </button>
+      </div>
+
+      {/* Main Content (White Card) */}
+      <div className="bg-white rounded-b-lg shadow p-6">
+        <div className="flex flex-col md:flex-row gap-6">
+          {/* Left Column: Basic Info */}
+          <div className="md:w-1/3 border-r pr-6">
+            {/* Current Title */}
+            <div className="mb-4">
+              <p className="text-sm text-gray-500">Current Title:</p>
+              <p className="text-lg font-semibold">Associate Professor</p>
+            </div>
+            {/* Department */}
+            <div className="mb-4">
+              <p className="text-sm text-gray-500">Department:</p>
+              <p className="text-lg font-semibold">Math,Aptitude</p>
+            </div>
+            {/* Years of Experience (Circle) */}
+            <div className="mb-2 flex items-center justify-center w-20 h-20 rounded-full bg-gray-100 mx-auto">
+              <span className="text-2xl font-bold text-gray-800">8</span>
+            </div>
+            <p className="text-center text-sm font-semibold">Years Experience</p>
+            <p className="text-center text-xs text-gray-500 mb-4">
+              Dedicated to student success
+            </p>
+            {/* Joined Date */}
+            <div className="mb-4">
+              <p className="text-sm text-gray-500">Joined:</p>
+              <p className="text-lg font-semibold">28 Oct 2023</p>
+            </div>
+            {/* Publications Count */}
+            <div className="mb-4">
+              <p className="text-sm text-gray-500">Publications:</p>
+              <p className="text-lg font-semibold">5</p>
             </div>
           </div>
-        )}
 
-        {activeTab === "documents" && (
-          <div>
-            <h3 className="text-lg font-semibold mb-2">Uploaded Documents</h3>
-            <div className="space-y-2">
-              {teacher.documents.map((doc, index) => (
-                <div key={index} className="flex items-center bg-gray-100 p-4 rounded-lg">
-                  <FileText className="w-6 h-6 text-gray-500 mr-4" />
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-900">{doc.name}</p>
-                    <p className="text-xs text-gray-600">{doc.type} • {doc.size}</p>
+          {/* Right Column: About, Courses Taught, Achievements */}
+          <div className="md:w-2/3">
+            {/* About Section */}
+            <div className="mb-6">
+              <h2 className="text-lg font-semibold mb-1">About</h2>
+              <p className="text-sm text-gray-600">
+                An experienced educator with a passion for teaching students to clear exam.
+              </p>
+            </div>
+
+            {/* Courses Taught */}
+            <div className="mb-6">
+              <h2 className="text-lg font-semibold mb-2">Courses Taught</h2>
+              <div className="grid gap-4 sm:grid-cols-2">
+                {/* Course 1 */}
+                <div className="border p-3 rounded">
+                  <h3 className="font-semibold">Aptitude</h3>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Introductory Course • Freshmen Level
+                  </p>
+                  <div className="bg-gray-200 rounded-full h-2 my-2">
+                    {/* Example "semester progress": 40% */}
+                    <div
+                      className="bg-green-500 h-2 rounded-full"
+                      style={{ width: '40%' }}
+                    />
                   </div>
-                  <button className="text-blue-600 hover:text-blue-800 text-sm font-medium">Download</button>
+                  <p className="text-xs">40% of semester complete</p>
                 </div>
-              ))}
+                {/* Course 2 */}
+                <div className="border p-3 rounded">
+                  <h3 className="font-semibold">Basic Math</h3>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Advanced Course • Upperclassmen Level
+                  </p>
+                  <div className="bg-gray-200 rounded-full h-2 my-2">
+                    {/* Example "semester progress": 20% */}
+                    <div
+                      className="bg-green-500 h-2 rounded-full"
+                      style={{ width: '20%' }}
+                    />
+                  </div>
+                  <p className="text-xs">20% of semester complete</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Achievements */}
+            <div>
+              <h2 className="text-lg font-semibold mb-2">Achievements</h2>
+              <div className="flex flex-wrap items-center gap-2">
+                {/* Achievement 1 */}
+                <div className="flex items-center gap-1 bg-gray-100 px-2 py-1 rounded text-sm">
+                  <CheckCircle className="w-4 h-4 text-green-500" />
+                  Awarded "Teacher of the Year" 2023
+                </div>
+                {/* Achievement 2 */}
+                <div className="flex items-center gap-1 bg-gray-100 px-2 py-1 rounded text-sm">
+                  <CheckCircle className="w-4 h-4 text-green-500" />
+                  Published 10+ Research Papers
+                </div>
+              </div>
             </div>
           </div>
-        )}
+        </div>
       </div>
     </div>
   );
-};
-
-export default TeacherProfile;
+}
