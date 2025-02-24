@@ -27,6 +27,7 @@ export const Navbar = () => {
       { name: "Dashboard", href: "/teacherDashboard" },
       { name: "Classes", href: "/classes" },
       { name: "Students", href: "/teacherStudents" },
+      { name: "Create Exam", href: "/quiz" },
     ],
     student: [
       { name: "Profile", href: "/studentProfile" },

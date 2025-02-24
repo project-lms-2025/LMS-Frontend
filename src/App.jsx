@@ -21,6 +21,8 @@ import StudentList from './pages/StudentList';
 import TeacherList from './pages/TeacherList';
 import BatchOverview from './pages/BatchOverview';
 import TeacherDetail from './pages/TeacherDetail';
+import QuestionPaper from './pages/Quiz';
+import CreateTestUI from './pages/Test/CreateTest';
 
 
 function App() {
@@ -50,8 +52,9 @@ function App() {
         <Route path="/TeacherList" element={<TeacherList/>} />
         <Route path="/BatchOverview" element={<BatchOverview/>} />
         <Route path="/TeacherDetail" element={<TeacherDetail/>} />
+        <Route path="/quiz" element={<QuestionPaper/>} />
 
-        <Route path="/Ques" element={<Quiz />} />
+        <Route path="/test" element={<CreateTestUI />} />
       </Routes>
     </Router>
   )
