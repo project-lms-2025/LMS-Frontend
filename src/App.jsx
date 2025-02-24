@@ -8,7 +8,7 @@ import Teacher from './pages/Dashboard/Teacher';
 import StudentDashboard from './pages/Dashboard/Student';
 import { StudentProfile } from './pages/Profile/Student';
 import Question from './components/Question';
-import Quiz from './pages/Quiz';
+import Quiz from './pages/QuestionPaper';
 import StudentTest from './pages/StudentTest';
 import TeacherProfile from './pages/Profile/Teacher';
 import { ToastContainer } from "react-toastify";
@@ -21,7 +21,7 @@ import StudentList from './pages/StudentList';
 import TeacherList from './pages/TeacherList';
 import BatchOverview from './pages/BatchOverview';
 import TeacherDetail from './pages/TeacherDetail';
-import QuestionPaper from './pages/Quiz';
+import QuestionPaper from './pages/QuestionPaper';
 import CreateTestUI from './pages/Test/CreateTest';
 
 
