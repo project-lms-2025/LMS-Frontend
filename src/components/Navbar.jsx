@@ -50,7 +50,7 @@ export const Navbar = () => {
             <GraduationCap className="w-8 h-8 text-primary-purple dark:text-accent-yellow" />
             <a href="/">
               <span className="text-xl font-bold dark:text-primary-white">
-                EduLearn
+                TeacherTech
               </span>
             </a>
           </div>

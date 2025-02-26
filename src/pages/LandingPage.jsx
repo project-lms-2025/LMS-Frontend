@@ -131,7 +131,7 @@ const LandingPage = () => {
               <h2 className="text-4xl font-bold mb-4 dark:text-primary-white">
                 Why Students Choose{" "}
                 <span className="text-primary-purple dark:text-accent-yellow">
-                  EduLearn
+                TeacherTech
                 </span>
               </h2>
               <p className="text-xl text-secondary-gray/120 dark:text-primary-white/80 max-w-2xl mx-auto">
@@ -179,7 +179,7 @@ const LandingPage = () => {
 
             <p className="text-xl dark:text-primary-white/80 mb-8 max-w-2xl mx-auto">
               Join thousands of learners who are already transforming their
-              careers with EduLearn.
+              careers with TeacherTech.
             </p>
             <button className="bg-gray-100 dark:bg-primary-white text-primary-purple px-8 py-4 rounded-lg text-lg font-semibold hover:bg-primary-white/90 transition-colors inline-flex items-center">
               Get Started Now
