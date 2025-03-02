@@ -8,4 +8,10 @@ html, body{
 #root{
     height: 100%;
   }
+.clip-custom1 {
+  clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 100% 100%, 0 100%, 0% 50%);
+} 
+.clip-custom2 {
+  clip-path: polygon(0 0, 100% 0, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+} 
   

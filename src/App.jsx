@@ -8,7 +8,7 @@ import Teacher from './pages/Dashboard/Teacher';
 import StudentDashboard from './pages/Dashboard/Student';
 import { StudentProfile } from './pages/Profile/Student';
 import Question from './components/Question';
-import Quiz from './pages/QuestionPaper';
+import Quiz from './pages/Test/QuestionPaper';
 import StudentTest from './pages/StudentTest';
 import TeacherProfile from './pages/Profile/Teacher';
 import { ToastContainer } from "react-toastify";
@@ -21,8 +21,12 @@ import StudentList from './pages/StudentList';
 import TeacherList from './pages/TeacherList';
 import BatchOverview from './pages/BatchOverview';
 import TeacherDetail from './pages/TeacherDetail';
-import QuestionPaper from './pages/QuestionPaper';
 import CreateTestUI from './pages/Test/CreateTest';
+import StudentResponse from './pages/Test/StudentResponse';
+import QuestionPaper from './pages/Test/QuestionPaper';
+import TeacherTestList from './pages/Test/TeacherTestList';
+import Rank from './pages/Test/Rank';
+import RankBoard from './pages/Test/BatchRank';
 
 
 function App() {
@@ -53,8 +57,12 @@ function App() {
         <Route path="/BatchOverview" element={<BatchOverview/>} />
         <Route path="/TeacherDetail" element={<TeacherDetail/>} />
         <Route path="/quiz" element={<QuestionPaper/>} />
+        <Route path="/res" element={<StudentResponse/>} />
 
         <Route path="/test" element={<CreateTestUI />} />
+        <Route path="/testList" element={<TeacherTestList />} />
+        <Route path="/rank" element={<Rank />} />
+        <Route path="/batchrank" element={<RankBoard />} />
       </Routes>
     </Router>
   )

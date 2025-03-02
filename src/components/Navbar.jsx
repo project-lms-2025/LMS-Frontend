@@ -42,7 +42,7 @@ export const Navbar = () => {
   };
 
   return (
-    <header className="sticky top-0 z-50 border-b px-16 dark:border-primary-purple/20 bg-primary-white dark:bg-primary-purple">
+    <header className="sticky top-0 z-50 border-b lg:px-16 dark:border-primary-purple/20 bg-primary-white dark:bg-primary-purple">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo Section */}

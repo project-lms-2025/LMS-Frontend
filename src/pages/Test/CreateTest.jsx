@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Clock, Eye, Edit2, Save, Plus, Cross, CircleX, CalculatorIcon } from 'lucide-react';
+import { Clock, Eye, Edit2, Save, Plus, Cross, CircleX, CalculatorIcon, ChevronUp, ChevronDown } from 'lucide-react';
 import Calculator from '../../components/Calculator';
 import Draggable from 'react-draggable';
-
 const Test = () => {
     // Sample test paper data for student test-taking.
     const [questionPaper, setQuestionPaper] = useState({
@@ -57,7 +56,12 @@ const Test = () => {
     const [showCalculator, setShowCalculator] = useState(false);
     // Timer (in seconds) from duration field
     const [timeLeft, setTimeLeft] = useState(questionPaper.duration * 60);
+    const [isOpen, setIsOpen] = useState(false);
 
+    // Function to toggle the open/close state
+    const togglePanel = () => {
+        setIsOpen(!isOpen);
+    };
     // Timer countdown effect
     useEffect(() => {
         const timerId = setInterval(() => {
@@ -124,53 +128,59 @@ const Test = () => {
     };
 
     return (
-        <div className="min-h-full bg-gray-100 p-4 pb-8">
-
-
-
-
+        <div className=" bg-gra00 p-4 ">
             {/* Main Content */}
-            <div className="flex gap-4">
+            <div className="lg:flex lg:gap-4  p-0">
                 {/* Left: Question Display (70%) */}
 
                 {/* Test Details */}
-                <div className="w-[67%]">
-                    <div className="bg-white rounded-lg shadow p-6 mb-4">
+                <div className="lg:w-[67%]">
+                    <div className="bg-white rounded-lg shadow p-4 mb-4">
                         <div className="flex justify-between md:grid-cols-2 gap-6">
                             <div>
                                 <h1 className="text-2xl font-bold text-gray-900">{questionPaper.title}</h1>
-                                <p className="text-gray-700 mt-2">{questionPaper.description}</p>
+                                {/* <p className="text-gray-700 mt-2">{questionPaper.description}</p> */}
                             </div>
                             <div className="flex flex-col items-end gap-2">
                                 {/* <div className="flex items-center">
                             <Clock className="w-5 h-5 text-gray-400 mr-2" />
                             <span className="text-gray-700">Duration: {questionPaper.duration} minutes</span>
                         </div> */}
-                                <div className="flex items-center">
+                                {/* <div className="flex items-center">
                                     <span className="text-gray-700">
                                         Scheduled on: {questionPaper.scheduleDate} at {questionPaper.scheduleTime}
                                     </span>
                                 </div>
                                 <div className="flex items-center">
                                     <span className="text-gray-700">Time Left: {formatTime(timeLeft)}</span>
-                                </div>
+                                </div> */}
                             </div>
                         </div>
                     </div>
-
+                    <div className="flex justify-between bg-white  border-t-[1px] border-black  py-1">
+                        <h1>Section</h1>
+                        <h1 className='font-bold' >Time Left: <span className='font-normal ' >1:19:54</span> </h1>
+                    </div>
+                    <div className="flex justify-between  border-t-[1px] border-b-[1px] border-black py-1 ">
+                        <h1 className='font-bold text-orange-500 ' >Question Type</h1>
+                        <div className="flex gap-2">
+                            <h1 className='' >Marks for correct answer: <span className='font-semibold text-green-500 ' >1 </span> </h1>
+                            <h1 className='' >Marks for incorrect answer: <span className='font-semibold text-red-500 ' >0.33</span> </h1>
+                        </div>
+                    </div>
                     {/* Section Selector */}
-                    <div className="bg-white rounded-lg shadow p-4 mb-4">
+                    <div className="  border-b-[1px] border-black mb-4">
                         <div className="flex justify-between gap-4">
-                            <div className='flex gap-2' >
+                            <div className='flex my-2 gap-2' >
 
                                 <button
                                     onClick={() => {
                                         setSelectedSection("GA");
                                         setCurrentQuestionIndex(0);
                                     }}
-                                    className={`px-4 py-2 rounded ${selectedSection === "GA"
+                                    className={`px-4 py-2 rounded-xl  ${selectedSection === "GA"
                                         ? "bg-blue-600 text-white"
-                                        : "bg-gray-100 text-gray-700"
+                                        : "bg-gray-200 text-gray-700"
                                         }`}
                                 >
                                     General Aptitude (GA)
@@ -180,9 +190,9 @@ const Test = () => {
                                         setSelectedSection("Subject");
                                         setCurrentQuestionIndex(0);
                                     }}
-                                    className={`px-4 py-2 rounded ${selectedSection === "Subject"
+                                    className={`px-4 py-2 rounded-xl ${selectedSection === "Subject"
                                         ? "bg-blue-600 text-white"
-                                        : "bg-gray-100 text-gray-700"
+                                        : "bg-gray-200 text-gray-700"
                                         }`}
                                 >
                                     Subject-specific Section
@@ -192,7 +202,7 @@ const Test = () => {
                             {/* Add here button to popup calculator & user can drag do calculations */}
                             <button
                                 onClick={() => setShowCalculator((prev) => !prev)}
-                                className="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300 text-gray-800"
+                                className="px-4 py-2 rounded  text-orange-400"
                             >
                                 <CalculatorIcon />
                             </button>
@@ -200,26 +210,17 @@ const Test = () => {
                         </div>
                     </div>
                     {currentQuestion ? (
-                        <div className="bg-white rounded-lg shadow p-6">
+                        <div className="bg-white rounded-lg h-[33rem] shadow px-4 py-2 ">
                             <div className="flex justify-between">
-                                <h2 className="text-xl font-semibold mb-4">
+                                <h2 className="text-2xl font-semibold mb-4">
                                     Question No. {currentQuestion.id}
                                 </h2>
-                                <div className=" flex gap-4 font-bold text-right">
-                                    <p className="text-sm text-green-500">
-                                        Correct Marks: {currentQuestion.marks}
-                                    </p>
-                                    {currentQuestion.type === 'MCQ' && (
-                                        <p className="text-sm text-red-500">
-                                            Negative Marks: {currentQuestion.incorrectMarks}
-                                        </p>
-                                    )}
-                                </div>
+
 
                             </div>
-                            <p className="mb-4 text-gray-800">{currentQuestion.text}</p>
+                            <p className="mb-4 text-gray-800 text-2xl">{currentQuestion.text}</p>
                             {currentQuestion.type === 'MCQ' && (
-                                <div className="space-y-2">
+                                <div className="space-y-[2.35rem]">
                                     {currentQuestion.options.map((opt, idx) => (
                                         <div key={idx} className="flex items-center gap-2">
                                             <input
@@ -231,13 +232,13 @@ const Test = () => {
                                                     updateStudentAnswer(currentQuestion.id, idx)
                                                 }
                                             />
-                                            <span className="text-gray-700">{opt}</span>
+                                            <span className="text-gray-700 text-xl">{opt}</span>
                                         </div>
                                     ))}
                                 </div>
                             )}
                             {currentQuestion.type === 'MSQ' && (
-                                <div className="space-y-2">
+                                <div className="space-y-[2rem]">
                                     {currentQuestion.options.map((opt, idx) => {
                                         const checked =
                                             currentQuestion.studentAnswers &&
@@ -258,7 +259,7 @@ const Test = () => {
                                                         updateStudentAnswers(currentQuestion.id, current);
                                                     }}
                                                 />
-                                                <span className="text-gray-700">{opt}</span>
+                                                <span className="text-gray-700 text-xl">{opt}</span>
                                             </div>
                                         );
                                     })}
@@ -287,109 +288,133 @@ const Test = () => {
                 </div>
 
                 {/* Right: Question Navigation (scrollable horizontally) */}
-                <div className="w-[33%] fixed right-0 bottom-5 bg-white rounded-lg shadow p-6 ">
-                    {/* Legend */}
-                    <div className="mb-4">
-                        <h3 className="text-md font-semibold">Status:</h3>
-                        <div className="flex flex-wrap gap-4 mt-2">
-                            <div className="flex items-center gap-1">
-                                <span className="flex items-center justify-center w-8 h-8 text-center rounded bg-gray-200 border border-gray-400">
-                                    {filteredQuestions.filter(q => q.status === "Answered").length}
-                                </span>
-                                <span className="text-sm">Answered</span>
-                            </div>
-                            <div className="flex items-center gap-1">
-                                <span className="flex items-center justify-center w-8 h-8 text-center rounded bg-blue-200 border border-blue-400">
-                                    {filteredQuestions.filter(q => q.status === "Not Answered").length}
-                                </span>
-                                <span className="text-sm">Not Answered</span>
-                            </div>
-                            <div className="flex items-center gap-1">
-                                <span className="flex items-center justify-center w-8 h-8 text-center rounded bg-purple-200 border border-purple-400">
-                                    {filteredQuestions.filter(q => !q.status || q.status === "Not Visited").length}
-                                </span>
-                                <span className="text-sm">Not Visited</span>
-                            </div>
-                            {/* <div className="flex gap- justify-between"> */}
-
-                            <div className="flex items-center gap-1">
-                                <span className="flex items-center justify-center w-8 h-8 text-center rounded bg-green-200 border border-green-400">
-                                    {filteredQuestions.filter(q => q.status === "Marked for Review").length}
-                                </span>
-                                <span className="text-sm">Marked for Review</span>
-                            </div>
-                            <div className="flex items-center gap-1">
-                                <span className="flex items-center justify-center w-8 h-8 text-center rounded bg-yellow-200 border border-yellow-400">
-                                    {filteredQuestions.filter(q => q.status === "Answered and Marked for Review").length}
-                                </span>
-                                <span className="text-sm wrap ">Answered & Marked for Review</span>
-                            </div>
-                            {/* </div> */}
-
-                        </div>
-
-                    </div>
-                    <h2 className="text-lg font-semibold mb-4">Questions</h2>
-                    <div className="flex flex-nowrap gap-2 overflow-x-auto h-[24.5rem] ">
-                        {filteredQuestions.map((q, index) => {
-                            let btnColor = "bg-gray-200 text-gray-800";
-                            // if (q.type === "MCQ") {
-                            //     btnColor = "bg-gray-200 text-gray-800";
-                            // } else if (q.type === "MSQ") {
-                            //     btnColor = "bg-blue-200 text-blue-800";
-                            // } else if (q.type === "NAT") {
-                            //     btnColor = "bg-purple-200 text-purple-800";
-                            // }
-                            // if (q.status === "Answered") {
-                            //     btnColor = "bg-green-200 text-green-800";
-                            // } else if (q.status === "Marked for Review") {
-                            //     btnColor = "bg-yellow-200 text-yellow-800";
-                            // }
-                            return (
-                                <button
-                                    key={index + 1}
-                                    onClick={() => setCurrentQuestionIndex(index)}
-                                    className={`w-10 h-10 rounded ${btnColor} hover:opacity-80`}
-                                >
-                                    {index + 1}
-                                </button>
-                            );
-                        })}
-                    </div>
-
-
-
-                    <div className="bg-white rounded-lg shadow p-4 mt-4">
-                        <div className="flex justify-between items-center">
-                            <div className="text-gray-600">
-                                Total Questions: {filteredQuestions.length}
-                            </div>
-                            <div className="text-gray-600">
-                                Total Marks: {questionPaper.totalMarks}
-                            </div>
-                        </div>
-                    </div>
-                    <div className="flex justify-between gap-4 mt-2">
-
-                        <button
-                            onClick={() => console.log(questionPaper)}
-                            className="flex w-full justify-center items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700"
-                        >
-                            <Save className="w-4 h-4" />
-                            Submit Test
+                <div className="lg:w-[33%] w-[93%] fixed lg:right-0  bottom-5 bg-gray-300 lg:bg-white rounded-lg shadow p-2 lg:p-6">
+                    {/* Chevron Toggle for Mobile */}
+                    <div className="flex justify-around lg:hidden lg:mb-4">
+                        <button onClick={togglePanel}>
+                            {isOpen ? (
+                                <ChevronDown className="text-blue-600 font-bold" size={28} />
+                            ) : (
+                                <ChevronUp className="text-blue-600 font-bold" size={28} />
+                            )}
                         </button>
+                    </div>
+
+                    {/* Main Content */}
+                    <div >
+                        {/* Profile and Status */}
+                        <div className={`${isOpen ? 'block' : 'hidden'} lg:block`}>
+
+                        <div className="grid grid-cols-2 mb-2">
+                            <img
+                                className="w-40"
+                                src="https://img.freepik.com/free-photo/handsome-young-cheerful-man-with-arms-crossed_171337-1073.jpg?t=st=1740684883~exp=1740688483~hmac=e341b2806af15396440b431d78a40c702cd6f73dcbd53cb2a02b9366fa7d41d2&w=1060"
+                                alt="Profile"
+                            />
+                            <h1 className="font-bold">Deepak Yadav</h1>
+                        </div>
+
+                        {/* Status Legend */}
+                        <div className="mb-4 border-y-2 border-black py-4">
+                            <h3 className="text-md font-semibold">Status:</h3>
+                            <div className="flex flex-wrap gap-4 mt-2">
+                                <div className="flex items-center gap-1">
+                                    <span className="w-10 h-10 bg-gradient-to-b from-teal-500 to-green-700 clip-custom1 flex items-center justify-center text-white">
+                                        {filteredQuestions.filter((q) => q.status === 'Answered').length}
+                                    </span>
+                                    <span className="text-sm">Answered</span>
+                                </div>
+                                <div className="flex items-center gap-1">
+                                    <span className="w-10 h-10 bg-gradient-to-b from-red-500 to-red-700 clip-custom2 flex items-center justify-center text-white">
+                                        {filteredQuestions.filter((q) => q.status === 'Not Answered').length}
+                                    </span>
+                                    <span className="text-sm">Not Answered</span>
+                                </div>
+
+                                <div className="flex items-center gap-1">
+                                    <span className="flex items-center justify-center w-10 h-10 text-center rounded bg-purple-200 border border-purple-400">
+                                        {filteredQuestions.filter((q) => !q.status || q.status === 'Not Visited').length}
+                                    </span>
+                                    <span className="text-sm">Not Visited</span>
+                                </div>
+
+                                <div className="flex items-center gap-1">
+                                    <span className="flex items-center justify-center w-10 h-10 text-center bg-violet-600 text-white rounded-full">
+                                        {filteredQuestions.filter((q) => q.status === 'Marked for Review').length}
+                                    </span>
+                                    <span className="text-sm">Marked for Review</span>
+                                </div>
+
+                                <div className="flex items-center gap-1">
+                                    <span className="flex items-center justify-center w-10 h-10 text-center rounded-full bg-violet-600 text-white relative">
+                                        {filteredQuestions.filter((q) => q.status === 'Answered and Marked for Review').length}
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            stroke-width="4"
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            className="w-7 h-7 font-bold text-green-500 absolute bottom-0 right-0 translate-x-1/4 translate-y-1/4"
+                                        >
+                                            <path d="M20 6L9 17l-5-5" />
+                                        </svg>
+                                    </span>
+                                    <span className="text-sm wrap">Answered & Marked for Review</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Question Buttons */}
+                        <h2 className="text-lg font-semibold mb-4">Questions</h2>
+                        <div className="flex flex-nowrap gap-2 overflow-x-auto h-[14.3rem]">
+                            {filteredQuestions.map((q, index) => {
+                                let btnColor = 'bg-gray-200 text-gray-800';
+
+                                return (
+                                    <button
+                                        key={index + 1}
+                                        onClick={() => setCurrentQuestionIndex(index)}
+                                        className={`w-10 h-10 rounded ${btnColor} hover:opacity-80`}
+                                    >
+                                        {index + 1}
+                                    </button>
+                                );
+                            })}
+                        </div>
+
+                        {/* Footer Information */}
+                        <div className="bg-white rounded-lg shadow p-4 mt-4">
+                            <div className="flex justify-between items-center">
+                                <div className="text-gray-600">
+                                    Total Questions: {filteredQuestions.length}
+                                </div>
+                                <div className="text-gray-600">Total Marks: {questionPaper.totalMarks}</div>
+                            </div>
+                        </div>
+                        </div>
+
+                        <div className="flex justify-between gap-4 mt-2">
+                            <button
+                                onClick={() => console.log(questionPaper)}
+                                className="flex w-full justify-center items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700"
+                            >
+                                Submit Test
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
             {showCalculator && (
                 <Draggable>
-                    <div className="fixed top-20 right-72 bg-black text-white p-3 rounded-xl shadow-lg z-50 cursor-move">
+                    <div className="fixed top-32 right-0 bg-gray-400 text-white p-2 rounded-xl shadow-lg z-50 cursor-move">
                         <div className="flex justify-end ">
                             <button
                                 onClick={() => setShowCalculator(false)}
                                 className=" text-gray-200 p py-1 rounded"
                             >
-                                <CircleX />
+                                <CircleX className='absolute top-8 right-6  text-white' />
                             </button>
                         </div>
                         <Calculator />
