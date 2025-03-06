@@ -27,6 +27,7 @@ import QuestionPaper from './pages/Test/QuestionPaper';
 import TeacherTestList from './pages/Test/TeacherTestList';
 import Rank from './pages/Test/Rank';
 import RankBoard from './pages/Test/BatchRank';
+import FileUploadComponent from './components/Upload';
 
 
 function App() {
@@ -56,13 +57,22 @@ function App() {
         <Route path="/TeacherList" element={<TeacherList/>} />
         <Route path="/BatchOverview" element={<BatchOverview/>} />
         <Route path="/TeacherDetail" element={<TeacherDetail/>} />
-        <Route path="/quiz" element={<QuestionPaper/>} />
+
+        <Route path="/createtest" element={<QuestionPaper/>} />
+        {/* Test created by teacher */}
+
+        <Route path="/test" element={<CreateTestUI />} />  
+        {/* test given by students */}
+
         <Route path="/res" element={<StudentResponse/>} />
 
-        <Route path="/test" element={<CreateTestUI />} />
+
         <Route path="/testList" element={<TeacherTestList />} />
         <Route path="/rank" element={<Rank />} />
         <Route path="/batchrank" element={<RankBoard />} />
+        <Route path="/up" element={<FileUploadComponent />} />
+
+
       </Routes>
     </Router>
   )

@@ -2,8 +2,6 @@ import React, { useState } from 'react';
 import { Plus, Trash2, Eye, Edit2, Clock, Save, Paperclip } from 'lucide-react';
 import { createTestWithQuestions, uploadImageToS3 } from '../../api/test'; // Import API functions
 import { v4 as uuidv4 } from 'uuid';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css'; // Import react-toastify CSS
 
 const QuestionPaper = () => {
   const [isPreview, setIsPreview] = useState(false);
@@ -12,7 +10,6 @@ const QuestionPaper = () => {
   const [showOptions, setShowOptions] = useState({});
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
 
   // Initialize paper state with an empty questions array.
   const [questionPaper, setQuestionPaper] = useState({
@@ -50,11 +47,11 @@ const QuestionPaper = () => {
       questions: prev.questions.map((q) =>
         q.question_id === questionId
           ? {
-            ...q,
-            options: q.options.map((opt, idx) =>
-              idx === optionIndex ? { ...opt, option_text: value } : opt
-            ),
-          }
+              ...q,
+              options: q.options.map((opt, idx) =>
+                idx === optionIndex ? { ...opt, option_text: value } : opt
+              ),
+            }
           : q
       ),
     }));
@@ -73,37 +70,39 @@ const QuestionPaper = () => {
   // ----------------------
   // Question Management
   // ----------------------
+  // Add a new question (MCQ, NAT, or MSQ) with generated IDs for question and options
   const addQuestion = (type = "MCQ") => {
     const newQuestion = {
       question_id: uuidv4(), // Unique question ID
       section: selectedSection, // Set the section to the current selected section
-      question_text: "", // Initialize with empty text
+      question_text: "",
       question_type: type, // 'MCQ', 'NAT', or 'MSQ'
       positive_marks: "",
       negative_marks: "",
       image_url: "",
       options:
         type === "NAT"
-          ? [{ option_id: uuidv4(), option_text: "", is_correct: true }] // Single option for NAT with is_correct: true
-          : Array(4) // For MCQ and MSQ, create 4 options (you can adjust the number of options if needed)
-            .fill(null)
-            .map(() => ({
-              option_id: uuidv4(),
-              option_text: "",
-              is_correct: false
-            })),
+          ? [] 
+          : Array(4)
+              .fill(null)
+              .map(() => ({ option_id: uuidv4(), option_text: "", image_url: "", is_correct: false })),
+      // For MCQ, default correctAnswer is 0; for MSQ, an empty array; for NAT, a text answer
+      correctAnswer: type === "MCQ" ? 0 : undefined,
+      correctAnswers: type === "MSQ" ? [] : undefined,
+      correctAnswerText: type === "NAT" ? "" : undefined,
       marks: 1,
+      incorrectMarks: type === "MCQ" ? 0.33 : 0,
       status: "Not Answered",
     };
 
     setQuestionPaper((prev) => ({
       ...prev,
       questions: [...prev.questions, newQuestion],
-      totalMarks: parseInt(prev.totalMarks || 0) + 1, // Increment total marks
+      totalMarks: parseInt(prev.totalMarks || 0) + 1,
     }));
   };
 
-
+  // Remove a question by question_id
   const removeQuestion = (question_id) => {
     setQuestionPaper((prev) => {
       const question = prev.questions.find((q) => q.question_id === question_id);
@@ -118,20 +117,22 @@ const QuestionPaper = () => {
   // ----------------------
   // File Upload Handling
   // ----------------------
+  // Handle file selection and upload for attachments (question-level or option-level)
   const handleFileChange = async (e, questionId, optionIndex, fileTypeCategory) => {
     const file = e.target.files[0];
     if (!file) return;
-
+    
+    // Process only image uploads in this demo
     if (file.type.startsWith("image/")) {
       let url;
       if (optionIndex === "question") {
-        // For question-level attachment
+        // For question-level attachment, call uploadImageToS3 with type "question"
         url = await uploadImageToS3(file, questionPaper.test_id, "question", questionId);
         if (url) {
           updateQuestionAttachment(questionId, url);
         }
       } else {
-        // For option-level attachment
+        // For option-level, use a composite id for uniqueness (e.g. questionId-optionIndex)
         url = await uploadImageToS3(file, questionPaper.test_id, "option", `${questionId}-${optionIndex}`);
         if (url) {
           setQuestionPaper((prev) => ({
@@ -153,6 +154,7 @@ const QuestionPaper = () => {
     } else {
       console.warn("Only image uploads are supported in this demo.");
     }
+    // Close the file upload popup for this question/option
     setShowOptions((prev) => ({
       ...prev,
       [`${questionId}-${optionIndex}`]: false,
@@ -167,47 +169,32 @@ const QuestionPaper = () => {
     }));
   };
 
+  // Handle text change for option text
   const handleOptionTextChange = (e, questionId, optionIndex) => {
     updateOption(questionId, optionIndex, e.target.value);
-  };
-
-  // Validation Function
-  const validateFields = () => {
-    for (let q of questionPaper.questions) {
-      if (!q.question_text) {
-        toast.error("Please fill in the question text.");
-        return false;
-      }
-
-      for (let opt of q.options) {
-        if (!opt.option_text) {
-          toast.error("Please fill in all option texts.");
-          return false;
-        }
-      }
-    }
-    return true;
   };
 
   // ----------------------
   // Test Creation
   // ----------------------
+  // Call API function to create the test with its questions
   const savePaper = async () => {
     setLoading(true);
     setMessage('');
     try {
-      // if (!validateFields()) return;
       const testPayload = { ...questionPaper };
-      console.log(testPayload)
       const result = await createTestWithQuestions(testPayload);
-      toast.success('Test created successfully!');
+      setMessage('Test created successfully!');
+      console.log("Test created successfully!");
       console.log(result);
     } catch (error) {
-      toast.error('Error creating test.');
+      console.error(error);
+      setMessage('Error creating test.');
     } finally {
       setLoading(false);
     }
   };
+
   return (
     <div className="h-full p-4 pb-8">
       {/* Top Paper Details */}
@@ -298,19 +285,21 @@ const QuestionPaper = () => {
         <div className="flex gap-4">
           <button
             onClick={() => setSelectedSection("GA")}
-            className={`px-4 py-2 rounded ${selectedSection === "GA"
+            className={`px-4 py-2 rounded ${
+              selectedSection === "GA"
                 ? "bg-blue-600 text-white"
                 : "bg-gray-100 text-gray-700"
-              }`}
+            }`}
           >
             General Aptitude (GA)
           </button>
           <button
             onClick={() => setSelectedSection("Subject")}
-            className={`px-4 py-2 rounded border ${selectedSection === "Subject"
+            className={`px-4 py-2 rounded border ${
+              selectedSection === "Subject"
                 ? "bg-blue-600 text-white"
                 : "bg-gray-100 text-gray-700"
-              }`}
+            }`}
           >
             Subject-specific Section
           </button>
@@ -391,8 +380,8 @@ const QuestionPaper = () => {
                                 type === "Image"
                                   ? "image/*"
                                   : type === "Video"
-                                    ? "video/*"
-                                    : "audio/*"
+                                  ? "video/*"
+                                  : "audio/*"
                               }
                               className="hidden"
                               onChange={(e) =>
@@ -463,8 +452,8 @@ const QuestionPaper = () => {
                                         type === "Image"
                                           ? "image/*"
                                           : type === "Video"
-                                            ? "video/*"
-                                            : "audio/*"
+                                          ? "video/*"
+                                          : "audio/*"
                                       }
                                       className="hidden"
                                       onChange={(e) =>
@@ -546,8 +535,8 @@ const QuestionPaper = () => {
                                           type === "Image"
                                             ? "image/*"
                                             : type === "Video"
-                                              ? "video/*"
-                                              : "audio/*"
+                                            ? "video/*"
+                                            : "audio/*"
                                         }
                                         className="hidden"
                                         onChange={(e) =>

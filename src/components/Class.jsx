@@ -36,29 +36,41 @@ const Class = () => {
             fetchClassesByCourse();
         }
     }, [selectedCourseId]);
-
+console.log(batches)
     // Fetch all batches
     const fetchBatches = async () => {
         try {
             setLoading(true);
-            const batchData = await getAllBatches();
-            setBatches(batchData);
+            const response = await getAllBatches(); // Ensure this function returns data correctly
+            setBatches(Array.isArray(response.data) ? response.data : []); // Ensure it's an array
         } catch (err) {
             setError(err.message);
+            setBatches([]); // Set empty array on error
         } finally {
             setLoading(false);
         }
     };
+    
 
     // Fetch courses for selected batch
     const fetchCoursesForBatch = async (batchId) => {
         try {
             const courseData = await getCoursesByBatchId(batchId);
-            setCourses((prev) => ({ ...prev, [batchId]: courseData }));
+            console.log("Fetched Courses:", courseData); // Debugging
+    
+            setCourses((prev) => ({
+                ...prev,
+                [batchId]: Array.isArray(courseData) ? courseData : [], // Ensure it's an array
+            }));
         } catch (err) {
             console.error(`Error fetching courses for batch ${batchId}:`, err);
+            setCourses((prev) => ({
+                ...prev,
+                [batchId]: [], // Handle error case
+            }));
         }
     };
+    
 
     // Fetch classes by course
     const fetchClassesByCourse = async () => {
