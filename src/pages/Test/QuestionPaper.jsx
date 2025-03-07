@@ -36,6 +36,7 @@ const QuestionPaper = () => {
   // Update Functions
   // ----------------------
   const updateQuestion = (question_id, field, value) => {
+    // console.log(value)
     setQuestionPaper((prev) => ({
       ...prev,
       questions: prev.questions.map((q) =>
@@ -44,7 +45,7 @@ const QuestionPaper = () => {
     }));
   };
 
-  const updateOption = (questionId, optionIndex, value) => {
+  const updateOption = (questionId, optionIndex, value, isCorrect = false) => {
     setQuestionPaper((prev) => ({
       ...prev,
       questions: prev.questions.map((q) =>
@@ -52,13 +53,50 @@ const QuestionPaper = () => {
           ? {
             ...q,
             options: q.options.map((opt, idx) =>
-              idx === optionIndex ? { ...opt, option_text: value } : opt
+              idx === optionIndex
+                ? { ...opt, option_text: value, is_correct: isCorrect }
+                : opt // For other options, keep their is_correct as false
             ),
           }
           : q
       ),
     }));
   };
+
+  const handleMCQSelection = (question, optionIndex) => {
+    // Update the correct option and set others to false
+    question.options.forEach((opt, idx) => {
+      const isCorrect = idx === optionIndex; // Set is_correct to true for the selected option
+      updateOption(question.question_id, idx, opt.option_text, isCorrect);
+    });
+  
+    // Update the correct answer index for the question
+    updateQuestion(question.question_id, "correctAnswer", optionIndex);
+  };
+  
+
+  const handleMSQSelection = (question, optionIndex, isChecked) => {
+    // Get the current selected options (correct answers)
+    const newCorrectAnswers = isChecked
+      ? [...(question.correctAnswers || []), optionIndex] // Add option if checked
+      : question.correctAnswers.filter((index) => index !== optionIndex); // Remove if unchecked
+
+    // Update each option's correctness
+    question.options.forEach((opt, idx) => {
+      const isCorrect = newCorrectAnswers.includes(idx); // Mark the option as correct if it's in the new list
+      updateOption(question.question_id, idx, opt.option_text, isCorrect);
+    });
+
+    // Update the correct answers array for MSQ
+    updateQuestion(question.question_id, "correctAnswers", newCorrectAnswers);
+  };
+
+
+  const handleNATSelection = (question, value) => {
+    // For NAT, always mark the first option as correct
+    updateOption(question.question_id, 0, value, true);
+  };
+
 
   // Update question-level attachment with uploaded file URL
   const updateQuestionAttachment = (questionId, fileUrl) => {
@@ -90,12 +128,11 @@ const QuestionPaper = () => {
             .map(() => ({
               option_id: uuidv4(),
               option_text: "",
-              is_correct: false
+              is_correct: false,
+              image_url: "",
             })),
       marks: 1,
-      status: "Not Answered",
     };
-
     setQuestionPaper((prev) => ({
       ...prev,
       questions: [...prev.questions, newQuestion],
@@ -115,9 +152,7 @@ const QuestionPaper = () => {
     });
   };
 
-  // ----------------------
   // File Upload Handling
-  // ----------------------
   const handleFileChange = async (e, questionId, optionIndex, fileTypeCategory) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -179,10 +214,18 @@ const QuestionPaper = () => {
         return false;
       }
 
-      for (let opt of q.options) {
-        if (!opt.option_text) {
-          toast.error("Please fill in all option texts.");
+      // Validate option text based on question type
+      if (q.question_type === "NAT") {
+        if (!q.options[0].option_text) {
+          toast.error("Please fill in the option text for NAT question.");
           return false;
+        }
+      } else {
+        for (let opt of q.options) {
+          if (!opt.option_text) {
+            toast.error("Please fill in all option texts.");
+            return false;
+          }
         }
       }
     }
@@ -299,8 +342,8 @@ const QuestionPaper = () => {
           <button
             onClick={() => setSelectedSection("GA")}
             className={`px-4 py-2 rounded ${selectedSection === "GA"
-                ? "bg-blue-600 text-white"
-                : "bg-gray-100 text-gray-700"
+              ? "bg-blue-600 text-white"
+              : "bg-gray-100 text-gray-700"
               }`}
           >
             General Aptitude (GA)
@@ -308,8 +351,8 @@ const QuestionPaper = () => {
           <button
             onClick={() => setSelectedSection("Subject")}
             className={`px-4 py-2 rounded border ${selectedSection === "Subject"
-                ? "bg-blue-600 text-white"
-                : "bg-gray-100 text-gray-700"
+              ? "bg-blue-600 text-white"
+              : "bg-gray-100 text-gray-700"
               }`}
           >
             Subject-specific Section
@@ -425,22 +468,19 @@ const QuestionPaper = () => {
                             type="radio"
                             name={`question-${question.question_id}`}
                             className="h-4 w-4 text-green-400"
-                            checked={question.correctAnswer === idx}
-                            onChange={() =>
-                              updateQuestion(question.question_id, "correctAnswer", idx)
-                            }
+                            checked={question.correctAnswer === idx} // Check if this option is the correct one
+                            onChange={() => handleMCQSelection(question, idx)} // Handle MCQ selection
                             required
                           />
                           <input
                             type="text"
-                            value={typeof opt === "object" ? opt.option_text : opt}
-                            onChange={(e) =>
-                              handleOptionTextChange(e, question.question_id, idx)
-                            }
+                            value={opt.option_text}
+                            onChange={(e) => handleOptionTextChange(e, question.question_id, idx)} // Handle option text change
                             className="w-full px-3 py-2 border rounded-md focus:ring-blue-500 focus:border-blue-500"
                             placeholder={`Option ${idx + 1}`}
                             required
                           />
+                          {/* Image upload button */}
                           <div className="relative">
                             <button
                               type="button"
@@ -468,7 +508,7 @@ const QuestionPaper = () => {
                                       }
                                       className="hidden"
                                       onChange={(e) =>
-                                        handleFileChange(e, question.question_id, idx, type)
+                                        handleFileChange(e, question.question_id, idx, type) // Image, Video or Audio upload
                                       }
                                     />
                                   </label>
@@ -477,7 +517,7 @@ const QuestionPaper = () => {
                             )}
                           </div>
                         </div>
-                        {typeof opt === "object" && opt.image_url && (
+                        {opt.image_url && (
                           <img
                             src={opt.image_url}
                             alt={`Option ${idx} Attachment`}
@@ -489,13 +529,14 @@ const QuestionPaper = () => {
                   </div>
                 )}
 
+
+
+
                 {/* MSQ Editor */}
                 {question.question_type === "MSQ" && (
                   <div className="space-y-2">
                     {question.options.map((opt, idx) => {
-                      const checked =
-                        question.correctAnswers &&
-                        question.correctAnswers.includes(idx);
+                      const checked = question.correctAnswers && question.correctAnswers.includes(idx);
                       return (
                         <div key={idx} className="mb-2">
                           <div className="flex items-center gap-2 mb-1">
@@ -503,27 +544,18 @@ const QuestionPaper = () => {
                               type="checkbox"
                               className="h-4 w-4"
                               checked={checked}
-                              onChange={(e) => {
-                                let currentAnswers = question.correctAnswers || [];
-                                if (e.target.checked) {
-                                  currentAnswers.push(idx);
-                                } else {
-                                  currentAnswers = currentAnswers.filter((i) => i !== idx);
-                                }
-                                updateQuestion(question.question_id, 'correctAnswers', currentAnswers);
-                              }}
+                              onChange={(e) => handleMSQSelection(question, idx, e.target.checked)} // Handle MSQ selection
                               required
                             />
                             <input
                               type="text"
-                              value={typeof opt === "object" ? opt.option_text : opt}
-                              onChange={(e) =>
-                                handleOptionTextChange(e, question.question_id, idx)
-                              }
+                              value={opt.option_text}
+                              onChange={(e) => handleOptionTextChange(e, question.question_id, idx)} // Handle option text change
                               className="w-full px-3 py-2 border rounded-md focus:ring-blue-500 focus:border-blue-500"
                               placeholder={`Option ${idx + 1}`}
                               required
                             />
+                            {/* Image upload button */}
                             <div className="relative">
                               <button
                                 type="button"
@@ -551,7 +583,7 @@ const QuestionPaper = () => {
                                         }
                                         className="hidden"
                                         onChange={(e) =>
-                                          handleFileChange(e, question.question_id, idx, type)
+                                          handleFileChange(e, question.question_id, idx, type) // Image, Video or Audio upload
                                         }
                                       />
                                     </label>
@@ -560,7 +592,7 @@ const QuestionPaper = () => {
                               )}
                             </div>
                           </div>
-                          {typeof opt === "object" && opt.image_url && (
+                          {opt.image_url && (
                             <img
                               src={opt.image_url}
                               alt={`Option ${idx} Attachment`}
@@ -573,15 +605,18 @@ const QuestionPaper = () => {
                   </div>
                 )}
 
+
+
+
                 {/* NAT Editor */}
                 {question.question_type === "NAT" && (
                   <div className="mt-4">
                     <label className="block text-sm font-medium text-gray-700">Answer</label>
                     <input
                       type="text"
-                      value={question.correctAnswerText || ""}
+                      value={question.options[0]?.option_text || ""} // Use the first option's text field to store the answer
                       onChange={(e) =>
-                        updateQuestion(question.question_id, 'correctAnswerText', e.target.value)
+                        updateOption(question.question_id, 0, e.target.value, true) // Update the first option's text (which stores the answer)
                       }
                       className="w-full px-3 py-2 border rounded-md focus:ring-blue-500 focus:border-blue-500"
                       placeholder="Enter answer"
@@ -589,6 +624,7 @@ const QuestionPaper = () => {
                     />
                   </div>
                 )}
+
               </div>
             ))
           ) : (
