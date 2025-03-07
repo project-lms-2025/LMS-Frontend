@@ -91,4 +91,8 @@ export const uploadImageToS3 = async (imageFile, testId, type, id) => {
     }
 };
 
+export const getTestById = async (testId) => {
+    const authToken = localStorage.getItem("authToken"); // Retrieve the token from localStorage
+    return fetchAPI(`/test/tests/${testId}`, "GET", null, false, authToken);
+  };  
 
