@@ -8,7 +8,7 @@ import Teacher from './pages/Dashboard/Teacher';
 import StudentDashboard from './pages/Dashboard/Student';
 import { StudentProfile } from './pages/Profile/Student';
 import Question from './components/Question';
-import Quiz from './pages/Test/QuestionPaper';
+import Quiz from './pages/Test/CreateTest';
 import StudentTest from './pages/StudentTest';
 import TeacherProfile from './pages/Profile/Teacher';
 import { ToastContainer } from "react-toastify";
@@ -21,13 +21,18 @@ import StudentList from './pages/StudentList';
 import TeacherList from './pages/TeacherList';
 import BatchOverview from './pages/BatchOverview';
 import TeacherDetail from './pages/TeacherDetail';
-import CreateTestUI from './pages/Test/CreateTest';
+import CreateTestUI from './pages/Test/TestPreview';
 import StudentResponse from './pages/Test/StudentResponse';
-import QuestionPaper from './pages/Test/QuestionPaper';
+import QuestionPaper from './pages/Test/CreateTest';
 import TeacherTestList from './pages/Test/TeacherTestList';
 import Rank from './pages/Test/Rank';
 import RankBoard from './pages/Test/BatchRank';
 import FileUploadComponent from './components/Upload';
+import Test from './pages/Test/TesterPAge';
+import TestPreview from './pages/Test/TestPreview';
+import CreateTest from './pages/Test/CreateTest';
+import SubmitTest from './pages/student/SubmitTest';
+import StudentTestList from './pages/student/StudentTestList';
 
 
 function App() {
@@ -45,7 +50,6 @@ function App() {
         <Route path="/studentSignup" element={<Register />} />
         <Route path="/studentProfile" element={<StudentProfile />} />
 
-        <Route path="/studentTest" element={<StudentTest />} />
         <Route path="/studentClass" element={<StudentDashboard />} />
 
         <Route path="/teacherRegister" element={<AdminRegister />} />
@@ -58,20 +62,20 @@ function App() {
         <Route path="/BatchOverview" element={<BatchOverview/>} />
         <Route path="/TeacherDetail" element={<TeacherDetail/>} />
 
-        <Route path="/createtest" element={<QuestionPaper/>} />
-        {/* Test created by teacher */}
-
-        <Route path="/test" element={<CreateTestUI />} />  
-        {/* test given by students */}
-
-        <Route path="/res" element={<StudentResponse/>} />
-
-
         <Route path="/testList" element={<TeacherTestList />} />
+        <Route path="/createtest" element={<CreateTest/>} /> {/* Test created by teacher */}
+        <Route path="/testpreview" element={<TestPreview />} />  {/* test given by students */}
+
+        <Route path="/studentTestList" element={<StudentTestList />} />
+        <Route path="/submittest" element={<SubmitTest/>} />
+        <Route path="/studentresponse" element={<StudentResponse/>} />
+
+
         <Route path="/rank" element={<Rank />} />
         <Route path="/batchrank" element={<RankBoard />} />
         <Route path="/up" element={<FileUploadComponent />} />
 
+        <Route path="/x" element={<Test />} />
 
       </Routes>
     </Router>

@@ -1,33 +1,36 @@
 import React, { useState, useEffect } from 'react';
-import { Clock, Eye, Edit2, Save, Plus, Cross, CircleX, CalculatorIcon, ChevronUp, ChevronDown } from 'lucide-react';
-import Calculator from '../../components/Calculator';
+import { Clock, Eye, Edit2, Save, Plus, CalculatorIcon, ChevronUp, ChevronDown, CircleX, Paperclip } from 'lucide-react';
 import Draggable from 'react-draggable';
-import { getTestById } from '../../api/test';
+import { getTestById, submitTest } from '../../api/test'; // Import API functions, including submitTest
 import { useLocation } from 'react-router-dom';
-const TestPreview = () => {
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [selectedSection, setSelectedSection] = useState("GA");
+const SubmitTest = () => {
+  // States for test data and UI
+  const [testData, setTestData] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [timeLeft, setTimeLeft] = useState(0);
+  const [selectedSection, setSelectedSection] = useState("GA");
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [isPreview, setIsPreview] = useState(false);
   const [isCalculatorVisible, setIsCalculatorVisible] = useState(false);
   const [isPanelOpen, setIsPanelOpen] = useState(false);
+  const [showOptions, setShowOptions] = useState({});
+  const [isOpen, setIsOpen] = useState(false);
 
-  // Sample test paper data for student test-taking.
-  const [questionPaper, setQuestionPaper] = useState({});
+  const { state } = useLocation();
+  // const { test_id } = state || {};
+  const test_id = "e2133b8b-52c0-4dce-b719-d05187fdef65";
 
-  const [testData, setTestData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const location = useLocation();
-  const searchParams = new URLSearchParams(location.search);
-  const test_id = searchParams.get("test_id");
-
+  // Fetch test data on mount using getTestById
   useEffect(() => {
     async function fetchTest() {
       try {
         const data = await getTestById(test_id);
-        console.log(data)
+        console.log(data);
         setTestData(data);
+        setTimeLeft(data.duration * 60);
         setLoading(false);
       } catch (error) {
         toast.error("Failed to load test.");
@@ -35,31 +38,29 @@ const TestPreview = () => {
         setLoading(false);
       }
     }
-    fetchTest();
+    if (test_id) fetchTest();
   }, [test_id]);
 
+  // Extract sections and filter questions
   const sectionLabels = {
     "GA": "General Aptitude",
     "Subject": "Subject Specific Question"
   };
   const sections = testData ? Array.from(new Set(testData.questions.map(q => q.section))) : [];
-
-  const filteredQuestions = testData
-    ? testData.questions.filter(q => q.section === selectedSection)
-    : [];
+  const filteredQuestions = testData ? testData.questions.filter(q => q.section === selectedSection) : [];
   const currentQuestion = filteredQuestions[currentQuestionIndex];
 
   // Timer countdown effect
   useEffect(() => {
     if (timeLeft > 0) {
       const timerId = setInterval(() => {
-        setTimeLeft(prev => prev - 1);
+        setTimeLeft(prev => (prev <= 1 ? 0 : prev - 1));
       }, 1000);
       return () => clearInterval(timerId);
     }
   }, [timeLeft]);
 
-  // Helper to format seconds into HH:MM:SS
+  // Helper to format time
   const formatTime = (secs) => {
     const h = String(Math.floor(secs / 3600)).padStart(2, '0');
     const m = String(Math.floor((secs % 3600) / 60)).padStart(2, '0');
@@ -67,15 +68,87 @@ const TestPreview = () => {
     return `${h}:${m}:${s}`;
   };
 
-  const [showCalculator, setShowCalculator] = useState(false);
-  // Timer (in seconds) from duration field
-  const [isOpen, setIsOpen] = useState(false);
-
-  // Function to toggle the open/close state
+  // Toggle panel for mobile view
   const togglePanel = () => {
-    setIsOpen(!isOpen);
+    setIsPanelOpen(!isPanelOpen);
   };
 
+  // ---------------------
+  // Answer Capture Handlers
+  // ---------------------
+  // For MCQ: store the selected option id in studentAnswer
+  const handleMCQAnswer = (questionId, optionId) => {
+    setTestData(prevData => ({
+      ...prevData,
+      questions: prevData.questions.map(q =>
+        q.question_id === questionId ? { ...q, studentAnswer: optionId } : q
+      )
+    }));
+  };
+
+  // For MSQ: store selected option ids in studentAnswers (array)
+  const handleMSQAnswer = (questionId, optionId, checked) => {
+    setTestData(prevData => ({
+      ...prevData,
+      questions: prevData.questions.map(q => {
+        if (q.question_id === questionId) {
+          let answers = q.studentAnswers ? [...q.studentAnswers] : [];
+          if (checked) {
+            if (!answers.includes(optionId)) answers.push(optionId);
+          } else {
+            answers = answers.filter(a => a !== optionId);
+          }
+          return { ...q, studentAnswers: answers };
+        }
+        return q;
+      })
+    }));
+  };
+
+  // For NAT: store the entered text in response_text
+  const handleNATAnswer = (questionId, value) => {
+    setTestData(prevData => ({
+      ...prevData,
+      questions: prevData.questions.map(q =>
+        q.question_id === questionId ? { ...q, response_text: value } : q
+      )
+    }));
+  };
+
+  // ---------------------
+  // Submit Functionality
+  // ---------------------
+  // Build responses array from testData and call the submitTest API.
+  const handleSubmitTest = async () => {
+    const responses = testData.questions.map(q => {
+      if (q.question_type === "MSQ") {
+        return {
+          question_id: q.question_id,
+          options_chosen: q.studentAnswers || [],
+          response_text: q.response_text || ""
+        };
+      } else {
+        return {
+          question_id: q.question_id,
+          options_chosen: q.studentAnswer ? [q.studentAnswer] : [],
+          response_text: q.response_text || ""
+        };
+      }
+    });
+
+    try {
+      console.log("Submitting responses:", responses);
+      const result = await submitTest(testData.test_id, responses);
+      toast.success("Test submitted successfully!");
+      console.log("Submission Response:", result);
+    } catch (error) {
+      toast.error("Error submitting test.");
+      console.error("Submit test error:", error);
+    }
+  };
+
+  if (loading) return <div>Loading test...</div>;
+  if (!testData) return <div>No test data available.</div>;
 
   return (
     <div className=" px-4 ">
@@ -92,12 +165,14 @@ const TestPreview = () => {
               </div>
             </div>
           </div>
-          <div className="flex justify-between bg-white  border-t-[1px] border-black  py-1">
-            <h1>Section</h1>
-            <h1 className='font-bold' >Time Left: <span className='font-normal ' >{testData?.schedule_date} at {testData?.schedule_time}</span> </h1>
+          <div className="mt-2">
+            <span>Scheduled on: {testData.schedule_date} at {testData.schedule_time}</span>
           </div>
           <div className="mb-4">
             <span>Duration: {testData?.duration} minutes</span>
+          </div>
+          <div className="mt-2">
+            <span>Time Left: {formatTime(timeLeft)}</span>
           </div>
           <div className="flex justify-between  border-t-[1px] border-b-[1px] border-black py-1 ">
             <h1 className='font-bold text-orange-500 ' >Question Type: {currentQuestion?.question_type}</h1>
@@ -107,7 +182,7 @@ const TestPreview = () => {
             </div>
           </div>
           {/* Section Selector */}
-          <div className="my-4">
+          <div className="my-4 ">
             {sections.map((section) => (
               <button
                 key={section}
@@ -115,17 +190,18 @@ const TestPreview = () => {
                   setSelectedSection(section);
                   setCurrentQuestionIndex(0);
                 }}
-                className={`px-4 py-2 rounded mx-2 ${section === selectedSection ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-700"
-                  }`}
+                className={`px-4 py-2 rounded mx-2 ${section === selectedSection ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-700"}`}
               >
                 {sectionLabels[section] || section}
               </button>
             ))}
           </div>
 
-          {currentQuestion ? (
+          {/* Left: Question Panel */}
+          {filteredQuestions.length > 0 ? (
             <div className="bg-white rounded-lg shadow-lg p-4 mb-4 h-[53vh] overflow-y-auto border">
-              <h2 className="text-xl font-semibold mb-4">{currentQuestion.question_text}</h2>
+              <h2 className="text-xl font-semibold">Question No. {currentQuestionIndex + 1}</h2>
+              <p className="mt-2">{currentQuestion.question_text}</p>
               {currentQuestion.image_url && (
                 <img
                   src={currentQuestion.image_url}
@@ -137,9 +213,16 @@ const TestPreview = () => {
               {currentQuestion.question_type === "MCQ" && (
                 <div>
                   {currentQuestion.options.map((opt, idx) => (
-                    <div key={opt.option_id} className=" space-x-2 mb-2">
-                      <input type="radio" name="mcq" />
-                      <span>{opt.option_text}</span>
+                    <div key={opt.option_id} className="flex w-full items-center gap-2 mb-2">
+                      <input
+                        type="radio"
+                        name={`question-${currentQuestion.question_id}`}
+                        className="h-4 w-4 text-green-400"
+                        checked={currentQuestion.studentAnswer === opt.option_id}
+                        onChange={() => handleMCQAnswer(currentQuestion.question_id, opt.option_id)}
+                        required
+                      />
+                      <span className='w-full' >{opt.option_text}</span>
                       <div className="w-full flex justify-center items-center">
                         {opt.image_url && (
                           <img
@@ -149,28 +232,36 @@ const TestPreview = () => {
                           />
                         )}
                       </div>
-
                     </div>
                   ))}
                 </div>
               )}
               {currentQuestion.question_type === "MSQ" && (
                 <div>
-                  {currentQuestion.options.map((opt, idx) => (
-                    <div key={opt.option_id} className="space-x-2 gap-2 mb-2">
-                      <input type="checkbox" />
-                      <span>{opt.option_text}</span>
-                      <div className="w-full flex  items-center">
-                        {opt.image_url && (
-                          <img
-                            src={opt.image_url}
-                            alt={`Option ${idx} Attachment`}
-                            className="border rounded-lg m-2 h-auto object-cover"
-                          />
-                        )}
+                  {currentQuestion.options.map((opt, idx) => {
+                    const checked = currentQuestion.studentAnswers && currentQuestion.studentAnswers.includes(opt.option_id);
+                    return (
+                      <div key={opt.option_id} className="space-x-2 gap-2 mb-2">
+                        <input
+                          type="checkbox"
+                          className="h-4 w-4"
+                          checked={checked}
+                          onChange={(e) => handleMSQAnswer(currentQuestion.question_id, opt.option_id, e.target.checked)}
+                          required
+                        />
+                        <span>{opt.option_text}</span>
+                        <div className="w-full flex justify-center items-center">
+                          {opt.image_url && (
+                            <img
+                              src={opt.image_url}
+                              alt={`Option ${idx} Attachment`}
+                              className="w-1/4 object-cover"
+                            />
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
               {currentQuestion.question_type === "NAT" && (
@@ -178,8 +269,11 @@ const TestPreview = () => {
                   <label className="block font-medium">Your Answer:</label>
                   <input
                     type="text"
-                    defaultValue={currentQuestion.options[0]?.option_text || ""}
+                    value={currentQuestion.response_text || ""}
+                    onChange={(e) => handleNATAnswer(currentQuestion.question_id, e.target.value)}
                     className="w-full border rounded px-2 py-1"
+                    placeholder="Enter answer"
+                    required
                   />
                 </div>
               )}
@@ -255,9 +349,9 @@ const TestPreview = () => {
                         viewBox="0 0 24 24"
                         fill="none"
                         stroke="currentColor"
-                        stroke-width="4"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
+                        strokeWidth="4"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
                         className="w-7 h-7 font-bold text-green-500 absolute bottom-0 right-0 translate-x-1/4 translate-y-1/4"
                       >
                         <path d="M20 6L9 17l-5-5" />
@@ -292,14 +386,14 @@ const TestPreview = () => {
                   <div className="text-gray-600">
                     Total Questions: {filteredQuestions.length}
                   </div>
-                  <div className="text-gray-600">Total Marks: {questionPaper.totalMarks}</div>
+                  {/* <div className="text-gray-600">Total Marks: {questionPaper?.totalMarks}</div> */}
                 </div>
               </div>
             </div>
 
             <div className="flex justify-between gap-4 mt-2">
               <button
-                onClick={() => console.log(questionPaper)}
+                onClick={handleSubmitTest}
                 className="flex w-full justify-center items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700"
               >
                 Submit Test
@@ -308,7 +402,7 @@ const TestPreview = () => {
           </div>
         </div>
       </div>
-      {showCalculator && (
+      {/* {showCalculator && (
         <Draggable>
           <div className="fixed top-32 right-0 bg-gray-400 text-white p-2 rounded-xl shadow-lg z-50 cursor-move">
             <div className="flex justify-end ">
@@ -322,10 +416,10 @@ const TestPreview = () => {
             <Calculator />
           </div>
         </Draggable>
-      )}
+      )} */}
 
     </div>
   );
 };
 
-export default TestPreview;
+export default SubmitTest;

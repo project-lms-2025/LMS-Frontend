@@ -94,5 +94,16 @@ export const uploadImageToS3 = async (imageFile, testId, type, id) => {
 export const getTestById = async (testId) => {
     const authToken = localStorage.getItem("authToken"); // Retrieve the token from localStorage
     return fetchAPI(`/test/tests/${testId}`, "GET", null, false, authToken);
-  };  
+};
+
+export const getAllTests = async () => {
+    const authToken = localStorage.getItem("authToken"); // Retrieve the token from localStorage
+    return fetchAPI("/test/tests", "GET", null, false, authToken);
+};
+
+export const submitTest = async (testId, responses) => {
+    const authToken = localStorage.getItem("authToken"); // Retrieve token from localStorage
+    return fetchAPI(`/test/${testId}/submit`, "POST", { responses }, false, authToken);
+  };
+  
 
