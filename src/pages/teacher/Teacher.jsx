@@ -1,7 +1,6 @@
 import React from 'react'
 import Batch from '../../components/Batch'
 import Course from '../../components/Course'
-import Class from '../../components/Class'
 
 const Teacher = () => {
   return (

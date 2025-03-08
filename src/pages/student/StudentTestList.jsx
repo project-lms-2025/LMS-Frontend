@@ -4,6 +4,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import { ChevronRight, Eye, ArrowLeftRight } from 'lucide-react';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom';
+import Sidebar from '../../components/Sidebar';
 
 // Dummy helper functions – adjust these as needed
 const formatDateTime = (dateString, timeString) => {
@@ -43,6 +44,7 @@ const onViewResults = () => {
 const TeacherTestList = () => {
   const [tests, setTests] = useState([]);
   const [loading, setLoading] = useState(true);
+    const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   // Fetch tests from backend when component mounts
   useEffect(() => {
@@ -62,6 +64,12 @@ const TeacherTestList = () => {
   if (loading) return <div>Loading tests...</div>;
 
   return (
+    <div className='m-0' >
+      <Sidebar open={open} setOpen={setOpen} />
+      {/* Main content */}
+      <div
+        className={`transition-all duration-300 ${open ? "md:ml-[20rem] ml-56 mr-4  w-[40%] md:w-[75%]" : "ml-24 mr-2"} md:w-[90%]  w-[95%] md:mt `}
+      >
     <div className="min-h-screen bg-secondary-gray dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
       <ToastContainer />
       <div className="max-w-4xl mx-auto">
@@ -147,6 +155,9 @@ const TeacherTestList = () => {
         </div>
       </div>
     </div>
+    </div>
+    </div>
+    
   );
 };
 
