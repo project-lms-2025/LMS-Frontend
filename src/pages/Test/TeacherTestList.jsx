@@ -41,7 +41,7 @@ const TeacherTestList = () => {
                                 <h2 className="text-2xl font-semibold mb-2">{test.title}</h2>
                                 <button
                                     onClick={() =>
-                                        window.open(`/testpreview?test_id=${questionPaper.test_id}`, '_blank')
+                                        window.open(`/testpreview?test_id=${test.test_id}`, '_blank')
                                     }
                                     className="flex  justify-center items-center gap-2 px-3 py-1 rounded-lg bg-white border border-gray-300 hover:bg-gray-50"
                                 >
