@@ -34,6 +34,8 @@ import CreateTest from './pages/teacher/CreateTest';
 import SubmitTest from './pages/student/SubmitTest';
 import StudentTestList from './pages/student/StudentTestList';
 import NotFound from './components/NotFound';
+import Batch from './pages/student/Batch';
+import TBatch from './pages/teacher/Batches';
 
 
 function App() {
@@ -51,7 +53,7 @@ function App() {
 
         {/* Student Routes */}
         <Route path="/studentProfile" element={<StudentProfile />} />
-        <Route path="/batches" element={<StudentProfile />} />
+        <Route path="/batches" element={<Batch />} />
         <Route path="/courses" element={<StudentProfile />} />
         <Route path="/studentClass" element={<StudentDashboard />} />
         <Route path="/studentTestList" element={<StudentTestList />} />
@@ -63,6 +65,7 @@ function App() {
 
         {/* Teacher Routes */}
         <Route path="/teacherDashboard" element={<Teacher />} />
+        <Route path="/TBatches" element={<TBatch />} />
         <Route path="/teacherProfile" element={<TeacherProfile />} />
         <Route path="/classes" element={<Classes />} />
         <Route path="/createtest" element={<CreateTest/>} /> {/* Test created by teacher */}

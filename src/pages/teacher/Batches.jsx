@@ -4,7 +4,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { getAllBatches } from '../../api/auth';
 import Sidebar from '../../components/Sidebar';
 
-const Batch = () => {
+const TBatch = () => {
   const [batches, setBatches] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -80,4 +80,4 @@ const Batch = () => {
   );
 };
 
-export default Batch;
+export default TBatch;

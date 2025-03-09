@@ -20,8 +20,8 @@ const SubmitTest = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   const { state } = useLocation();
-  // const { test_id } = state || {};
-  const test_id = "e2133b8b-52c0-4dce-b719-d05187fdef65";
+  const { test_id } = state || {};
+  // const test_id = "e2133b8b-52c0-4dce-b719-d05187fdef65";
 
   // Fetch test data on mount using getTestById
   useEffect(() => {
@@ -165,14 +165,14 @@ const SubmitTest = () => {
               </div>
             </div>
           </div>
-          <div className="mt-2">
-            <span>Scheduled on: {testData.schedule_date} at {testData.schedule_time}</span>
-          </div>
-          <div className="mb-4">
-            <span>Duration: {testData?.duration} minutes</span>
-          </div>
-          <div className="mt-2">
-            <span>Time Left: {formatTime(timeLeft)}</span>
+          <div className=" flex justify-between items-center mt-2">
+            <div className=" flex flex-col ">
+              <span>Scheduled on: {testData.schedule_date} at {testData.schedule_time}</span>
+              <span>Duration: {testData?.duration} minutes</span>
+            </div>
+            <div className="mt-2 text-xl font-bold">
+              <span>Time Left: {formatTime(timeLeft)}</span>
+            </div>
           </div>
           <div className="flex justify-between  border-t-[1px] border-b-[1px] border-black py-1 ">
             <h1 className='font-bold text-orange-500 ' >Question Type: {currentQuestion?.question_type}</h1>

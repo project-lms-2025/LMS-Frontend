@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import { Crown, Award } from "lucide-react"; // Icons from lucide-react
+import Sidebar from "../../components/Sidebar";
 
 // Dummy data for demonstration
 const dummyResults = [
@@ -18,7 +19,14 @@ const highlightRow = (rank) => {
 };
 
 const Rank = () => {
+    const [open, setOpen] = useState(false);
   return (
+    <div className='m-0' >
+    <Sidebar open={open} setOpen={setOpen} />
+    {/* Main content */}
+    <div
+      className={`transition-all duration-300 ${open ? "md:ml-[20rem] ml-56 mr-4  w-[40%] md:w-[75%]" : "ml-24 mr-2"} md:w-[90%]  w-[95%] md:mt `}
+    >
     <div className="max-w-3xl mx-auto p-6">
       <h1 className="text-3xl font-semibold mb-4 text-gray-800">Test Results</h1>
       <div className="bg-white shadow-md rounded-lg overflow-hidden">
@@ -79,6 +87,8 @@ const Rank = () => {
           </tbody>
         </table>
       </div>
+    </div>
+    </div>
     </div>
   );
 };

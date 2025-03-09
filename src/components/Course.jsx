@@ -106,7 +106,7 @@ const Course = () => {
     };
 
     return (
-        <div className="p-6 bg-secondary-gray dark:bg-gray-900 flex justify-center min-h-screen ">
+        <div className="p-6  dark:bg-gray-900 flex justify-center min-h-screen ">
             <div className="w-[40rem]">
                 <h1 className="text-3xl font-bold mb-6">Course Management</h1>
                 {loading && <p className="text-primary-purple">Loading...</p>}
