@@ -23,20 +23,15 @@ export const Navbar = () => {
 
   const navLinks = {
     teacher: [
-      { name: "Profile", href: "/teacherProfile" },
+      { name: "Home", href: "/" },
       { name: "Dashboard", href: "/teacherDashboard" },
-      { name: "Classes", href: "/classes" },
-      { name: "Students", href: "/teacherStudents" },
-      { name: "Create Exam", href: "/quiz" },
     ],
     student: [
-      { name: "Profile", href: "/studentProfile" },
-      { name: "Test", href: "/studentTest" },
-      { name: "Classes", href: "/studentClass" },
+      { name: "Home", href: "/" },
+      { name: "Batch", href: "/batches" },
     ],
     admin: [
-      { name: "Students", href: "/adminStudents" },
-      { name: "Teacher", href: "/adminTeacher" },
+      { name: "Home", href: "/" },
       { name: "New Registration", href: "/teacherRegister" },
     ],
   };

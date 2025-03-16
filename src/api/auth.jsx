@@ -1,3 +1,4 @@
+// const API_BASE_URL = "https://testapi.teachertech.in/api"; // Added /api prefix
 const API_BASE_URL = "https://testapi.teachertech.in/api"; // Added /api prefix
 
 // Helper function to handle API requests
