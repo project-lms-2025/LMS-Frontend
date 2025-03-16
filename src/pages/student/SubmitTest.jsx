@@ -177,8 +177,8 @@ const SubmitTest = () => {
           <div className="flex justify-between  border-t-[1px] border-b-[1px] border-black py-1 ">
             <h1 className='font-bold text-orange-500 ' >Question Type: {currentQuestion?.question_type}</h1>
             <div className="flex gap-2">
-              <h1 className='' >Marks for correct answer: <span className='font-semibold text-green-500 ' >1 </span> </h1>
-              <h1 className='' >Marks for incorrect answer: <span className='font-semibold text-red-500 ' >0.33</span> </h1>
+              <h1 className='' >Marks for correct answer: <span className='font-semibold text-green-500 ' >{currentQuestion?.positive_marks} </span> </h1>
+              <h1 className='' >Marks for incorrect answer: <span className='font-semibold text-red-500 ' >{currentQuestion?.negative_marks}</span> </h1>
             </div>
           </div>
           {/* Section Selector */}

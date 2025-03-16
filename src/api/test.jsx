@@ -1,3 +1,4 @@
+// const API_BASE_URL = "https://testapi.teachertech.in/api"; // Added /api prefix
 const API_BASE_URL = "https://testapi.teachertech.in/api"; // Added /api prefix
 
 // Helper function to handle API requests
@@ -104,6 +105,15 @@ export const getAllTests = async () => {
 export const submitTest = async (testId, responses) => {
     const authToken = localStorage.getItem("authToken"); // Retrieve token from localStorage
     return fetchAPI(`/test/${testId}/submit`, "POST", { responses }, false, authToken);
-  };
-  
+};
+
+export const getLeaderboard = async (testId) => {
+    const authToken = localStorage.getItem("authToken"); // Retrieve token from localStorage
+    return fetchAPI(`/test/tests/${testId}/leaderboard`, "GET", null, false, authToken);
+};
+
+export const attemptedTest = async () => {
+    const authToken = localStorage.getItem("authToken"); // Retrieve token from localStorage
+    return fetchAPI("/test/attempted", "GET", null, false, authToken);
+};
 

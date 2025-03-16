@@ -43,13 +43,13 @@ const Sidebar = ({ open, setOpen }) => {
     ],
     student: [
       { title: "Batches", icon: <Repeat size={24} />, url: "batches" },
-      { title: "Courses", icon: <User size={24} />, url: "not" },
       { title: "Tests", icon: <User size={24} />, url: "studentTestList" },
       { title: "Leaderboard", icon: <User size={24} />, url: "rank" },
+      { title: "Grades & Results", icon: <User size={24} />, url: "resultList" },
+      { title: "Courses", icon: <User size={24} />, url: "not" },
       { title: "Announcements", icon: <FileText size={24} />, url: "not" },
       { title: "Planner/Schedule", icon: <LayoutDashboard size={24} />, url: "not" },
       { title: "Notes", icon: <User size={24} />, url: "not" },
-      { title: "Grades & Results", icon: <User size={24} />, url: "not" },
       { title: "My Performance", icon: <User size={24} />, url: "not" },
     ],
   };

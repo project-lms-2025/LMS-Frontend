@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { ChevronDown, Loader } from "lucide-react";
 import { registerUser, sendOtp, verifyOtp } from "../../api/auth"; // Ensure API functions are correctly imported
@@ -76,6 +76,7 @@ function Register() {
 
   return (
     <div className="min-h-screen flex justify-center items-center dark:bg-primary-purple bg-white py-3 px-4 sm:px-6 lg:px-8">
+      <ToastContainer />
       <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 w-full max-w-md">
         <h2 className="text-3xl font-bold text-primary-purple dark:text-primary-white mb-6 text-center">
           Student Registration

@@ -47,9 +47,11 @@ const Course = () => {
             try {
                 const courseData = await getCoursesByBatchId(batch.batch_id);
                 console.log(`Courses for batch ${batch.batch_id}:`, courseData);
-                courseMap[batch.batch_id] = courseData;
+                // Ensure we're storing the data.data array, not the entire response
+                courseMap[batch.batch_id] = courseData.success ? courseData.data : [];
             } catch (err) {
                 console.error(`Error fetching courses for batch ${batch.batch_id}:`, err);
+                courseMap[batch.batch_id] = [];
             }
         }
         setCourses(courseMap);
@@ -153,12 +155,15 @@ const Course = () => {
                                 )}
                                 <h4 className="mt-3 text-md font-semibold text-gray-800 dark:text-white">Courses:</h4>
                                 <ul>
-                                    {courses[batch.batch_id]?.length > 0 ? (
+                                    {courses[batch.batch_id] && courses[batch.batch_id].length > 0 ? (
                                         courses[batch.batch_id].map((course) => (
                                             <li key={course.course_id} className="border border-gray-300 dark:border-gray-600 p-3 my-2 flex justify-between items-center rounded-lg bg-secondary-gray dark:bg-gray-700">
-                                                <span className="text-gray-900 dark:text-white">
-                                                    {course.course_name} <span className="text-sm text-gray-500 dark:text-gray-300">(ID: {course.course_id})</span>
-                                                </span>
+                                                <div className="">
+                                                <h1 className="text-gray-900 dark:text-white">
+                                                    {course.course_name} 
+                                                </h1>
+                                                <h1 className="text-sm text-gray-500 dark:text-gray-300">(ID: {course.course_id})</h1>
+                                                </div>
                                                 <div className="flex space-x-2">
                                                     <button
                                                         onClick={() => handleUpdateCourse(course.course_id)}

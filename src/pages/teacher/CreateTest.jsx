@@ -3,7 +3,7 @@ import { Plus, Trash2, Eye, Edit2, Clock, Save, Paperclip } from 'lucide-react';
 import { createTestWithQuestions, uploadImageToS3 } from '../../api/test'; // Import API functions
 import { v4 as uuidv4 } from 'uuid';
 import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css'; // Import react-toastify CSS
+import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom';
 
 const CreateTest = () => {
@@ -15,10 +15,11 @@ const CreateTest = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
+
   // Initialize paper state with an empty questions array.
   const [questionPaper, setQuestionPaper] = useState({
-    test_id: "e2133b8b-52c0-4dce-b719-d05187fdef65",
-    course_id: "d0f5624d-b068-410a-943a-1ab6b35c0f98",
+    test_id: uuidv4(),
+    course_id: "1a94497c-3fc4-4a7c-a9b3-2b2d29019c54",
     title: "",
     description: "",
     duration: "", // in minutes
@@ -28,17 +29,13 @@ const CreateTest = () => {
     questions: [], // No default question here
   });
 
-
   // Derived filtered questions by section
   const filteredQuestions = questionPaper.questions.filter(
     (q) => q.section === selectedSection
   );
 
-  // ----------------------
   // Update Functions
-  // ----------------------
   const updateQuestion = (question_id, field, value) => {
-    // console.log(value)
     setQuestionPaper((prev) => ({
       ...prev,
       questions: prev.questions.map((q) =>
@@ -53,52 +50,52 @@ const CreateTest = () => {
       questions: prev.questions.map((q) =>
         q.question_id === questionId
           ? {
-            ...q,
-            options: q.options.map((opt, idx) =>
-              idx === optionIndex
-                ? { ...opt, option_text: value, is_correct: isCorrect }
-                : opt // For other options, keep their is_correct as false
-            ),
-          }
+              ...q,
+              options: q.options.map((opt, idx) =>
+                idx === optionIndex
+                  ? { ...opt, option_text: value, is_correct: isCorrect }
+                  : opt
+              ),
+            }
           : q
       ),
     }));
   };
 
+  // MCQ Selection: set selected option as correct and update correct_option_id
   const handleMCQSelection = (question, optionIndex) => {
-    // Update the correct option and set others to false
     question.options.forEach((opt, idx) => {
-      const isCorrect = idx === optionIndex; // Set is_correct to true for the selected option
+      const isCorrect = idx === optionIndex;
       updateOption(question.question_id, idx, opt.option_text, isCorrect);
     });
-
-    // Update the correct answer index for the question
     updateQuestion(question.question_id, "correctAnswer", optionIndex);
+    const selectedOptionId = question.options[optionIndex].option_id;
+    updateQuestion(question.question_id, "correct_option_id", selectedOptionId);
   };
 
-
+  // MSQ Selection: update multiple correct options; join their option_ids with underscore
   const handleMSQSelection = (question, optionIndex, isChecked) => {
-    // Get the current selected options (correct answers)
-    const newCorrectAnswers = isChecked
-      ? [...(question.correctAnswers || []), optionIndex] // Add option if checked
-      : question.correctAnswers.filter((index) => index !== optionIndex); // Remove if unchecked
-
-    // Update each option's correctness
+    let newCorrectAnswers = question.correctAnswers ? [...question.correctAnswers] : [];
+    if (isChecked) {
+      newCorrectAnswers.push(optionIndex);
+    } else {
+      newCorrectAnswers = newCorrectAnswers.filter(index => index !== optionIndex);
+    }
     question.options.forEach((opt, idx) => {
-      const isCorrect = newCorrectAnswers.includes(idx); // Mark the option as correct if it's in the new list
+      const isCorrect = newCorrectAnswers.includes(idx);
       updateOption(question.question_id, idx, opt.option_text, isCorrect);
     });
-
-    // Update the correct answers array for MSQ
     updateQuestion(question.question_id, "correctAnswers", newCorrectAnswers);
+    const correctOptionIds = newCorrectAnswers.map(idx => question.options[idx].option_id);
+    const joinedOptionIds = correctOptionIds.join("_");
+    updateQuestion(question.question_id, "correct_option_id", joinedOptionIds);
   };
 
-
+  // NAT Selection: always mark the single option as correct
   const handleNATSelection = (question, value) => {
-    // For NAT, always mark the first option as correct
     updateOption(question.question_id, 0, value, true);
+    updateQuestion(question.question_id, "correct_option_id", question.options[0].option_id);
   };
-
 
   // Update question-level attachment with uploaded file URL
   const updateQuestionAttachment = (questionId, fileUrl) => {
@@ -115,33 +112,33 @@ const CreateTest = () => {
   // ----------------------
   const addQuestion = (type = "MCQ") => {
     const newQuestion = {
-      question_id: uuidv4(), // Unique question ID
-      section: selectedSection, // Set the section to the current selected section
-      question_text: "", // Initialize with empty text
-      question_type: type, // 'MCQ', 'NAT', or 'MSQ'
+      question_id: uuidv4(),
+      section: selectedSection,
+      question_text: "",
+      question_type: type,
       positive_marks: "",
       negative_marks: "",
       image_url: "",
+      correct_option_id: "",
       options:
         type === "NAT"
-          ? [{ option_id: uuidv4(), option_text: "", is_correct: true }] // Single option for NAT with is_correct: true
-          : Array(4) // For MCQ and MSQ, create 4 options (you can adjust the number of options if needed)
-            .fill(null)
-            .map(() => ({
-              option_id: uuidv4(),
-              option_text: "",
-              is_correct: false,
-              image_url: "",
-            })),
+          ? [{ option_id: uuidv4(), option_text: "", is_correct: true }]
+          : Array(4)
+              .fill(null)
+              .map(() => ({
+                option_id: uuidv4(),
+                option_text: "",
+                is_correct: false,
+                image_url: "",
+              })),
       marks: 1,
     };
     setQuestionPaper((prev) => ({
       ...prev,
       questions: [...prev.questions, newQuestion],
-      totalMarks: parseInt(prev.totalMarks || 0) + 1, // Increment total marks
+      totalMarks: parseInt(prev.totalMarks || 0) + 1,
     }));
   };
-
 
   const removeQuestion = (question_id) => {
     setQuestionPaper((prev) => {
@@ -162,13 +159,11 @@ const CreateTest = () => {
     if (file.type.startsWith("image/")) {
       let url;
       if (optionIndex === "question") {
-        // For question-level attachment
         url = await uploadImageToS3(file, questionPaper.test_id, "question", questionId);
         if (url) {
           updateQuestionAttachment(questionId, url);
         }
       } else {
-        // For option-level attachment
         url = await uploadImageToS3(file, questionPaper.test_id, "option", `${questionId}-${optionIndex}`);
         if (url) {
           setQuestionPaper((prev) => ({
@@ -210,13 +205,43 @@ const CreateTest = () => {
 
   // Validation Function
   const validateFields = () => {
+    // Validate test details
+    if (!questionPaper.title.trim()) {
+      toast.error("Please enter a test title.");
+      return false;
+    }
+
+    if (!questionPaper.duration || questionPaper.duration <= 0) {
+      toast.error("Please enter a valid test duration (greater than 0 minutes).");
+      return false;
+    }
+
+    if (!questionPaper.schedule_date) {
+      toast.error("Please select a scheduled date for the test.");
+      return false;
+    }
+
+    if (!questionPaper.schedule_time) {
+      toast.error("Please select a scheduled time for the test.");
+      return false;
+    }
+
+    if (!questionPaper.description.trim()) {
+      toast.error("Please enter a test description.");
+      return false;
+    }
+
+    // Validate questions
+    if (questionPaper.questions.length === 0) {
+      toast.error("Please add at least one question to the test.");
+      return false;
+    }
+
     for (let q of questionPaper.questions) {
       if (!q.question_text) {
         toast.error("Please fill in the question text.");
         return false;
       }
-
-      // Validate option text based on question type
       if (q.question_type === "NAT") {
         if (!q.options[0].option_text) {
           toast.error("Please fill in the option text for NAT question.");
@@ -234,27 +259,27 @@ const CreateTest = () => {
     return true;
   };
 
-  // ----------------------
-  // Test Creation
-  // ----------------------
+  // Test Creation Function
   const savePaper = async () => {
     setLoading(true);
     setMessage('');
     try {
       if (!validateFields()) return;
       const testPayload = { ...questionPaper };
-      console.log(testPayload)
+      console.log(testPayload);
       const result = await createTestWithQuestions(testPayload);
       toast.success('Test created successfully!');
       console.log(result);
     } catch (error) {
       toast.error('Error creating test.');
+      console.error(error);
     } finally {
       setLoading(false);
     }
   };
   return (
     <div className=" px-4 ">
+      <ToastContainer/>
       {/* Top Paper Details */}
       <div className='  w-full bg-white z-20' >
         <div className="bg-white rounded-lg shadow p-6 mb-4">

@@ -39,6 +39,7 @@ const Batch = () => {
   const handleCreateBatch = async () => {
     try {
       setLoading(true);
+      console.log(batchData)
       await createBatch(batchData);
       setBatchData({ batch_name: "", description: "" });
       fetchBatches();

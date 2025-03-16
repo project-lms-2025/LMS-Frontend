@@ -16,6 +16,7 @@ const TeacherTestList = () => {
         async function fetchTests() {
             try {
                 const data = await getAllTests();
+                console.log(data)
                 setTests(data);
                 setLoading(false);
             } catch (error) {
@@ -62,7 +63,7 @@ const TeacherTestList = () => {
                                     <div className="grid grid-cols-2 gap-x-10 font-bold">
                                         {/* Adjust field names as necessary. Since "subject" isn’t provided in the backend, we show Course ID */}
                                         <p className="text-gray-600 mb-1">
-                                            Course: <span className="font-normal">{test.course_id}</span>
+                                            Course: <span className="font-normal">{test.course_name}</span>
                                         </p>
                                         <p className="text-gray-500 mb-1">
                                             Date: <span className="font-normal">{test.schedule_date}</span>

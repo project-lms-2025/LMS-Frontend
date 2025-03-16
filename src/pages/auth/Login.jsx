@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { loginUser, sendLoginOtp } from "../../api/auth";
 import { useAuth } from "../../context/AuthContext";
@@ -55,7 +55,7 @@ const Login = () => {
       toast.error("Please enter OTP");
       return;
     }
-  
+
     setLoading(true);
     try {
       const response = await loginUser(formData);
@@ -76,10 +76,11 @@ const Login = () => {
       setLoading(false);
     }
   };
-  
+
 
   return (
     <div className="min-h-[92.2vh] w-full flex items-center justify-center bg-secondary-gray dark:bg-gray-900">
+      <ToastContainer />
       <div className="max-w-md w-full space-y-8 bg-white dark:bg-gray-800 p-8 py-14 rounded-2xl shadow-lg">
         <div>
           <h2 className="text-center text-3xl font-extrabold text-primary-purple dark:text-primary-white">
