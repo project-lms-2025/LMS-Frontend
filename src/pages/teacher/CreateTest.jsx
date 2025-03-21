@@ -50,13 +50,13 @@ const CreateTest = () => {
       questions: prev.questions.map((q) =>
         q.question_id === questionId
           ? {
-              ...q,
-              options: q.options.map((opt, idx) =>
-                idx === optionIndex
-                  ? { ...opt, option_text: value, is_correct: isCorrect }
-                  : opt
-              ),
-            }
+            ...q,
+            options: q.options.map((opt, idx) =>
+              idx === optionIndex
+                ? { ...opt, option_text: value, is_correct: isCorrect }
+                : opt
+            ),
+          }
           : q
       ),
     }));
@@ -87,7 +87,8 @@ const CreateTest = () => {
     });
     updateQuestion(question.question_id, "correctAnswers", newCorrectAnswers);
     const correctOptionIds = newCorrectAnswers.map(idx => question.options[idx].option_id);
-    const joinedOptionIds = correctOptionIds.join("_");
+    const joinedOptionIds = correctOptionIds.sort().join("_");
+    console.log(joinedOptionIds)
     updateQuestion(question.question_id, "correct_option_id", joinedOptionIds);
   };
 
@@ -124,13 +125,13 @@ const CreateTest = () => {
         type === "NAT"
           ? [{ option_id: uuidv4(), option_text: "", is_correct: true }]
           : Array(4)
-              .fill(null)
-              .map(() => ({
-                option_id: uuidv4(),
-                option_text: "",
-                is_correct: false,
-                image_url: "",
-              })),
+            .fill(null)
+            .map(() => ({
+              option_id: uuidv4(),
+              option_text: "",
+              is_correct: false,
+              image_url: "",
+            })),
       marks: 1,
     };
     setQuestionPaper((prev) => ({
@@ -279,7 +280,7 @@ const CreateTest = () => {
   };
   return (
     <div className=" px-4 ">
-      <ToastContainer/>
+      <ToastContainer />
       {/* Top Paper Details */}
       <div className='  w-full bg-white z-20' >
         <div className="bg-white rounded-lg shadow p-6 mb-4">

@@ -1,5 +1,5 @@
-// const API_BASE_URL = "https://testapi.teachertech.in/api"; // Added /api prefix
 const API_BASE_URL = "https://testapi.teachertech.in/api"; // Added /api prefix
+// const API_BASE_URL = "https://rude-times-look.loca.lt/api"; // Added /api prefix
 
 // Helper function to handle API requests
 const fetchAPI = async (endpoint, method = "GET", body = null, isFormData = false, authToken = null) => {
@@ -166,8 +166,12 @@ export const getUserByEmail = async (email) => {
     return fetchAPI(`/user/${encodeURIComponent(email)}`, "GET", null, false, authToken);
 };
 
-export const updateUserProfile = async (userData) => {
-    return fetchAPI("/user/profile", "PUT", userData);
+export const updateUserProfile = async () => {
+    const authToken = localStorage.getItem("authToken");
+    if (!authToken) {
+        throw new Error("Authorization token is missing");
+    }
+    return fetchAPI("/user/profile", "GET", null, false, authToken);
 };
 
 // File Upload API (Profile Picture & PDF)

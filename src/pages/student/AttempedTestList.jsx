@@ -16,6 +16,7 @@ const AttempedTestList = () => {
         const fetchAttemptedTests = async () => {
             try {
                 const fetchedTests = await attemptedTest();
+                console.log(fetchedTests)
                 setTests(fetchedTests);
                 setLoading(false);
             } catch (error) {
@@ -28,7 +29,7 @@ const AttempedTestList = () => {
     }, []);
 
     const handleViewTestDetails = (testId) => {
-        navigate(`/test/${testId}`);
+        navigate(`/studentresponse/${testId}`);
     };
 
     return (

@@ -22,7 +22,6 @@ import TeacherList from './pages/owner/TeacherList';
 import BatchOverview from './pages/owner/BatchOverview';
 import TeacherDetail from './pages/owner/TeacherDetail';
 import CreateTestUI from './pages/teacher/TestPreview';
-import StudentResponse from './pages/student/StudentResponse';
 import QuestionPaper from './pages/teacher/CreateTest';
 import TeacherTestList from './pages/teacher/TeacherTestList';
 import Rank from './pages/student/Rank';
@@ -37,6 +36,7 @@ import NotFound from './components/NotFound';
 import Batch from './pages/student/Batch';
 import TBatch from './pages/teacher/Batches';
 import TestResultList from './pages/student/AttempedTestList';
+import StudentResponse from './pages/student/StudentResponse';
 
 
 function App() {
@@ -59,7 +59,7 @@ function App() {
         <Route path="/studentClass" element={<StudentDashboard />} />
         <Route path="/studentTestList" element={<StudentTestList />} />
         <Route path="/submittest" element={<SubmitTest/>} />
-        <Route path="/studentresponse" element={<StudentResponse/>} />
+        <Route path="/studentresponse/:resultId" element={<StudentResponse/>} /> 
         <Route path="/rank" element={<Rank />} />
         <Route path="/batchrank" element={<RankBoard />} />
         <Route path="/resultList" element={<TestResultList />} />
