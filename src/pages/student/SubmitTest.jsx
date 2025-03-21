@@ -213,7 +213,7 @@ const SubmitTest = () => {
               {currentQuestion.question_type === "MCQ" && (
                 <div>
                   {currentQuestion.options.map((opt, idx) => (
-                    <div key={opt.option_id} className="flex w-full items-center gap-2 mb-2">
+                    <div key={opt.option_id} className="fle w-full items-center gap-2 mb-2">
                       <input
                         type="radio"
                         name={`question-${currentQuestion.question_id}`}
@@ -222,8 +222,8 @@ const SubmitTest = () => {
                         onChange={() => handleMCQAnswer(currentQuestion.question_id, opt.option_id)}
                         required
                       />
-                      <span className='w-full' >{opt.option_text}</span>
-                      <div className="w-full flex justify-center items-center">
+                      <span className='w-full ml-2 ' >{opt.option_text}</span>
+                      <div className="w-full flex justify-cente items-center">
                         {opt.image_url && (
                           <img
                             src={opt.image_url}

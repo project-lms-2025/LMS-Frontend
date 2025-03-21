@@ -65,7 +65,17 @@ const Login = () => {
         localStorage.setItem("role", response.role);
         login(response.role); // Update role in AuthContext
         toast.success("Login successful!");
-        navigate("/");
+
+        // Navigate after a 1-second delay according to user role
+        setTimeout(() => {
+          if (response.role === "student") {
+            navigate("/batches"); // adjust student route as needed
+          } else if (response.role === "teacher") {
+            navigate("/teacherDashboard"); // adjust teacher route as needed
+          } else {
+            navigate("/"); // default route
+          }
+        }, 1000);
       } else {
         toast.error(response.message || "Login failed!");
       }

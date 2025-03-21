@@ -1,5 +1,5 @@
-// const API_BASE_URL = "https://testapi.teachertech.in/api"; // Added /api prefix
 const API_BASE_URL = "https://testapi.teachertech.in/api"; // Added /api prefix
+// const API_BASE_URL = "https://rude-times-look.loca.lt/api"; // Added /api prefix
 
 // Helper function to handle API requests
 const fetchAPI = async (endpoint, method = "GET", body = null, isFormData = false, authToken = null) => {
@@ -117,3 +117,8 @@ export const attemptedTest = async () => {
     return fetchAPI("/test/attempted", "GET", null, false, authToken);
 };
 
+// Test Results API
+export const getTestResultDetails = async (resultId, studentId) => {
+    const authToken = localStorage.getItem("authToken");
+    return fetchAPI(`/test/results/${resultId}/${studentId}`, "GET", null, false, authToken);
+};
