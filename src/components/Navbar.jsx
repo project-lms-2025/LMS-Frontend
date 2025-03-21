@@ -34,6 +34,8 @@ export const Navbar = () => {
       if (!email) throw new Error("No user email found");
       await logoutUser(email); // Call logout API
       logout(); // Update AuthContext state
+      setUser(null); // Clear user state after logout
+      setLoading(false); // Stop loading
       navigate("/signin"); // Redirect to login page
     } catch (error) {
       console.error("Logout failed:", error);
@@ -104,7 +106,7 @@ export const Navbar = () => {
             </button>
 
             {/* Conditionally render Login / Logout button */}
-            {user ? (
+            {role ? (
               <button
                 onClick={handleLogout}
                 className="px-4 py-2 bg-red-500/90 text-white rounded-lg hover:bg-red-600 transition-colors"
