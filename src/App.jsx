@@ -37,6 +37,10 @@ import Batch from './pages/student/Batch';
 import TBatch from './pages/teacher/Batches';
 import TestResultList from './pages/student/AttempedTestList';
 import StudentResponse from './pages/student/StudentResponse';
+import AllTestSeries from './pages/TestSeries/AllTestSeries';
+import AllTestInSeries from './pages/TestSeries/AllTestInSeries';
+import CreateTestSeries from './pages/TestSeries/CreateTestSeries';
+import CreateTestInSeries from './pages/TestSeries/CreateTestInSeries';
 
 
 function App() {
@@ -73,6 +77,12 @@ function App() {
         <Route path="/createtest" element={<CreateTest/>} /> {/* Test created by teacher */}
         <Route path="/testList" element={<TeacherTestList />} />
         <Route path="/testpreview" element={<TestPreview />} />  {/* test given by students */}
+
+        {/* Test Series */}
+        <Route path="/testSeries" element={<AllTestSeries />} />  {/* test given by students DONE */} 
+        <Route path="/testInSeries/:seriesId" element={<AllTestInSeries />} />  {/* test given by students */}
+        <Route path="/createtestSeries" element={<CreateTestInSeries/>} /> {/* Test created by teacher DONE */} 
+        <Route path="/test_series_preview" element={<TestPreview />} />  {/* test given by students */}
 
         {/* Owner Routes */}
         <Route path="/teacherRegister" element={<AdminRegister />} />

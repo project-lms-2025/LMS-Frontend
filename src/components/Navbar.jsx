@@ -17,7 +17,7 @@ export const Navbar = () => {
     const fetchUserProfile = async () => {
       try {
         const userProfile = await updateUserProfile(); // Fetch user data
-        console.log(userProfile.data);
+        // console.log(userProfile.data);
         setUser(userProfile.data); // Set user profile data
         setLoading(false); // Stop loading once data is fetched
       } catch (err) {

@@ -35,7 +35,7 @@ const Login = () => {
       if (data.success && data.email) {
         localStorage.setItem("email", data.email);
         setFormData((prev) => ({ ...prev, email: data.email })); // Update email in formData
-        setOtpSent(true);
+        setOtpSent(true); // OTP has been sent, show login button
         toast.success(`OTP sent successfully to ${data.email}!`);
       } else {
         toast.error(data.message || "Failed to send OTP.");
@@ -47,7 +47,6 @@ const Login = () => {
       setIsOtpSending(false);
     }
   };
-
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -86,7 +85,6 @@ const Login = () => {
       setLoading(false);
     }
   };
-
 
   return (
     <div className="min-h-[92.2vh] w-full flex items-center justify-center bg-secondary-gray dark:bg-gray-900">
@@ -128,28 +126,26 @@ const Login = () => {
                   {isOtpSending ? "Sending..." : "Send OTP"}
                 </button>
               ) : (
-                <input
-                  type="text"
-                  name="otp"
-                  value={formData.otp}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 rounded-lg border border-primary-purple bg-secondary-gray dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-primary-purple focus:border-primary-purple"
-                  placeholder="Enter OTP"
-                  required
-                />
+                <div className="w-full" >
+                  <input
+                    type="text"
+                    name="otp"
+                    value={formData.otp}
+                    onChange={handleChange}
+                    className="w-full px-4 py-2 rounded-lg border border-primary-purple bg-secondary-gray dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-primary-purple focus:border-primary-purple"
+                    placeholder="Enter OTP"
+                    required
+                  />
+                  <button
+                    type="submit"
+                    className="w-full py-2 px-4 text-white bg-primary-purple hover:bg-purple-700 rounded-lg font-semibold transition flex justify-center items-center mt-4"
+                    disabled={loading}
+                  >
+                    {loading ? "Logging in..." : "Log In"}
+                  </button>
+                </div>
               )}
             </div>
-          </div>
-
-          {/* Login Button */}
-          <div>
-            <button
-              type="submit"
-              className="w-full py-2 px-4 text-white bg-primary-purple hover:bg-purple-700 rounded-lg font-semibold transition flex justify-center items-center"
-              disabled={loading}
-            >
-              {loading ? "Logging in..." : "Log In"}
-            </button>
           </div>
 
           {/* Sign Up Link */}

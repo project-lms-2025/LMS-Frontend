@@ -30,6 +30,7 @@ const Sidebar = ({ open, setOpen }) => {
       { title: "Dashboard", icon: <LayoutDashboard size={24} />, url: "teacherDashboard" },
       { title: "Test", icon: <UserRoundPlus size={24} />, url: "testList" },
       { title: "Batches", icon: <Users size={24} />, url: "TBatches" },
+      { title: "Test Series", icon: <Users size={24} />, url: "testSeries" },
       { title: "Student Performance", icon: <LayoutDashboard size={24} />, url: "not" },
       { title: "My Schedule", icon: <FileText size={24} />, url: "not" },
       { title: "Courses", icon: <Repeat size={24} />, url: "not" },

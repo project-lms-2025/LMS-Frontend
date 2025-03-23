@@ -1,5 +1,5 @@
 const API_BASE_URL = "https://testapi.teachertech.in/api"; // Added /api prefix
-// const API_BASE_URL = "https://rude-times-look.loca.lt/api"; // Added /api prefix
+// const API_BASE_URL = "https://tender-corners-rhyme.loca.lt/api"; // Added /api prefix
 
 // Helper function to handle API requests
 const fetchAPI = async (endpoint, method = "GET", body = null, isFormData = false, authToken = null) => {

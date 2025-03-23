@@ -255,9 +255,9 @@ const TestPreview = () => {
                         viewBox="0 0 24 24"
                         fill="none"
                         stroke="currentColor"
-                        stroke-width="4"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
+                        strokeWidth="4"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
                         className="w-7 h-7 font-bold text-green-500 absolute bottom-0 right-0 translate-x-1/4 translate-y-1/4"
                       >
                         <path d="M20 6L9 17l-5-5" />
