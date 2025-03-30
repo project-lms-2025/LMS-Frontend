@@ -8,6 +8,7 @@ import {
   CheckCircle,
   Star,
 } from "lucide-react";
+import EnrollBatch from "../components/EnrollBatch";
 
 const LandingPage = () => {
   const features = [
@@ -123,6 +124,7 @@ const LandingPage = () => {
             </div>
           </div>
         </section>
+        <EnrollBatch/>
 
         {/* Features Section */}
         <section className="py-20 px-4">
