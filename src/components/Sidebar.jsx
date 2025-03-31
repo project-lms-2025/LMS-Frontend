@@ -47,7 +47,7 @@ const Sidebar = ({ open, setOpen }) => {
       { title: "Tests", icon: <User size={24} />, url: "studentTestList" },
       { title: "Leaderboard", icon: <User size={24} />, url: "rank" },
       { title: "Grades & Results", icon: <User size={24} />, url: "resultList" },
-      { title: "Courses", icon: <User size={24} />, url: "not" },
+      { title: "Courses", icon: <User size={24} />, url: "courses" },
       { title: "Announcements", icon: <FileText size={24} />, url: "not" },
       { title: "Planner/Schedule", icon: <LayoutDashboard size={24} />, url: "not" },
       { title: "Notes", icon: <User size={24} />, url: "not" },

@@ -1,6 +1,3 @@
-const API_BASE_URL = "https://testapi.teachertech.in/api"; // Added /api prefix
-// const API_BASE_URL = "https://tender-corners-rhyme.loca.lt/api"; // Added /api prefix
-
 // Helper function to handle API requests
 const fetchAPI = async (endpoint, method = "GET", body = null, isFormData = false, authToken = null) => {
     const options = {
@@ -17,7 +14,7 @@ const fetchAPI = async (endpoint, method = "GET", body = null, isFormData = fals
     }
 
     try {
-        const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}${endpoint}`, options);
         const contentType = response.headers.get("Content-Type");
         let data = {};
 
@@ -165,8 +162,8 @@ export const getUserByEmail = async (email) => {
 
     return fetchAPI(`/user/${encodeURIComponent(email)}`, "GET", null, false, authToken);
 };
-
-export const updateUserProfile = async () => {
+// Get User Profile
+export const getUserProfile = async () => {
     const authToken = localStorage.getItem("authToken");
     if (!authToken) {
         throw new Error("Authorization token is missing");
@@ -177,4 +174,28 @@ export const updateUserProfile = async () => {
 // File Upload API (Profile Picture & PDF)
 export const uploadFiles = async (formData) => {
     return fetchAPI("/user/upload", "POST", formData, true);
+};
+export const enrollUser = async (enrollmentData) => {
+    const authToken = localStorage.getItem("authToken");
+    return fetchAPI("/enrollment/enroll-user", "POST", enrollmentData, false, authToken);
+};
+// Enroll User in Batch
+export const getEnrollmentBatches = async () => {
+    const authToken = localStorage.getItem("authToken");
+    if (!authToken) {
+        throw new Error("Authorization token is missing");
+    }
+    return fetchAPI("/enrollment/batch", "GET", null, false, authToken);
+};
+export const getEnrolledCourses = async () => {
+    const authToken = localStorage.getItem("authToken");
+    if (!authToken) {
+        throw new Error("Authorization token is missing");
+    }
+    return fetchAPI("/course/enrolled-courses", "GET", null, false, authToken);
+};
+
+export const createPaymentOrder = async (paymentData) => {
+    const authToken = localStorage.getItem("authToken");
+    return fetchAPI("/payment/create-order", "POST", paymentData, false, authToken);
 };

@@ -124,7 +124,6 @@ const LandingPage = () => {
             </div>
           </div>
         </section>
-        <EnrollBatch/>
 
         {/* Features Section */}
         <section className="py-20 px-4">
@@ -166,6 +165,7 @@ const LandingPage = () => {
             </div>
           </div>
         </section>
+        <EnrollBatch/>
 
         {/* CTA Section */}
         <section className="py-20 px-4 relative overflow-hidden">

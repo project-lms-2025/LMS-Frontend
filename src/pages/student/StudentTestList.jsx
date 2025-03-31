@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getAllTests, attemptedTest } from '../../api/test';
+import { getEnrolledTests, attemptedTest } from '../../api/test';
 import { ToastContainer, toast } from 'react-toastify';
 import { ChevronRight, Eye, ArrowLeftRight, CheckCircle } from 'lucide-react';
 import 'react-toastify/dist/ReactToastify.css';
@@ -28,11 +28,12 @@ const StudentTestList = () => {
     const fetchTestsAndAttemptedTests = async () => {
       try {
         const [allTests, attempted] = await Promise.all([
-          getAllTests(),
+          getEnrolledTests(),
           attemptedTest()
         ]);
 
         setTests(allTests);
+        console.log(allTests)
         setAttemptedTests(attempted);
         setLoading(false);
       } catch (error) {

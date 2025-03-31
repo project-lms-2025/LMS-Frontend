@@ -1,5 +1,3 @@
-const API_BASE_URL = "https://testapi.teachertech.in/api"; // Added /api prefix
-// const API_BASE_URL = "https://tender-corners-rhyme.loca.lt/api"; // Added /api prefix
 
 // Helper function to handle API requests
 const fetchAPI = async (endpoint, method = "GET", body = null, isFormData = false, authToken = null) => {
@@ -17,7 +15,7 @@ const fetchAPI = async (endpoint, method = "GET", body = null, isFormData = fals
     }
 
     try {
-        const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}${endpoint}`, options);
         const contentType = response.headers.get("Content-Type");
         let data = {};
 

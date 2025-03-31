@@ -41,6 +41,12 @@ import AllTestSeries from './pages/TestSeries/AllTestSeries';
 import AllTestInSeries from './pages/TestSeries/AllTestInSeries';
 import CreateTestSeries from './pages/TestSeries/CreateTestSeries';
 import CreateTestInSeries from './pages/TestSeries/CreateTestInSeries';
+import StudentRegister from './pages/auth/StudentRegisterForm';
+import Jupyter from './pages/Jupyter';
+import "rsuite/dist/rsuite.css";
+import EnrolledBatches from './pages/student/EnrolledBatches';
+import EnrolledCourses from './pages/student/EnrolledCourses';
+import BatchPayment from './pages/auth/BatchPayment';
 
 
 function App() {
@@ -55,12 +61,13 @@ function App() {
         <Route path="/forgot" element={<Forgot />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/studentSignup" element={<Register />} />   {/* Student registration */}
-
+        <Route path="/studentSignup2" element={<StudentRegister />} />   {/* Student registration */}
+        <Route path="/payment_batch/:batch_id" element={<BatchPayment />} />
         {/* Student Routes */}
-        <Route path="/studentProfile" element={<StudentProfile />} />
-        <Route path="/batches" element={<Batch />} />
-        <Route path="/courses" element={<StudentProfile />} />
         <Route path="/studentClass" element={<StudentDashboard />} />
+        <Route path="/studentProfile" element={<StudentProfile />} />
+        <Route path="/batches" element={<EnrolledBatches />} />
+        <Route path="/courses" element={<EnrolledCourses />} />
         <Route path="/studentTestList" element={<StudentTestList />} />
         <Route path="/submittest" element={<SubmitTest/>} />
         <Route path="/studentresponse/:resultId" element={<StudentResponse/>} /> 
@@ -96,6 +103,7 @@ function App() {
         <Route path="/x" element={<Test />} />
         <Route path="/not" element={<NotFound />} />
 
+        <Route path="/jupyter" element={<Jupyter />} />
       </Routes>
     </Router>
   )

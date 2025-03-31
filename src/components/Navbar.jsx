@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { ThemeContext } from "../context/ThemeContext";
 import { GraduationCap, Moon, Sun } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { logoutUser, updateUserProfile } from "../api/auth";
+import { logoutUser, getUserProfile } from "../api/auth";
 import { useAuth } from "../context/AuthContext";
 
 export const Navbar = () => {
@@ -16,7 +16,7 @@ export const Navbar = () => {
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
-        const userProfile = await updateUserProfile(); // Fetch user data
+        const userProfile = await getUserProfile(); // Fetch user data
         // console.log(userProfile.data);
         setUser(userProfile.data); // Set user profile data
         setLoading(false); // Stop loading once data is fetched
@@ -62,8 +62,8 @@ export const Navbar = () => {
           {/* Logo Section */}
           <div className="flex items-center space-x-2">
             <GraduationCap className="w-8 h-8 text-primary-purple dark:text-accent-yellow" />
-            <a href="/">
-              <span className="text-xl font-bold dark:text-primary-white">
+            <a href="/" className="no-underline hover:no-underline">
+              <span className="text-xl font-bold hover: text-primary-purple dark:text-primary-white">
                 TeacherTech
               </span>
             </a>

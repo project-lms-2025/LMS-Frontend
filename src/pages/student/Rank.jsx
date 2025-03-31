@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronRight, Crown, Award } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { getAllTests, getLeaderboard } from '../../api/test';
+import { getEnrolledTests, getLeaderboard } from '../../api/test';
 import Sidebar from '../../components/Sidebar';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -19,8 +19,8 @@ const Rank = () => {
   useEffect(() => {
     async function fetchTests() {
       try {
-        const data = await getAllTests();
-        // getAllTests might return an array directly or { success: true, data: [...] }
+        const data = await getEnrolledTests();
+        // getEnrolledTests might return an array directly or { success: true, data: [...] }
         const testsArray = Array.isArray(data) ? data : data.data;
         setTests(testsArray);
       } catch (error) {

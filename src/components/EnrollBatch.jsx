@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { enrollUser, getAllBatches, getEnrollmentBatches } from '../api/auth';
+import Loading from './Loading';
+import { toast } from 'react-toastify';
 
-// A card component for a single available batch
 const BatchCard = ({ batch, onEnroll, isEnrolled }) => {
   return (
     <div className="bg-secondary-gray p-6 rounded-lg shadow-md">
@@ -36,6 +38,15 @@ const EnrollBatch = () => {
   const [enrolledBatches, setEnrolledBatches] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
+
+  // Check for auth token on mount; if missing, redirect to login
+  useEffect(() => {
+    const authToken = localStorage.getItem("authToken");
+    if (!authToken) {
+      navigate("/signin");
+    }
+  }, [navigate]);
 
   // Fetch all available batches from the API
   const fetchBatches = async () => {
@@ -61,36 +72,16 @@ const EnrollBatch = () => {
       const response = await getEnrollmentBatches();
       console.log("Raw enrolled batches response:", response);
       if (response && response.success) {
-        // If response.batch is an array, use it directly; if it's an object, wrap it in an array.
-        const enrolledData = Array.isArray(response.batch)
-          ? response.batch
-          : [response.batch];
+        const enrolledData = Array.isArray(response.data)
+          ? response.data
+          : [response.data];
         console.log("Enrolled batches:", enrolledData);
         setEnrolledBatches(enrolledData);
       } else {
         setEnrolledBatches([]);
       }
     } catch (err) {
-      console.error("Error fetching enrolled batches:", err);
-    }
-  };
-
-  // Enrollment handler using enrollUser API call
-  const handleEnroll = async (batchId) => {
-    const enrollmentData = {
-      batch_id: batchId,
-      payment_amount: 100.0, // Replace with actual payment amount or input from the user
-      payment_status: "successful",
-      enrollment_type: "batch",
-    };
-
-    try {
-      const response = await enrollUser(enrollmentData);
-      console.log("Enrollment successful:", response);
-      // After enrolling, refresh the enrolled batches list
-      fetchEnrolledBatches();
-    } catch (error) {
-      console.error("Enrollment failed:", error);
+      console.log("No batches found");
     }
   };
 
@@ -99,8 +90,24 @@ const EnrollBatch = () => {
     fetchEnrolledBatches();
   }, []);
 
+  // Enrollment handler: if logged in, navigate to the payment page with batch_id.
+  const handleEnroll = (batchId) => {
+    const authToken = localStorage.getItem("authToken");
+    if (!authToken) {
+      navigate("/signin");
+      return;
+    }
+    // Redirect to payment page with batch_id as a route parameter
+    navigate(`/payment_batch/${batchId}`);
+  };
+
   if (loading) {
-    return <div>Loading batches...</div>;
+    return (
+      <div className="flex flex-col items-center">
+        <div className="w-16 h-16 border-4 border-t-primary-purple border-secondary-gray rounded-full animate-spin"></div>
+        <p className="mt-4 text-xl font-semibold text-primary-purple">Loading...</p>
+      </div>
+    );
   }
 
   if (error) {
@@ -109,7 +116,7 @@ const EnrollBatch = () => {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold text-center mb-8">Available Batches</h1>
+      <h1 className="text-4xl font-bold text-center mb-8">Available Batches</h1>
       {batches.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {batches.map((batch) => {
@@ -127,7 +134,7 @@ const EnrollBatch = () => {
           })}
         </div>
       ) : (
-        <div>No batches available.</div>
+        <Loading />
       )}
     </div>
   );

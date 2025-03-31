@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { updateUserProfile } from '../../api/auth';
+import { getUserProfile } from '../../api/auth';
 import { getTestResultDetails } from '../../api/test';
 
 const StudentResponse = () => {
@@ -14,7 +14,7 @@ const StudentResponse = () => {
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
-        const userProfile = await updateUserProfile(); // Fetch user data
+        const userProfile = await getUserProfile(); // Fetch user data
         setUserData(userProfile.data); // Set user profile data
         fetchTestResults(userProfile.data.user_id); // Fetch test results using student ID
       } catch (err) {
