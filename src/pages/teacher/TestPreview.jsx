@@ -93,17 +93,17 @@ const TestPreview = () => {
             </div>
           </div>
           <div className="flex justify-between bg-white  border-t-[1px] border-black  py-1">
-            <h1>Section</h1>
-            <h1 className='font-bold' >Time Left: <span className='font-normal ' >{testData?.schedule_date} at {testData?.schedule_time}</span> </h1>
+            <h1 className='text-xl' >Section</h1>
+            <h1 className='font-bold text-base' >Time Left: <span className='font-normal ' >{testData?.schedule_date} at {testData?.schedule_time}</span> </h1>
           </div>
           <div className="mb-4">
             <span>Duration: {testData?.duration} minutes</span>
           </div>
           <div className="flex justify-between  border-t-[1px] border-b-[1px] border-black py-1 ">
-            <h1 className='font-bold text-orange-500 ' >Question Type: {currentQuestion?.question_type}</h1>
+            <h1 className='font-bold text-orange-500 text-xl' >Question Type: {currentQuestion?.question_type}</h1>
             <div className="flex gap-2">
-              <h1 className='' >Marks for correct answer: <span className='font-semibold text-green-500 ' > {currentQuestion?.positive_marks} </span> </h1>
-              <h1 className='' >Marks for incorrect answer: <span className='font-semibold text-red-500 ' > {currentQuestion?.negative_marks}</span> </h1>
+              <h1 className='text-xl' >Marks for correct answer: <span className='font-semibold text-green-500 ' > {currentQuestion?.positive_marks} </span> </h1>
+              <h1 className='text-xl' >Marks for incorrect answer: <span className='font-semibold text-red-500 ' > {currentQuestion?.negative_marks}</span> </h1>
             </div>
           </div>
           {/* Section Selector */}

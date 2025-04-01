@@ -4,7 +4,7 @@ import { enrollUser, getAllBatches, getEnrollmentBatches } from '../api/auth';
 import Loading from './Loading';
 import { toast } from 'react-toastify';
 
-const BatchCard = ({ batch, onEnroll, isEnrolled }) => {
+const Testcard = ({ batch, onEnroll, isEnrolled }) => {
   return (
     <div className="bg-secondary-gray p-6 rounded-lg shadow-md">
       <h2 className="text-2xl font-bold text-primary-purple mb-2">
@@ -33,7 +33,7 @@ const BatchCard = ({ batch, onEnroll, isEnrolled }) => {
   );
 };
 
-const EnrollBatch = () => {
+const EnrollTestSeries = () => {
   const [batches, setBatches] = useState([]);
   const [enrolledBatches, setEnrolledBatches] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -41,12 +41,12 @@ const EnrollBatch = () => {
   const navigate = useNavigate();
 
   // Check for auth token on mount; if missing, redirect to login
-  // useEffect(() => {
-  //   const authToken = localStorage.getItem("authToken");
-  //   if (!authToken) {
-  //     navigate("/signin");
-  //   }
-  // }, [navigate]);
+  useEffect(() => {
+    const authToken = localStorage.getItem("authToken");
+    if (!authToken) {
+      navigate("/signin");
+    }
+  }, [navigate]);
 
   // Fetch all available batches from the API
   const fetchBatches = async () => {
@@ -124,7 +124,7 @@ const EnrollBatch = () => {
               (enrolled) => enrolled.batch_id === batch.batch_id
             );
             return (
-              <BatchCard
+              <Testcard
                 key={batch.batch_id}
                 batch={batch}
                 onEnroll={handleEnroll}
@@ -140,4 +140,4 @@ const EnrollBatch = () => {
   );
 };
 
-export default EnrollBatch;
+export default EnrollTestSeries;

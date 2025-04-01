@@ -15,17 +15,20 @@ const CreateTest = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const queryParams = new URLSearchParams(location.search);
+  const type = queryParams.get("type");
 
   // Initialize paper state with an empty questions array.
   const [questionPaper, setQuestionPaper] = useState({
     test_id: uuidv4(),
-    course_id: "1a94497c-3fc4-4a7c-a9b3-2b2d29019c54",
+    course_id: "5c10fb9a-7f14-420b-903d-497c4bdc97f4",
     title: "",
     description: "",
     duration: "", // in minutes
-    schedule_date: "",
-    schedule_time: "",
+    schedule_start: "",
+    schedule_end: "",
     totalMarks: "",
+    test_type: type,
     questions: [], // No default question here
   });
 
@@ -217,13 +220,13 @@ const CreateTest = () => {
       return false;
     }
 
-    if (!questionPaper.schedule_date) {
-      toast.error("Please select a scheduled date for the test.");
+    if (!questionPaper.schedule_start) {
+      toast.error("Please select a scheduled start for the test.");
       return false;
     }
 
-    if (!questionPaper.schedule_time) {
-      toast.error("Please select a scheduled time for the test.");
+    if (!questionPaper.schedule_end) {
+      toast.error("Please select a scheduled end for the test.");
       return false;
     }
 
@@ -316,30 +319,33 @@ const CreateTest = () => {
                 />
               </div>
             </div>
+            {/* Schedule Start */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Schedule Date</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Schedule Start</label>
               <input
-                type="date"
-                value={questionPaper.schedule_date || ""}
+                type="datetime-local"
+                value={questionPaper.schedule_start || ""}
                 onChange={(e) =>
                   setQuestionPaper((prev) => ({
                     ...prev,
-                    schedule_date: e.target.value,
+                    schedule_start: e.target.value,
                   }))
                 }
                 disabled={isPreview}
                 className="w-full px-3 py-2 border rounded-md focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
+
+            {/* Schedule End */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Schedule Time</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Schedule End</label>
               <input
-                type="time"
-                value={questionPaper.schedule_time || ""}
+                type="datetime-local"
+                value={questionPaper.schedule_end || ""}
                 onChange={(e) =>
                   setQuestionPaper((prev) => ({
                     ...prev,
-                    schedule_time: e.target.value,
+                    schedule_end: e.target.value,
                   }))
                 }
                 disabled={isPreview}

@@ -159,7 +159,7 @@ const Course = () => {
                                         courses[batch.batch_id].map((course) => (
                                             <li key={course.course_id} className="border border-gray-300 dark:border-gray-600 p-3 my-2 flex justify-between items-center rounded-lg bg-secondary-gray dark:bg-gray-700">
                                                 <div className="">
-                                                <h1 className="text-gray-900 dark:text-white">
+                                                <h1 className="text-gray-900 text-xl dark:text-white">
                                                     {course.course_name} 
                                                 </h1>
                                                 <h1 className="text-sm text-gray-500 dark:text-gray-300">(ID: {course.course_id})</h1>

@@ -3,8 +3,8 @@ import { Clock, Eye, Edit2, Save, Plus, CalculatorIcon, ChevronUp, ChevronDown, 
 import Draggable from 'react-draggable';
 import { getTestById, submitTest } from '../../api/test'; // Import API functions, including submitTest
 import { useLocation } from 'react-router-dom';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import toast, { Toaster } from 'react-hot-toast';
+import SuccessPopup from '../../components/SuccessPopup';
 
 const SubmitTest = () => {
   // States for test data and UI
@@ -18,7 +18,7 @@ const SubmitTest = () => {
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [showOptions, setShowOptions] = useState({});
   const [isOpen, setIsOpen] = useState(false);
-
+  const [showSuccess, setShowSuccess] = useState(false);
   const { state } = useLocation();
   const { test_id } = state || {};
   // const test_id = "e2133b8b-52c0-4dce-b719-d05187fdef65";
@@ -119,39 +119,44 @@ const SubmitTest = () => {
   // Submit Functionality
   // ---------------------
   // Build responses array from testData and call the submitTest API.
-  const handleSubmitTest = async () => {
-    const responses = testData.questions.map(q => {
-      if (q.question_type === "MSQ") {
-        return {
-          question_id: q.question_id,
-          options_chosen: q.studentAnswers || [],
-          response_text: q.response_text || ""
-        };
-      } else {
-        return {
-          question_id: q.question_id,
-          options_chosen: q.studentAnswer ? [q.studentAnswer] : [],
-          response_text: q.response_text || ""
-        };
-      }
-    });
 
-    try {
-      console.log("Submitting responses:", responses);
-      const result = await submitTest(testData.test_id, responses);
-      toast.success("Test submitted successfully!");
-      console.log("Submission Response:", result);
-    } catch (error) {
-      toast.error("Error submitting test.");
-      console.error("Submit test error:", error);
+const handleSubmitTest = async () => {
+  const responses = testData.questions.map(q => {
+    if (q.question_type === "MSQ") {
+      return {
+        question_id: q.question_id,
+        options_chosen: q.studentAnswers || [],
+        response_text: q.response_text || ""
+      };
+    } else {
+      return {
+        question_id: q.question_id,
+        options_chosen: q.studentAnswer ? [q.studentAnswer] : [],
+        response_text: q.response_text || ""
+      };
     }
-  };
+  });
+
+  try {
+    console.log("Submitting responses:", responses);
+    const result = await submitTest(testData.test_id, responses);
+    toast.success("Test submitted successfully!");
+    setShowSuccess(true); // Show popup
+  } catch (error) {
+    toast.error("Error submitting test.");
+    console.error("Submit test error:", error);
+  }
+};
+
 
   if (loading) return <div>Loading test...</div>;
   if (!testData) return <div>No test data available.</div>;
 
   return (
     <div className=" px-4 ">
+      <Toaster />
+      {showSuccess && <SuccessPopup />}
+
       {/* Main Content */}
       <div className="lg:flex lg:gap-4  p-0">
         {/* Left: Question Display (70%) */}
@@ -175,10 +180,10 @@ const SubmitTest = () => {
             </div>
           </div>
           <div className="flex justify-between  border-t-[1px] border-b-[1px] border-black py-1 ">
-            <h1 className='font-bold text-orange-500 ' >Question Type: {currentQuestion?.question_type}</h1>
+            <h1 className='font-bold text-orange-500 text-xl' >Question Type: {currentQuestion?.question_type}</h1>
             <div className="flex gap-2">
-              <h1 className='' >Marks for correct answer: <span className='font-semibold text-green-500 ' >{currentQuestion?.positive_marks} </span> </h1>
-              <h1 className='' >Marks for incorrect answer: <span className='font-semibold text-red-500 ' >{currentQuestion?.negative_marks}</span> </h1>
+              <h1 className='text-xl' >Marks for correct answer: <span className='font-semibold text-green-500 ' >{currentQuestion?.positive_marks} </span> </h1>
+              <h1 className='text-xl' >Marks for incorrect answer: <span className='font-semibold text-red-500 ' >{currentQuestion?.negative_marks}</span> </h1>
             </div>
           </div>
           {/* Section Selector */}
@@ -307,7 +312,7 @@ const SubmitTest = () => {
                   src="https://img.freepik.com/free-photo/handsome-young-cheerful-man-with-arms-crossed_171337-1073.jpg?t=st=1740684883~exp=1740688483~hmac=e341b2806af15396440b431d78a40c702cd6f73dcbd53cb2a02b9366fa7d41d2&w=1060"
                   alt="Profile"
                 />
-                <h1 className="font-bold">Deepak Yadav</h1>
+                <h1 className="font-bold text-xl">Deepak Yadav</h1>
               </div>
 
               {/* Status Legend */}

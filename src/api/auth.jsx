@@ -88,7 +88,8 @@ export const createBatch = async (batchData) => {
 };
 
 export const getAllBatches = async () => {
-    return fetchAPI("/batch", "GET");
+    const authToken = localStorage.getItem("authToken");
+    return fetchAPI("/batch", "GET", null, false, authToken);
 };
 
 export const getBatchById = async (batchId) => {

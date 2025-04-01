@@ -41,7 +41,7 @@ const TeacherTestList = () => {
                     <div className="w-[45rem]">
                         <div className="flex justify-between items-center mb-4">
                             <h1 className="text-3xl font-bold ">Scheduled Tests</h1>
-                            <a className="flex  justify-center items-center gap-2 px-3 p-1 rounded-lg bg-white border border-gray-300 hover:bg-gray-50" href="/createtest">Create Test<Plus /> </a>
+                            <a className="flex  justify-center items-center gap-2 px-3 p-1 rounded-lg bg-white border border-gray-300 hover:bg-gray-50" href="/createtest?type=COURSE_TEST">Create Test<Plus /> </a>
                         </div>
                         <div className="grid grid-cols-1 gap-4">
                             {tests.map((test) => (

@@ -2,8 +2,11 @@ import React, { useState } from "react";
 import { ChevronLeft, ChevronRight, Upload, CheckCircle, GraduationCap } from "lucide-react";
 import { useNavigate } from 'react-router-dom';
 import { toast } from "react-toastify";
+import { CountrySelect, StateSelect, CitySelect } from "react-country-state-city";
+import "react-country-state-city/dist/react-country-state-city.css";
 
 import { registerUser, sendOtp, verifyOtp } from "../../api/auth";
+import { count } from "rsuite/esm/internals/utils/ReactChildren";
 function StudentRegister() {
   const [step, setStep] = useState(1);
   const [otpSent, setOtpSent] = useState(false);
@@ -32,8 +35,10 @@ function StudentRegister() {
     previousYearScore: 20,  // For previous year score
     is_email_verified: false,  // Default to false until OTP is verified
   });
-
-
+  const [country, setCountry] = useState(101);
+  const [currentState, setCurrentState] = useState(null);
+  const [currentCity, setCurrentCity] = useState(null);
+  console.log(country)
   const navigate = useNavigate();
 
   const handleInputChange = (e) => {
@@ -170,7 +175,7 @@ function StudentRegister() {
             <h2 className="text-3xl font-bold flex justify-center items-center text-black dark:text-primary-white mb-2 text-center">
               Welcome To Teacher Tech
             </h2>
-            <h4 className="text-center mb-6" >Kindly fill in your details below to create an account</h4>
+            <h4 className="text-center text-lg mb-6 dark:text-primary-white" >Kindly fill in your details below to create an account</h4>
             <div className="relative mb-4">
               {/* Background Progress Bar */}
               <div className="absolute mt-4 mx-6 inset-0 h-1 bg-gray-300 dark:bg-gray-600 rounded-full"></div>
@@ -265,6 +270,23 @@ function StudentRegister() {
                       required
                     />
                   </div>
+                  <div className="w-full">
+                    <label className="block text-sm font-medium text-primary-purple dark:text-accent-yellow mb-1">
+                      Exam registered for
+                    </label>
+                    <select
+                      name="examRegisteredFor"
+                      value={formData.examRegisteredFor}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-2 rounded-lg border border-primary-purple bg-secondary-gray dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-primary-purple focus:border-primary-purple"
+                      required
+                    >
+                      <option value="">Select Exam</option>
+                      <option value="JEE">JEE</option>
+                      <option value="GATE">GATE</option>
+                    </select>
+                  </div>
+
                   {/* <div className="w-full">
                     <label className="block text-sm font-medium text-primary-purple dark:text-accent-yellow mb-1">
                       Password
@@ -390,32 +412,35 @@ function StudentRegister() {
                     required
                   />
                 </div>
-                <div className="flex justify-between gap-6">
-                  <div className="w-full" >
+                <div className="flex justify-between ">
+                <div className="w-full" >
                     <label className="block text-sm font-medium text-primary-purple dark:text-accent-yellow mb-1">
                       State
                     </label>
-                    <input
-                      type="text"
-                      name="state"
-                      value={formData.state}
-                      onChange={handleInputChange}
-                      className="w-full px-4 py-2 rounded-lg border border-primary-purple bg-secondary-gray dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-primary-purple focus:border-primary-purple"
-                      required
-                    />
+                  <StateSelect
+                    countryid={101}
+                    containerClassName="form-group"
+                    inputClassName="w-full px-4 py-2 rounded-lg border border-primary-purple bg-secondary-gray dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-purple focus:border-primary-purple transition duration-200"
+                    onChange={(_state) => setCurrentState(_state)}
+                    onTextChange={(_txt) => console.log(_txt)}
+                    defaultValue={currentState}
+                    className="text-blue-400"
+                    placeHolder="Select State"
+                  />
                   </div>
                   <div className="w-full" >
                     <label className="block text-sm font-medium text-primary-purple dark:text-accent-yellow mb-1">
                       City
                     </label>
-                    <input
-                      type="text"
-                      name="city"
-                      value={formData.city}
-                      onChange={handleInputChange}
-                      className="w-full px-4 py-2 rounded-lg border border-primary-purple bg-secondary-gray dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-primary-purple focus:border-primary-purple"
-                      required
-                    />
+                  <CitySelect
+                    countryid={101}
+                    inputClassName="w-full px-4 py-2 rounded-lg border border-primary-purple bg-secondary-gray dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-purple focus:border-primary-purple transition duration-200"
+                    stateid={currentState?.id}
+                    onChange={(_city) => setCurrentCity(_city)}
+                    defaultValue={currentCity}
+                    placeHolder="Select City"
+                    className=""
+                  />
                   </div>
                 </div>
 
@@ -479,7 +504,7 @@ function StudentRegister() {
 
             {step === 3 && (
               <div className="space-y-3  ">
-                
+
                 {/* Tenth Certificate */}
                 <div>
                   <label className="block text-sm font-medium text-primary-purple dark:text-accent-yellow mb-1">
@@ -607,7 +632,7 @@ function StudentRegister() {
           </form>
         </div>
       </div>
-      
+
     </div>
   );
 }

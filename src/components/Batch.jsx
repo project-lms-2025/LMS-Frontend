@@ -10,7 +10,7 @@ import {
 
 const Batch = () => {
   const [batches, setBatches] = useState([]);
-  const [batchData, setBatchData] = useState({ batch_name: "", description: "" });
+  const [batchData, setBatchData] = useState({ batch_name: "", description: "",start_date:"",end_date:"" });
   const [selectedBatchId, setSelectedBatchId] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -41,7 +41,7 @@ const Batch = () => {
       setLoading(true);
       console.log(batchData)
       await createBatch(batchData);
-      setBatchData({ batch_name: "", description: "" });
+      setBatchData({ batch_name: "", description: "",start_date:"",end_date:"" });
       fetchBatches();
     } catch (err) {
       setError(err.message);
@@ -86,6 +86,23 @@ const Batch = () => {
         placeholder="Batch Name"
         value={batchData.batch_name}
         onChange={(e) => setBatchData({ ...batchData, batch_name: e.target.value })}
+        className="border p-3 w-full mb-3 rounded-lg bg-primary-white shadow-sm"
+      />
+      <h1 className="text-xl" >Start date</h1>
+      <input
+        type="date"
+        placeholder="Start Date"
+        value={batchData.start_date}
+        onChange={(e) => setBatchData({ ...batchData, start_date: e.target.value })}
+        className="border p-3 w-full mb-3 rounded-lg bg-primary-white shadow-sm"
+      />
+      <h1 className="text-xl" >end date</h1>
+
+      <input
+        type="date"
+        placeholder="End Date"
+        value={batchData.end_date}
+        onChange={(e) => setBatchData({ ...batchData, end_date: e.target.value })}
         className="border p-3 w-full mb-3 rounded-lg bg-primary-white shadow-sm"
       />
       <textarea
