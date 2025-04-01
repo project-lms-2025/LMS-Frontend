@@ -15,7 +15,7 @@ const TeacherTestList = () => {
     useEffect(() => {
         async function fetchTests() {
             try {
-                const data = await getAllTests();
+                const data = await getAllTests("COURSE_TEST");
                 console.log(data)
                 setTests(data);
                 setLoading(false);

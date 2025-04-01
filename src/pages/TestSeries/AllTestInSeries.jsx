@@ -19,7 +19,7 @@ const AllTestInSeries = () => {
   useEffect(() => {
     const fetchTests = async () => {
       try {
-        const data = await getAllTests();
+        const data = await getAllTests("SERIES_TEST");
         console.log("Hi", data)
         // If the API returns an array directly
         if (Array.isArray(data)) {

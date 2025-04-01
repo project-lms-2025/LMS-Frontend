@@ -95,9 +95,9 @@ export const getTestById = async (testId) => {
     return fetchAPI(`/test/tests/${testId}`, "GET", null, false, authToken);
 };
 
-export const getAllTests = async () => {
+export const getAllTests = async (test_type) => {
     const authToken = localStorage.getItem("authToken"); // Retrieve the token from localStorage
-    return fetchAPI("/test/tests", "GET", null, false, authToken);
+    return fetchAPI(`/test/tests?test_type=${test_type}`, "GET", null, false, authToken);
 };
 
 export const getEnrolledTests = async () => {
