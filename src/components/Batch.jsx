@@ -78,7 +78,7 @@ const Batch = () => {
   };
 
   return (
-    <div className="p-6 max-w-lg mx-auto bg-secondary-gray rounded-lg shadow-lg">
+    <div className="p-6 max-w-4xl mx-auto bg-secondary-gray rounded-lg shadow-lg">
       <h2 className="text-2xl font-bold text-primary-purple mb-4">Batch Management</h2>
       {error && <p className="text-red-500">{error}</p>}
       <input

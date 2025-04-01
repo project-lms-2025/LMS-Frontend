@@ -21,7 +21,8 @@ const CreateTest = () => {
   // Initialize paper state with an empty questions array.
   const [questionPaper, setQuestionPaper] = useState({
     test_id: uuidv4(),
-    course_id: "5c10fb9a-7f14-420b-903d-497c4bdc97f4",
+    // course_id: "5c10fb9a-7f14-420b-903d-497c4bdc97f4",
+    series_id:"TS123",
     title: "",
     description: "",
     duration: "", // in minutes

@@ -5,6 +5,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import { getAllTestsInSeries } from '../../api/testSeries';
 import Loading from '../../components/Loading';
 import Sidebar from '../../components/Sidebar';
+import { Plus } from 'lucide-react';
+import { getAllTests, getTestById } from '../../api/test';
 
 const AllTestInSeries = () => {
   const { seriesId } = useParams();
@@ -17,7 +19,7 @@ const AllTestInSeries = () => {
   useEffect(() => {
     const fetchTests = async () => {
       try {
-        const data = await getAllTestsInSeries(seriesId);
+        const data = await getAllTests();
         console.log("Hi", data)
         // If the API returns an array directly
         if (Array.isArray(data)) {
@@ -52,9 +54,12 @@ const AllTestInSeries = () => {
         <div className="min-h-screen bg-secondary-gray dark:bg-gray-900 p-6">
           <ToastContainer position="top-right" autoClose={3000} />
           <div className="max-w-5xl mx-auto space-y-6">
-            <h1 className="text-3xl font-bold text-primary-purple dark:text-primary-white">
-              Tests in Series
-            </h1>
+            <div className='flex justify-between ' >
+              <h1 className="text-3xl font-bold text-primary-purple dark:text-primary-white">
+                Tests in Series
+              </h1>
+              <a className="flex  justify-center items-center gap-2 px-3 p-1 rounded-lg bg-white border border-gray-300 hover:bg-gray-50" href="/createtest?type=SERIES_TEST">Create Test<Plus /> </a>
+            </div>
             {loading ? (
               <Loading />
             ) : error ? (
