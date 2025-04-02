@@ -88,7 +88,8 @@ function App() {
         {/* Test Series */}
         <Route path="/testSeries" element={<AllTestSeries />} />  {/* test given by students DONE */} 
         <Route path="/testInSeries/:seriesId" element={<AllTestInSeries />} />  {/* test given by students */}
-        <Route path="/createtestSeries" element={<CreateTestInSeries/>} /> {/* Test created by teacher DONE */} 
+        <Route path="/createTestSeries" element={<CreateTestSeries />} />  {/* test given by students */}
+        <Route path="/createTestInSeries" element={<CreateTestInSeries/>} /> {/* Test created by teacher DONE */} 
         <Route path="/test_series_preview" element={<TestPreview />} />  {/* test given by students */}
 
         {/* Owner Routes */}

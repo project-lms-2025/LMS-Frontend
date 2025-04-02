@@ -1,18 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { enrollUser, getAllBatches, getEnrollmentBatches } from '../api/auth';
+import { getEnrollmentBatches } from '../api/auth';
+import { getAllTestSeries, getEnrolledTestSeries } from '../api/testSeries';
 import Loading from './Loading';
 import { toast } from 'react-toastify';
 
-const Testcard = ({ batch, onEnroll, isEnrolled }) => {
+// Card Component for a Test Series
+const Testcard = ({ series, onEnroll, isEnrolled }) => {
   return (
     <div className="bg-secondary-gray p-6 rounded-lg shadow-md">
       <h2 className="text-2xl font-bold text-primary-purple mb-2">
-        {batch.batch_name}
+        {series.title}
       </h2>
-      <p className="text-gray-600 mb-2">{batch.description}</p>
+      <p className="text-gray-600 mb-2">{series.description}</p>
       <p className="text-sm text-gray-500 mb-4">
-        Created on: {new Date(batch.created_at).toLocaleDateString()}
+        Created on: {new Date(series.created_at).toLocaleDateString()}
       </p>
       {isEnrolled ? (
         <button
@@ -23,7 +25,7 @@ const Testcard = ({ batch, onEnroll, isEnrolled }) => {
         </button>
       ) : (
         <button
-          onClick={() => onEnroll(batch.batch_id)}
+          onClick={() => onEnroll(series.series_id)}
           className="bg-primary-purple hover:bg-secondary-coral text-primary-white font-semibold py-2 px-4 rounded"
         >
           Enroll Now
@@ -34,13 +36,13 @@ const Testcard = ({ batch, onEnroll, isEnrolled }) => {
 };
 
 const EnrollTestSeries = () => {
-  const [batches, setBatches] = useState([]);
+  const [testSeriesList, setTestSeriesList] = useState([]);
   const [enrolledBatches, setEnrolledBatches] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  // Check for auth token on mount; if missing, redirect to login
+  // Check auth token on mount
   useEffect(() => {
     const authToken = localStorage.getItem("authToken");
     if (!authToken) {
@@ -48,57 +50,55 @@ const EnrollTestSeries = () => {
     }
   }, [navigate]);
 
-  // Fetch all available batches from the API
-  const fetchBatches = async () => {
+  // Fetch available test series
+  const fetchTestSeries = async () => {
     try {
       setLoading(true);
-      const response = await getAllBatches();
+      const response = await getAllTestSeries();
+      console.log("Available test series:", response);
       if (response && response.success && Array.isArray(response.data)) {
-        console.log("Available batches:", response.data);
-        setBatches(response.data);
+        setTestSeriesList(response.data);
       } else {
-        setBatches([]);
+        setTestSeriesList([]);
       }
     } catch (err) {
-      setError(err.message);
+      setError("Failed to fetch test series.");
     } finally {
       setLoading(false);
     }
   };
 
-  // Fetch enrolled batches from the API
+  // Fetch enrolled test series
   const fetchEnrolledBatches = async () => {
     try {
-      const response = await getEnrollmentBatches();
-      console.log("Raw enrolled batches response:", response);
+      const response = await getEnrolledTestSeries();
+      console.log("Enrolled test series:", response);
       if (response && response.success) {
         const enrolledData = Array.isArray(response.data)
           ? response.data
           : [response.data];
-        console.log("Enrolled batches:", enrolledData);
         setEnrolledBatches(enrolledData);
       } else {
         setEnrolledBatches([]);
       }
     } catch (err) {
-      console.log("No batches found");
+      console.log("No enrolled test series found");
     }
   };
 
   useEffect(() => {
-    fetchBatches();
+    fetchTestSeries();
     fetchEnrolledBatches();
   }, []);
 
-  // Enrollment handler: if logged in, navigate to the payment page with batch_id.
-  const handleEnroll = (batchId) => {
+  // Handle enrollment redirect
+  const handleEnroll = (seriesId) => {
     const authToken = localStorage.getItem("authToken");
     if (!authToken) {
       navigate("/signin");
       return;
     }
-    // Redirect to payment page with batch_id as a route parameter
-    navigate(`/payment_batch/${batchId}`);
+    navigate(`/payment_batch/${seriesId}`);
   };
 
   if (loading) {
@@ -111,22 +111,22 @@ const EnrollTestSeries = () => {
   }
 
   if (error) {
-    return <div>Error: {error}</div>;
+    return <div className="text-red-500 text-center">{error}</div>;
   }
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-4xl font-bold text-center mb-8">Available Batches</h1>
-      {batches.length > 0 ? (
+      <h1 className="text-4xl font-bold text-center mb-8">Available Test Series</h1>
+      {testSeriesList.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {batches.map((batch) => {
+          {testSeriesList.map((series) => {
             const isEnrolled = enrolledBatches.some(
-              (enrolled) => enrolled.batch_id === batch.batch_id
+              (enrolled) => enrolled.series_id === series.series_id
             );
             return (
               <Testcard
-                key={batch.batch_id}
-                batch={batch}
+                key={series.series_id}
+                series={series}
                 onEnroll={handleEnroll}
                 isEnrolled={isEnrolled}
               />
@@ -134,7 +134,7 @@ const EnrollTestSeries = () => {
           })}
         </div>
       ) : (
-        <Loading />
+        <div className="text-center text-gray-500">No test series available right now.</div>
       )}
     </div>
   );

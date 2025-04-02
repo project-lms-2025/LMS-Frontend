@@ -36,6 +36,7 @@ const BatchPayment = () => {
     const handlePayment = async () => {
         try {
             const order = await createPaymentOrder({
+                batch_id: batch.batch_id,
                 amount: batch?.cost,
                 currency: "INR",
             });
@@ -60,8 +61,8 @@ const BatchPayment = () => {
                             enrollment_type: "batch",
                             // payment_status: "successful"
                         };
-
-                        await enrollUser(enrollmentPayload);
+                        toast.success(`Payment Successful! Enrollment will be updated`);
+                        // await enrollUser(enrollmentPayload);
                         navigate("/batches");
                     } catch (enrollErr) {
                         console.error("Enrollment failed after payment:", enrollErr);

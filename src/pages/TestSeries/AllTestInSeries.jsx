@@ -2,11 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { getAllTestsInSeries } from '../../api/testSeries';
 import Loading from '../../components/Loading';
 import Sidebar from '../../components/Sidebar';
 import { Plus } from 'lucide-react';
 import { getAllTests, getTestById } from '../../api/test';
+import { getAllTestInSeries } from '../../api/testSeries';
 
 const AllTestInSeries = () => {
   const { seriesId } = useParams();
@@ -19,7 +19,7 @@ const AllTestInSeries = () => {
   useEffect(() => {
     const fetchTests = async () => {
       try {
-        const data = await getAllTests("SERIES_TEST");
+        const data = await getAllTestInSeries(seriesId);
         console.log("Hi", data)
         // If the API returns an array directly
         if (Array.isArray(data)) {

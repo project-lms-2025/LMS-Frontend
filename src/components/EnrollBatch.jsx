@@ -54,7 +54,7 @@ const EnrollBatch = () => {
       setLoading(true);
       const response = await getAllBatches();
       if (response && response.success && Array.isArray(response.data)) {
-        console.log("Available batches:", response.data);
+        // console.log("Available batches:", response.data);
         setBatches(response.data);
       } else {
         setBatches([]);
@@ -70,12 +70,12 @@ const EnrollBatch = () => {
   const fetchEnrolledBatches = async () => {
     try {
       const response = await getEnrollmentBatches();
-      console.log("Raw enrolled batches response:", response);
+      // console.log("Raw enrolled batches response:", response);
       if (response && response.success) {
         const enrolledData = Array.isArray(response.data)
           ? response.data
           : [response.data];
-        console.log("Enrolled batches:", enrolledData);
+        // console.log("Enrolled batches:", enrolledData);
         setEnrolledBatches(enrolledData);
       } else {
         setEnrolledBatches([]);

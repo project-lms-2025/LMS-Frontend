@@ -54,6 +54,17 @@ export const getAllTestSeries = async () => {
     return fetchAPI("/test-series", "GET", null, false, authToken);
 };
 
+// All test in series(entity_type, entity_id)
+export const getAllTestInSeries = async (seriesId) => {
+    const authToken = localStorage.getItem("authToken"); // Retrieve token from localStorage
+    return fetchAPI(`/test/tests/${seriesId}?test_type=SERIES_TEST`, "GET", null, false, authToken);
+};
+
+export const getEnrolledTestSeries = async () => {
+    const authToken = localStorage.getItem("authToken"); // Retrieve token from localStorage
+    return fetchAPI("/test-series/my-series", "GET", null, false, authToken);
+};
+
 // Get a Specific Test Series
 export const getTestSeriesById = async (seriesId) => {
     const authToken = localStorage.getItem("authToken"); // Retrieve token from localStorage
@@ -70,12 +81,6 @@ export const updateTestSeries = async (seriesId, updatedData) => {
 export const deleteTestSeries = async (seriesId) => {
     const authToken = localStorage.getItem("authToken"); // Retrieve token from localStorage
     return fetchAPI(`/test-series/${seriesId}`, "DELETE", null, false, authToken);
-};
-
-// Get All Tests in a Specific Test Series
-export const getAllTestsInSeries = async (seriesId) => {
-    const authToken = localStorage.getItem("authToken");
-    return fetchAPI(`/test-series/${seriesId}/tests`, "GET", null, false, authToken);
 };
 
 

@@ -4,6 +4,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { createTestSeries } from '../../api/testSeries';
 import Sidebar from '../../components/Sidebar';
+import { Plus } from 'lucide-react';
 
 const CreateTestSeries = () => {
   // Optionally, you can get the teacher_id from localStorage or AuthContext.
@@ -15,7 +16,6 @@ const CreateTestSeries = () => {
     teacher_id: storedTeacherId,
     title: "",
     description: "",
-    total_tests: 0,
     created_at: new Date().toISOString()
   });
 
@@ -29,6 +29,7 @@ const CreateTestSeries = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      console.log("Form Data:", formData);
       const result = await createTestSeries(formData);
       toast.success("Test series created successfully!");
       // Reset the form (generate a new series_id and update created_at)
@@ -37,7 +38,6 @@ const CreateTestSeries = () => {
         teacher_id: storedTeacherId,
         title: "",
         description: "",
-        total_tests: 0,
         created_at: new Date().toISOString()
       });
     } catch (error) {
@@ -55,9 +55,10 @@ const CreateTestSeries = () => {
         <div className="min-h-screen bg-secondary-gray dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
           <ToastContainer position="top-right" autoClose={3000} />
           <div className="max-w-xl mx-auto bg-primary-white dark:bg-gray-800 p-8 rounded-xl shadow-lg">
-            <h1 className="text-3xl font-bold text-primary-purple dark:text-primary-white mb-6">
-              Create Test Series
-            </h1>
+              <h1 className="text-3xl font-bold text-primary-purple dark:text-primary-white mb-6">
+                Create Test Series
+              </h1>
+
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
                 <label htmlFor="title" className="block text-lg font-medium text-gray-700 dark:text-gray-300">

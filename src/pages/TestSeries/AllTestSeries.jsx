@@ -4,6 +4,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { getAllTestSeries } from '../../api/testSeries';
 import Sidebar from '../../components/Sidebar';
+import { Plus } from 'lucide-react';
 
 const AllTestSeries = () => {
   const [testSeries, setTestSeries] = useState([]);
@@ -46,9 +47,13 @@ const AllTestSeries = () => {
         <div className="min-h-screen bg-secondary-gray dark:bg-gray-900 p-6">
           <ToastContainer position="top-right" autoClose={3000} />
           <div className="max-w-5xl mx-auto space-y-6">
-            <h1 className="text-3xl font-bold text-primary-purple dark:text-primary-white">
-              All Test Series
-            </h1>
+            <div className="flex justify-between">
+
+              <h1 className="text-3xl font-bold text-primary-purple dark:text-primary-white">
+                All Test Series
+              </h1>
+              <a className="flex  justify-center items-center gap-2 px-3 p-1 rounded-lg bg-white border border-gray-300 hover:bg-gray-50" href="/createTestSeries">Create Test Series<Plus /> </a>
+            </div>
             {loading ? (
               <div className="text-center text-primary-purple dark:text-accent-skyblue">
                 Loading...

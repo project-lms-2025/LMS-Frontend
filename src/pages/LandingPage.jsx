@@ -9,6 +9,7 @@ import {
   Star,
 } from "lucide-react";
 import EnrollBatch from "../components/EnrollBatch";
+import EnrollTestSeries from "../components/EnrollTestSeries";
 
 const LandingPage = () => {
   const features = [
@@ -166,6 +167,7 @@ const LandingPage = () => {
           </div>
         </section>
         <EnrollBatch/>
+        <EnrollTestSeries/>
 
         {/* CTA Section */}
         <section className="py-20 px-4 relative overflow-hidden">
