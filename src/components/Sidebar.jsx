@@ -44,6 +44,7 @@ const Sidebar = ({ open, setOpen }) => {
     ],
     student: [
       { title: "Batches", icon: <Repeat size={24} />, url: "batches" },
+      { title: "Test Series", icon: <Users size={24} />, url: "enrolledTestSeries" },
       { title: "Tests", icon: <User size={24} />, url: "studentTestList" },
       { title: "Leaderboard", icon: <User size={24} />, url: "rank" },
       { title: "Grades & Results", icon: <User size={24} />, url: "resultList" },

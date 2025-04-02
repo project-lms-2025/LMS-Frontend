@@ -46,7 +46,9 @@ import Jupyter from './pages/Jupyter';
 import "rsuite/dist/rsuite.css";
 import EnrolledBatches from './pages/student/EnrolledBatches';
 import EnrolledCourses from './pages/student/EnrolledCourses';
+import EnrolledTestSeries from './pages/student/EnrolledTestSeries';
 import BatchPayment from './pages/auth/BatchPayment';
+import TestSeriesPayment from './pages/auth/TestSeriesPayment'
 
 
 function App() {
@@ -88,10 +90,11 @@ function App() {
         {/* Test Series */}
         <Route path="/testSeries" element={<AllTestSeries />} />  {/* test given by students DONE */} 
         <Route path="/testInSeries/:seriesId" element={<AllTestInSeries />} />  {/* test given by students */}
+        <Route path="/enrolledTestSeries" element={<EnrolledTestSeries />} />  {/* enrolled test series */}
         <Route path="/createTestSeries" element={<CreateTestSeries />} />  {/* test given by students */}
         <Route path="/createTestInSeries" element={<CreateTestInSeries/>} /> {/* Test created by teacher DONE */} 
         <Route path="/test_series_preview" element={<TestPreview />} />  {/* test given by students */}
-
+        <Route path="/payment_ts/:series_id" element={<TestSeriesPayment />} />
         {/* Owner Routes */}
         <Route path="/teacherRegister" element={<AdminRegister />} />
         <Route path="/StudentList" element={<StudentList/>} />

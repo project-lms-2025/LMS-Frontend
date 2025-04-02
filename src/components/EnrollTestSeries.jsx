@@ -98,7 +98,7 @@ const EnrollTestSeries = () => {
       navigate("/signin");
       return;
     }
-    navigate(`/payment_batch/${seriesId}`);
+    navigate(`/payment_ts/${seriesId}`);
   };
 
   if (loading) {
