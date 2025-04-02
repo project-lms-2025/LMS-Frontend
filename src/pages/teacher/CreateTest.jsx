@@ -16,12 +16,13 @@ const CreateTest = () => {
   const navigate = useNavigate();
   const queryParams = new URLSearchParams(location.search);
   const type = queryParams.get("type");
-
+  const courseId = queryParams.get("course_id");
+  const seriesId = queryParams.get("seriesId");
   // Initialize paper state with an empty questions array.
   const [questionPaper, setQuestionPaper] = useState({
     test_id: uuidv4(),
-    // course_id: "5c10fb9a-7f14-420b-903d-497c4bdc97f4",
-    series_id:"TS123",
+    ...(courseId ? { course_id: courseId } : {}),
+    ...(seriesId ? { series_id: seriesId } : {}),
     title: "",
     description: "",
     duration: "", // in minutes

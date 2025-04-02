@@ -11,7 +11,7 @@ import toast from "react-hot-toast";
 
 const Batch = () => {
   const [batches, setBatches] = useState([]);
-  const [batchData, setBatchData] = useState({ batch_name: "", description: "", start_date: "", end_date: "" });
+  const [batchData, setBatchData] = useState({ batch_name: "", description: "", start_date: "", end_date: "",cost:"" });
   const [selectedBatchId, setSelectedBatchId] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -42,7 +42,7 @@ const Batch = () => {
       setLoading(true);
       console.log(batchData)
       // await createBatch(batchData);
-      setBatchData({ batch_name: "", description: "", start_date: "", end_date: "" });
+      setBatchData({ batch_name: "", description: "", start_date: "", end_date: "",cost:""  });
       toast.success("Batch created successfully!");
       fetchBatches();
     } catch (err) {
@@ -111,6 +111,16 @@ const Batch = () => {
             placeholder="End Date"
             value={batchData.end_date}
             onChange={(e) => setBatchData({ ...batchData, end_date: e.target.value })}
+            className="border p-3 w-full mb-3 rounded-lg bg-primary-white shadow-sm"
+          />
+        </div>
+        <div className="w-1/2 ">
+          <h1 className="text-xl" >Cost</h1>
+          <input
+            type="text"
+            placeholder="cost"
+            value={batchData.cost}
+            onChange={(e) => setBatchData({ ...batchData, cost: e.target.value })}
             className="border p-3 w-full mb-3 rounded-lg bg-primary-white shadow-sm"
           />
         </div>

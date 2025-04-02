@@ -51,13 +51,19 @@ const AllTestInSeries = () => {
         className={`transition-all duration-300 ${open ? "md:ml-[20rem] ml-56 mr-4  w-[40%] md:w-[75%]" : "ml-24 mr-2"} md:w-[90%]  w-[95%] md:mt `}
       >
         <div className="min-h-screen bg-secondary-gray dark:bg-gray-900 p-6">
-          <Toaster  autoClose={3000} />
+          <Toaster autoClose={3000} />
           <div className="max-w-5xl mx-auto space-y-6">
             <div className='flex justify-between ' >
               <h1 className="text-3xl font-bold text-primary-purple dark:text-primary-white">
                 Tests in Series
               </h1>
-              <a className="flex  justify-center items-center gap-2 px-3 p-1 rounded-lg bg-white border border-gray-300 hover:bg-gray-50" href="/createtest?type=SERIES_TEST">Create Test<Plus /> </a>
+              <a
+                className="flex justify-center items-center gap-2 px-3 p-1 rounded-lg bg-white border border-gray-300 hover:bg-gray-50"
+                href={`/createtest?type=SERIES_TEST&seriesId=${seriesId}`}
+              >
+                Create Test <Plus />
+              </a>
+
             </div>
             {loading ? (
               <Loading />

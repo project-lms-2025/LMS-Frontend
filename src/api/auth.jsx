@@ -130,6 +130,10 @@ export const deleteCourse = async (courseId) => {
 export const getCoursesByBatchId = async (batchId) => {
     return fetchAPI(`/course/batch/${batchId}`);
 };
+export const getAllCourses = async () => {
+    const authToken = localStorage.getItem("authToken"); // Retrieve token from localStorage
+    return fetchAPI(`/course/courses`,"GET", null, false, authToken);
+};
 
 // Class APIs
 export const createClass = async (classData, authToken) => {
@@ -160,7 +164,6 @@ export const getUserByEmail = async (email) => {
     if (!authToken) {
         throw new Error("Authorization token is missing");
     }
-
     return fetchAPI(`/user/${encodeURIComponent(email)}`, "GET", null, false, authToken);
 };
 // Get User Profile

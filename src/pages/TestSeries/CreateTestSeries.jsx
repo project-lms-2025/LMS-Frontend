@@ -15,6 +15,7 @@ const CreateTestSeries = () => {
     teacher_id: storedTeacherId,
     title: "",
     description: "",
+    cost: "",
     created_at: new Date().toISOString()
   });
 
@@ -31,12 +32,14 @@ const CreateTestSeries = () => {
       console.log("Form Data:", formData);
       const result = await createTestSeries(formData);
       toast.success("Test series created successfully!");
+      console.log("result",result)
       // Reset the form (generate a new series_id and update created_at)
       setFormData({
         series_id: uuidv4(),
         teacher_id: storedTeacherId,
         title: "",
         description: "",
+        cost: "",
         created_at: new Date().toISOString()
       });
     } catch (error) {
@@ -51,12 +54,12 @@ const CreateTestSeries = () => {
       <div
         className={`transition-all duration-300 ${open ? "md:ml-[20rem] ml-56 mr-4  w-[40%] md:w-[75%]" : "ml-24 mr-2"} md:w-[90%]  w-[95%] md:mt `}
       >
-          <Toaster  autoClose={3000} />
+        <Toaster autoClose={3000} />
         <div className="min-h-screen bg-secondary-gray dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
           <div className="max-w-xl mx-auto bg-primary-white dark:bg-gray-800 p-8 rounded-xl shadow-lg">
-              <h1 className="text-3xl font-bold text-primary-purple dark:text-primary-white mb-6">
-                Create Test Series
-              </h1>
+            <h1 className="text-3xl font-bold text-primary-purple dark:text-primary-white mb-6">
+              Create Test Series
+            </h1>
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
@@ -68,6 +71,21 @@ const CreateTestSeries = () => {
                   name="title"
                   id="title"
                   value={formData.title}
+                  onChange={handleChange}
+                  placeholder="Enter test series title"
+                  className="mt-1 p-1 h-10 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-purple focus:ring-primary-purple"
+                  required
+                />
+              </div>
+              <div>
+                <label htmlFor="title" className="block text-lg font-medium text-gray-700 dark:text-gray-300">
+                  Cost
+                </label>
+                <input
+                  type="number"
+                  name="cost"
+                  id="title"
+                  value={formData.cost}
                   onChange={handleChange}
                   placeholder="Enter test series title"
                   className="mt-1 p-1 h-10 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-purple focus:ring-primary-purple"
