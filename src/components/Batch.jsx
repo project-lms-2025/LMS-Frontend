@@ -41,7 +41,7 @@ const Batch = () => {
     try {
       setLoading(true);
       console.log(batchData)
-      // await createBatch(batchData);
+      await createBatch(batchData);
       setBatchData({ batch_name: "", description: "", start_date: "", end_date: "",cost:""  });
       toast.success("Batch created successfully!");
       fetchBatches();
