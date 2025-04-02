@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import Sidebar from '../../components/Sidebar';
 import Loading from '../../components/Loading';
 import { getEnrolledCourses } from '../../api/auth';
+import toast, { Toaster } from 'react-hot-toast';
 
 const EnrolledCourses = () => {
   const [courses, setCourses] = useState([]);
@@ -55,7 +54,7 @@ console.log(courses)
         } md:w-[90%] w-[95%]`}
       >
         <div className="min-h-[90vh] py-12 px-4 sm:px-6 lg:px-8">
-          <ToastContainer />
+          <Toaster />
           <div className="max-w-3xl mx-auto">
             <h1 className="text-3xl font-bold text-primary-purple mb-6">
               Enrolled Courses

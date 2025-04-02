@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { Toaster, toast } from 'react-hot-toast';
 import { getAllBatches } from '../../api/auth';
 import Sidebar from '../../components/Sidebar';
 
@@ -49,7 +48,7 @@ const TBatch = () => {
         className={`transition-all duration-300 ${open ? "md:ml-[20rem] ml-56 mr-4  w-[40%] md:w-[75%]" : "ml-24 mr-2"} md:w-[90%]  w-[95%] md:mt `}
       >
         <div className="min-h-[90vh]  py-12 px-4 sm:px-6 lg:px-8">
-          <ToastContainer />
+          <Toaster />
           <div className="max-w-3xl mx-auto">
             <h1 className="text-3xl font-bold text-primary-purple mb-6">Batch Management</h1>
             {error && <p className="text-red-500 mb-4">{error}</p>}

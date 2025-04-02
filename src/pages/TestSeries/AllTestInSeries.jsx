@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { Toaster, toast } from 'react-hot-toast';
 import Loading from '../../components/Loading';
 import Sidebar from '../../components/Sidebar';
 import { Plus } from 'lucide-react';
@@ -52,7 +51,7 @@ const AllTestInSeries = () => {
         className={`transition-all duration-300 ${open ? "md:ml-[20rem] ml-56 mr-4  w-[40%] md:w-[75%]" : "ml-24 mr-2"} md:w-[90%]  w-[95%] md:mt `}
       >
         <div className="min-h-screen bg-secondary-gray dark:bg-gray-900 p-6">
-          <ToastContainer position="top-right" autoClose={3000} />
+          <Toaster  autoClose={3000} />
           <div className="max-w-5xl mx-auto space-y-6">
             <div className='flex justify-between ' >
               <h1 className="text-3xl font-bold text-primary-purple dark:text-primary-white">

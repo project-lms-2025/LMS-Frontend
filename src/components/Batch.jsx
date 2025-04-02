@@ -7,10 +7,11 @@ import {
   updateBatchById,
   deleteBatchById,
 } from "../api/auth";
+import toast from "react-hot-toast";
 
 const Batch = () => {
   const [batches, setBatches] = useState([]);
-  const [batchData, setBatchData] = useState({ batch_name: "", description: "",start_date:"",end_date:"" });
+  const [batchData, setBatchData] = useState({ batch_name: "", description: "", start_date: "", end_date: "" });
   const [selectedBatchId, setSelectedBatchId] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -40,10 +41,12 @@ const Batch = () => {
     try {
       setLoading(true);
       console.log(batchData)
-      await createBatch(batchData);
-      setBatchData({ batch_name: "", description: "",start_date:"",end_date:"" });
+      // await createBatch(batchData);
+      setBatchData({ batch_name: "", description: "", start_date: "", end_date: "" });
+      toast.success("Batch created successfully!");
       fetchBatches();
     } catch (err) {
+      toast.error("Failed to create batch")
       setError(err.message);
     } finally {
       setLoading(false);
@@ -57,6 +60,7 @@ const Batch = () => {
       await updateBatchById(selectedBatchId, batchData);
       setSelectedBatchId(null);
       setBatchData({ batch_name: "", description: "" });
+      toast.success("Batch updated successfully!")
       fetchBatches();
     } catch (err) {
       setError(err.message);
@@ -88,23 +92,30 @@ const Batch = () => {
         onChange={(e) => setBatchData({ ...batchData, batch_name: e.target.value })}
         className="border p-3 w-full mb-3 rounded-lg bg-primary-white shadow-sm"
       />
-      <h1 className="text-xl" >Start date</h1>
-      <input
-        type="date"
-        placeholder="Start Date"
-        value={batchData.start_date}
-        onChange={(e) => setBatchData({ ...batchData, start_date: e.target.value })}
-        className="border p-3 w-full mb-3 rounded-lg bg-primary-white shadow-sm"
-      />
-      <h1 className="text-xl" >end date</h1>
+      <div className="flex justify-between gap-2">
+        <div className="w-1/2 ">
+          <h1 className="text-xl" >Start date</h1>
+          <input
+            type="date"
+            placeholder="Start Date"
+            value={batchData.start_date}
+            onChange={(e) => setBatchData({ ...batchData, start_date: e.target.value })}
+            className="border p-3 w-full mb-3 rounded-lg bg-primary-white shadow-sm"
+          />
+        </div>
+        <div className="w-1/2 ">
+          <h1 className="text-xl" >end date</h1>
 
-      <input
-        type="date"
-        placeholder="End Date"
-        value={batchData.end_date}
-        onChange={(e) => setBatchData({ ...batchData, end_date: e.target.value })}
-        className="border p-3 w-full mb-3 rounded-lg bg-primary-white shadow-sm"
-      />
+          <input
+            type="date"
+            placeholder="End Date"
+            value={batchData.end_date}
+            onChange={(e) => setBatchData({ ...batchData, end_date: e.target.value })}
+            className="border p-3 w-full mb-3 rounded-lg bg-primary-white shadow-sm"
+          />
+        </div>
+      </div>
+
       <textarea
         placeholder="Batch Description"
         value={batchData.description}

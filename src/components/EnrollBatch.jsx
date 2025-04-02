@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { enrollUser, getAllBatches, getEnrollmentBatches } from '../api/auth';
 import Loading from './Loading';
-import { toast } from 'react-toastify';
 
 const BatchCard = ({ batch, onEnroll, isEnrolled }) => {
   return (
@@ -93,10 +92,10 @@ const EnrollBatch = () => {
   // Enrollment handler: if logged in, navigate to the payment page with batch_id.
   const handleEnroll = (batchId) => {
     const authToken = localStorage.getItem("authToken");
-    if (!authToken) {
-      navigate("/signin");
-      return;
-    }
+    // if (!authToken) {
+    //   navigate("/signin");
+    //   return;
+    // }
     // Redirect to payment page with batch_id as a route parameter
     navigate(`/payment_batch/${batchId}`);
   };

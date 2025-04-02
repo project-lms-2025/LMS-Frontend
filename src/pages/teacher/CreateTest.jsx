@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 import { Plus, Trash2, Eye, Edit2, Clock, Save, Paperclip } from 'lucide-react';
 import { createTestWithQuestions, uploadImageToS3 } from '../../api/test'; // Import API functions
 import { v4 as uuidv4 } from 'uuid';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { Toaster, toast } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 
 const CreateTest = () => {
@@ -284,7 +283,7 @@ const CreateTest = () => {
   };
   return (
     <div className=" px-4 ">
-      <ToastContainer />
+      <Toaster />
       {/* Top Paper Details */}
       <div className='  w-full bg-white z-20' >
         <div className="bg-white rounded-lg shadow p-6 mb-4">

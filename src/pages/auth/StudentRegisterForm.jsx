@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { ChevronLeft, ChevronRight, Upload, CheckCircle, GraduationCap } from "lucide-react";
 import { useNavigate } from 'react-router-dom';
-import { toast } from "react-toastify";
+import { toast } from "react-hot-toast";
 import { CountrySelect, StateSelect, CitySelect } from "react-country-state-city";
 import "react-country-state-city/dist/react-country-state-city.css";
 

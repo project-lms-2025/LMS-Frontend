@@ -3,8 +3,7 @@ import { Clock, Eye, Edit2, Save, Plus, CalculatorIcon, ChevronUp, ChevronDown, 
 import Draggable from 'react-draggable';
 import { getTestById, submitTest } from '../../api/test';
 import { useLocation } from 'react-router-dom';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { Toaster, toast } from 'react-hot-toast';
 
 const SubmitTest = () => {
   // States for test data and UI
@@ -152,7 +151,7 @@ const SubmitTest = () => {
 
   return (
     <div className="px-4">
-      <ToastContainer />
+      <Toaster />
       {/* Top Fixed Panel */}
       <div className="fixed top-16 w-full bg-white z-20 shadow">
         <div className="bg-white rounded-lg p-6">
@@ -314,7 +313,7 @@ const SubmitTest = () => {
           </div>
         </Draggable>
       )}
-      <ToastContainer />
+      <Toaster />
     </div>
   );
 };

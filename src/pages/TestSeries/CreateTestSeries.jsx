@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { toast, Toaster } from 'react-hot-toast';
 import { createTestSeries } from '../../api/testSeries';
 import Sidebar from '../../components/Sidebar';
 import { Plus } from 'lucide-react';
@@ -52,8 +51,8 @@ const CreateTestSeries = () => {
       <div
         className={`transition-all duration-300 ${open ? "md:ml-[20rem] ml-56 mr-4  w-[40%] md:w-[75%]" : "ml-24 mr-2"} md:w-[90%]  w-[95%] md:mt `}
       >
+          <Toaster  autoClose={3000} />
         <div className="min-h-screen bg-secondary-gray dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
-          <ToastContainer position="top-right" autoClose={3000} />
           <div className="max-w-xl mx-auto bg-primary-white dark:bg-gray-800 p-8 rounded-xl shadow-lg">
               <h1 className="text-3xl font-bold text-primary-purple dark:text-primary-white mb-6">
                 Create Test Series
@@ -71,7 +70,7 @@ const CreateTestSeries = () => {
                   value={formData.title}
                   onChange={handleChange}
                   placeholder="Enter test series title"
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-purple focus:ring-primary-purple"
+                  className="mt-1 p-1 h-10 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-purple focus:ring-primary-purple"
                   required
                 />
               </div>
@@ -85,7 +84,7 @@ const CreateTestSeries = () => {
                   value={formData.description}
                   onChange={handleChange}
                   placeholder="Enter description"
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-purple focus:ring-primary-purple"
+                  className="mt-1 p-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-purple focus:ring-primary-purple"
                   rows="4"
                   required
                 ></textarea>

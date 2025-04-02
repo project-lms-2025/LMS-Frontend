@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { ChevronDown, Loader } from "lucide-react";
 import { registerTeacher, sendOtp, verifyOtp } from "../../api/auth"; // Ensure API functions are correctly imported

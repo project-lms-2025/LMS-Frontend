@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import { loginUser, sendLoginOtp } from "../../api/auth";
 import { useAuth } from "../../context/AuthContext";
+import toast, { Toaster } from "react-hot-toast";
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -88,7 +87,7 @@ const Login = () => {
 
   return (
     <div className="min-h-[92.2vh] w-full flex items-center justify-center bg-secondary-gray dark:bg-gray-900">
-      <ToastContainer />
+      <Toaster/>
       <div className="max-w-md w-full space-y-8 bg-white dark:bg-gray-800 p-8 py-14 rounded-2xl shadow-lg">
         <div>
           <h2 className="text-center text-3xl font-extrabold text-primary-purple dark:text-primary-white">

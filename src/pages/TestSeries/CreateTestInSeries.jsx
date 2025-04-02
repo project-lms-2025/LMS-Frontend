@@ -2,10 +2,9 @@ import React, { useState } from 'react';
 import { Plus, Trash2, Eye, Edit2, Clock, Save, Paperclip } from 'lucide-react';
 import {  uploadImageToS3 } from '../../api/test'; // Import API functions
 import { v4 as uuidv4 } from 'uuid';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom';
 import { createTestWithQuestions } from '../../api/testSeries';
+import toast, { Toaster } from 'react-hot-toast';
 
 const CreateTestInSeries = () => {
   const [isPreview, setIsPreview] = useState(false);
@@ -282,7 +281,7 @@ const CreateTestInSeries = () => {
   };
   return (
     <div className=" px-4 ">
-      <ToastContainer />
+      <Toaster />
       {/* Top Paper Details */}
       <div className='  w-full bg-white z-20' >
         <div className="bg-white rounded-lg shadow p-6 mb-4">

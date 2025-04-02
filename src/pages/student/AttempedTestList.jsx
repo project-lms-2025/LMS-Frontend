@@ -3,8 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Eye } from 'lucide-react';
 import Sidebar from '../../components/Sidebar';
 import { attemptedTest } from '../../api/test';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { Toaster, toast } from 'react-hot-toast';
 
 const AttempedTestList = () => {
     const [open, setOpen] = useState(false);
@@ -35,7 +34,7 @@ const AttempedTestList = () => {
     return (
         <div className='m-0'>
             <Sidebar open={open} setOpen={setOpen} />
-            <ToastContainer />
+            <Toaster />
             {/* Main content */}
             <div
                 className={`transition-all duration-300 p-6 ${open ? "md:ml-[20rem] ml-56 mr-4 w-[40%] md:w-[75%]" : "ml-24 mr-2"} md:w-[90%] w-[95%]`}

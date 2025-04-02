@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { toast } from "react-toastify";
+import { toast } from "react-hot-toast";
 import { useNavigate, useLocation } from "react-router-dom";
 import { resetPassword } from "../../api/auth";
 import { FaEye, FaEyeSlash } from "react-icons/fa";

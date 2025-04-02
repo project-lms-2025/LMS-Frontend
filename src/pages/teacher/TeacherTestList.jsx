@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getAllTests } from '../../api/test';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { Toaster, toast } from 'react-hot-toast';
 import { Eye, Plus, PlusSquare } from 'lucide-react';
 import Sidebar from '../../components/Sidebar';
 import Loading from '../../components/Loading';
@@ -37,7 +36,7 @@ const TeacherTestList = () => {
                 className={`transition-all duration-300 ${open ? "md:ml-[20rem] ml-56 mr-4  w-[40%] md:w-[75%]" : "ml-24 mr-2"} md:w-[90%]  w-[95%] md:mt `}
             >
                 <div className="p-6  flex justify-center min-h-[90vh]">
-                    <ToastContainer />
+                    <Toaster />
                     <div className="w-[45rem]">
                         <div className="flex justify-between items-center mb-4">
                             <h1 className="text-3xl font-bold ">Scheduled Tests</h1>

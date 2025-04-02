@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { getEnrollmentBatches } from '../api/auth';
 import { getAllTestSeries, getEnrolledTestSeries } from '../api/testSeries';
 import Loading from './Loading';
-import { toast } from 'react-toastify';
 
 // Card Component for a Test Series
 const Testcard = ({ series, onEnroll, isEnrolled }) => {
@@ -44,10 +43,10 @@ const EnrollTestSeries = () => {
 
   // Check auth token on mount
   useEffect(() => {
-    const authToken = localStorage.getItem("authToken");
-    if (!authToken) {
-      navigate("/signin");
-    }
+    // const authToken = localStorage.getItem("authToken");
+    // if (!authToken) {
+    //   navigate("/signin");
+    // }
   }, [navigate]);
 
   // Fetch available test series
@@ -93,11 +92,11 @@ const EnrollTestSeries = () => {
 
   // Handle enrollment redirect
   const handleEnroll = (seriesId) => {
-    const authToken = localStorage.getItem("authToken");
-    if (!authToken) {
-      navigate("/signin");
-      return;
-    }
+    // const authToken = localStorage.getItem("authToken");
+    // if (!authToken) {
+    //   navigate("/signin");
+    //   return;
+    // }
     navigate(`/payment_ts/${seriesId}`);
   };
 

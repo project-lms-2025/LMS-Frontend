@@ -76,7 +76,7 @@ export const Navbar = () => {
                 <a
                   key={link.name}
                   href={link.href}
-                  className="dark:text-secondary-gray hover:text-primary-purple dark:text-primary-white/80 dark:hover:text-accent-yellow transition-colors"
+                  className="dark:text-secondary-gray  hover:text-primary-purple dark:text-primary-white/80 dark:hover:text-accent-yellow transition-colors"
                 >
                   {link.name}
                 </a>
@@ -88,7 +88,7 @@ export const Navbar = () => {
           <div className="flex items-center space-x-4">
             {/* Show user name if logged in */}
             {user && !loading && (
-              <span className="text-primary-white">{user.name || user.email}</span>
+              <span className="text-black dark:text-white">{user.name || user.email}</span>
             )}
 
             <button

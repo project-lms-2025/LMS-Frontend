@@ -11,7 +11,6 @@ import Question from './components/Question';
 import Quiz from './pages/teacher/CreateTest';
 import StudentTest from './pages/StudentTest';
 import TeacherProfile from './pages/teacher/TeacherProfile';
-import { ToastContainer } from "react-toastify";
 import Forgot from './pages/auth/Forgot';
 import ResetPassword from './pages/auth/ResetPassword';
 import AdminRegister from './pages/auth/AdminRegister';
@@ -49,13 +48,14 @@ import EnrolledCourses from './pages/student/EnrolledCourses';
 import EnrolledTestSeries from './pages/student/EnrolledTestSeries';
 import BatchPayment from './pages/auth/BatchPayment';
 import TestSeriesPayment from './pages/auth/TestSeriesPayment'
+import { Toaster } from 'react-hot-toast';
 
 
 function App() {
   const { role } = useAuth();
   return (
     <Router className="h-screen" >
-      <ToastContainer position="top-right" autoClose={3000} />
+      <Toaster autoClose={3000} />
       <Navbar role={role} />
       <Routes>
         <Route path="/" element={<LandingPage />} />

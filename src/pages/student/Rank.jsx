@@ -3,8 +3,7 @@ import { ChevronRight, Crown, Award } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { getEnrolledTests, getLeaderboard } from '../../api/test';
 import Sidebar from '../../components/Sidebar';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { Toaster, toast } from 'react-hot-toast';
 
 const Rank = () => {
   const navigate = useNavigate();
@@ -96,7 +95,7 @@ const Rank = () => {
         className={`transition-all duration-300 ${open ? "md:ml-[20rem] ml-56 mr-4  w-[40%] md:w-[75%]" : "ml-24 mr-2"} md:w-[90%]  w-[95%] md:mt `}
       >
         <div className="max-w-4xl mx-auto">
-          <ToastContainer />
+          <Toaster />
           {!selectedTestId ? (
             // Test List View
             <>

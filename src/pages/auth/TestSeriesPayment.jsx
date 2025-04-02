@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import { toast } from 'react-hot-toast';
 import Loading from '../../components/Loading';
 import { createPaymentOrder, getUserProfile } from '../../api/auth';
 import { getTestSeriesById } from '../../api/testSeries';
