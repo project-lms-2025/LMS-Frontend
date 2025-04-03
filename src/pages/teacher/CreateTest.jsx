@@ -320,7 +320,7 @@ const validateFields = () => {
       if (!validateFields()) return;
       const testPayload = { ...questionPaper };
       console.log(testPayload);
-      // const result = await createTestWithQuestions(testPayload);
+      const result = await createTestWithQuestions(testPayload);
       toast.success('Test created successfully!');
       console.log(result);
     } catch (error) {
