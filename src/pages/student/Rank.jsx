@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { getEnrolledTests, getLeaderboard } from '../../api/test';
 import Sidebar from '../../components/Sidebar';
 import { Toaster, toast } from 'react-hot-toast';
+import Loading from '../../components/Loading';
 
 const Rank = () => {
   const navigate = useNavigate();
@@ -19,8 +20,8 @@ const Rank = () => {
     async function fetchTests() {
       try {
         const data = await getEnrolledTests();
-        // getEnrolledTests might return an array directly or { success: true, data: [...] }
         const testsArray = Array.isArray(data) ? data : data.data;
+        console.log("Test ",testsArray)
         setTests(testsArray);
       } catch (error) {
         toast.error("Failed to load tests.");
@@ -99,9 +100,9 @@ const Rank = () => {
           {!selectedTestId ? (
             // Test List View
             <>
-              <h1 className="text-3xl font-bold pt-6 text-gray-900 dark:text-primary-white">Completed Tests</h1>
+              <h1 className="text-3xl font-bold pt-6 text-gray-900 dark:text-primary-white">All Tests Leaderboard</h1>
               {loadingTests ? (
-                <div className="text-center text-xl">Loading tests...</div>
+                <Loading/>
               ) : tests.length > 0 ? (
                 <div className="space-y-4">
                   {tests.map((test) => (
@@ -109,9 +110,8 @@ const Rank = () => {
                       <div className="flex justify-between items-center"> 
                         <div>
                           <h2 className="text-2xl font-bold text-gray-900 dark:text-primary-white">{test.title}</h2>
-                          {/* <p className="text-gray-600 dark:text-gray-300 mt-2">{test.description}</p> */}
-                          Date & Time: <span className="font-semibold">{formatDateTime(test.schedule_date, test.schedule_time)}</span>
-
+                          <p className="text-gray-600 dark:text-gray-300">{test.description}</p>
+                          {/* Date & Time: <span className="font-semibold">{formatDateTime(test.schedule_date, test.schedule_time)}</span> */}
                         </div>
                           <button
                             onClick={() => handleViewLeaderboard(test.test_id)}

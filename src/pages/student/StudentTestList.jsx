@@ -12,8 +12,9 @@ const isTestDatePassed = (scheduleDate, scheduleTime) => {
   return testDateTime < new Date();
 };
 
-const formatDateTime = (dateString, timeString) => {
-  return `${dateString} ${timeString}`;
+const formatDateTime = (dateTimeString) => {
+  const options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+  return new Date(dateTimeString).toLocaleString(undefined, options);
 };
 
 const StudentTestList = () => {
@@ -48,7 +49,7 @@ const StudentTestList = () => {
     return attemptedTests.some(attemptedTest => attemptedTest.test_id === testId);
   };
 
-  if (loading) return <Loading/>;
+  if (loading) return <Loading />;
 
   return (
     <div className='m-0'>
@@ -79,7 +80,7 @@ const StudentTestList = () => {
                             {test.title}
                           </h3>
                           <p className="text-sm text-gray-500 dark:text-gray-400">
-                            {test.course_id}
+                            Duration: {test.duration} mins
                           </p>
                         </div>
                       </div>
@@ -87,10 +88,10 @@ const StudentTestList = () => {
                       <div className="flex items-center space-x-6">
                         <div className="text-right">
                           <p className="text-sm font-medium text-gray-900 dark:text-primary-white">
-                            {formatDateTime(test.schedule_date, test.schedule_time)}
+                            {formatDateTime(test.schedule_start)}
                           </p>
                           <p className="text-sm text-gray-500 dark:text-gray-400">
-                            Duration: {test.duration} mins
+                          {formatDateTime(test.schedule_end)}
                           </p>
                         </div>
 

@@ -9,9 +9,10 @@ import {
     getAllBatches
 } from "../../api/auth";
 import Sidebar from "../../components/Sidebar";
+import toast from "react-hot-toast";
 
 const Course = () => {
-      const [open, setOpen] = useState(false);
+    const [open, setOpen] = useState(false);
     const [batches, setBatches] = useState([]);
     const [courses, setCourses] = useState({});
     const [loading, setLoading] = useState(false);
@@ -60,13 +61,18 @@ const Course = () => {
     };
 
     const handleCreateCourse = async () => {
-        if (!newCourseName || !selectedBatchId) {
-            alert("Please enter course name and select a batch.");
+        // Validation for course name and batch selection
+        if (!newCourseName.trim()) {
+            toast.error("Course name is required.");
             return;
         }
+        if (!selectedBatchId) {
+            toast.error("Please select a batch.");
+            return;
+        }
+
         try {
             setLoading(true);
-            console.log("Creating course with batch:", selectedBatchId, "and course name:", newCourseName);
             const courseData = {
                 batch_id: selectedBatchId,
                 course_name: newCourseName,
@@ -74,13 +80,17 @@ const Course = () => {
             };
             await createCourse(courseData);
             setNewCourseName("");
+            setSelectedBatchId("");
+            toast.success("Course created successfully!");
             fetchBatches();
         } catch (err) {
             setError(err.message);
+            toast.error("Failed to create course.");
         } finally {
             setLoading(false);
         }
     };
+
 
     const handleUpdateCourse = async (courseId) => {
         const updatedName = prompt("Enter new course name:");
@@ -145,10 +155,12 @@ const Course = () => {
                             <button
                                 onClick={handleCreateCourse}
                                 className="flex items-center justify-center bg-primary-purple text-white px-4 py-2 rounded transition-all hover:bg-purple-700"
+                                disabled={loading || !newCourseName.trim() || !selectedBatchId} // Disable if validation fails
                             >
                                 <PlusCircle size={18} className="mr-2" /> Create Course
                             </button>
                         </div>
+
 
                         {/* Display Batches & Courses */}
                         <div className="mt-4">

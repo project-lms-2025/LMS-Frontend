@@ -17,6 +17,7 @@ const fetchAPI = async (endpoint, method = "GET", body = null, isFormData = fals
 
     try {
         const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}${endpoint}`, options);
+        console.log(response)
         const contentType = response.headers.get("Content-Type");
         let data = {};
 

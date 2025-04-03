@@ -21,12 +21,12 @@ const SubmitTest = () => {
   const [showSuccess, setShowSuccess] = useState(false);
   const { state } = useLocation();
   const { test_id } = state || {};
-  // const test_id = "e2133b8b-52c0-4dce-b719-d05187fdef65";
 
   // Fetch test data on mount using getTestById
   useEffect(() => {
     async function fetchTest() {
       try {
+        console.log("Test ",test_id)
         const data = await getTestById(test_id);
         console.log(data);
         setTestData(data);
