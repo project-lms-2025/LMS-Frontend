@@ -1,6 +1,7 @@
-
 // Helper function to handle API requests
-const fetchAPI = async (endpoint, method = "GET", body = null, isFormData = false, authToken = null) => {
+const fetchAPI = async (endpoint, method = "GET", body = null, isFormData = false) => {
+    const authToken = localStorage.getItem("authToken"); // Retrieve token from localStorage
+
     const options = {
         method,
         headers: {
@@ -36,11 +37,89 @@ const fetchAPI = async (endpoint, method = "GET", body = null, isFormData = fals
     }
 };
 
-// Create a new test along with its questions
-export const createTestWithQuestions = async (testData) => {
-    const authToken = localStorage.getItem("authToken"); // Retrieve token from localStorage
-    return fetchAPI("/test/tests", "POST", testData, false, authToken);
+
+// Fetch all tests
+export const getAllTests = async (testType) => {
+    return fetchAPI(`/test/tests?test_type=${testType}`, "GET");
 };
+
+// Get a specific test by ID
+export const getTestById = async (testId) => {
+    return fetchAPI(`/test/${testId}`, "GET");
+};
+
+// Submit answers for a specific test
+export const submitTest = async (testId, responses) => {
+    return fetchAPI(`/test/${testId}/submit`, "POST", { responses });
+};
+
+// Create a new test with questions
+export const createTestWithQuestions = async (testData) => {
+    return fetchAPI("/test/tests", "POST", testData);
+};
+
+// API service related to test series
+// Create a new test series
+export const createTestSeries = async (testSeriesData) => {
+    return fetchAPI("/test-series", "POST", testSeriesData);
+};
+
+export const getAllTestSeries = async () => {
+    return fetchAPI("/test-series", "GET");
+};
+
+// Get all tests in a specific test series
+export const getAllTestInSeries = async (seriesId) => {
+    return fetchAPI(`/test/tests/${seriesId}?test_type=SERIES_TEST`, "GET");
+};
+
+// Get specific test series by ID
+export const getTestSeriesById = async (seriesId) => {
+    return fetchAPI(`/test-series/${seriesId}`, "GET");
+};
+
+// Update a test series
+export const updateTestSeries = async (seriesId, updatedData) => {
+    return fetchAPI(`/test-series/${seriesId}`, "PUT", updatedData);
+};
+
+// Delete a test series
+export const deleteTestSeries = async (seriesId) => {
+    return fetchAPI(`/test-series/${seriesId}`, "DELETE");
+};
+
+
+
+// Get all enrolled tests
+export const getEnrolledTests = async () => {
+    return fetchAPI("/test/enrolled", "GET", null, false);
+};
+
+// Get leaderboard for a specific test
+export const getLeaderboard = async (testId) => {
+    return fetchAPI(`/test/tests/${testId}/leaderboard`, "GET", null, false);
+};
+
+// Get tests that have been attempted by the user
+export const attemptedTest = async () => {
+    return fetchAPI("/test/attempted", "GET", null, false);
+};
+
+// Get detailed test results for a specific student and result
+export const getTestResultDetails = async (resultId, studentId) => {
+    return fetchAPI(`/test/results/${resultId}/${studentId}`, "GET", null, false);
+};
+
+// Get all enrolled test series for the current user
+export const getEnrolledTestSeries = async () => {
+    return fetchAPI("/test-series/my-series", "GET", null, false);
+};
+
+// Get a specific test in a test series
+export const getTestInSeries = async (seriesId, testId) => {
+    return fetchAPI(`/test-series/${seriesId}/tests/${testId}`, "GET", null, false);
+};
+
 
 // Upload an image file to S3 using a presigned URL and return that URL
 export const uploadImageToS3 = async (imageFile, testId, type, id) => {
@@ -88,40 +167,4 @@ export const uploadImageToS3 = async (imageFile, testId, type, id) => {
         console.error("Error during image upload:", error);
         throw error;
     }
-};
-
-export const getTestById = async (testId) => {
-    const authToken = localStorage.getItem("authToken"); // Retrieve the token from localStorage
-    return fetchAPI(`/test/tests/${testId}`, "GET", null, false, authToken);
-};
-
-export const getAllTests = async (test_type) => {
-    const authToken = localStorage.getItem("authToken"); // Retrieve the token from localStorage
-    return fetchAPI(`/test/tests?test_type=${test_type}`, "GET", null, false, authToken);
-};
-
-export const getEnrolledTests = async () => {
-    const authToken = localStorage.getItem("authToken"); // Retrieve the token from localStorage
-    return fetchAPI("/test/enrolled", "GET", null, false, authToken);
-};
-
-export const submitTest = async (testId, responses) => {
-    const authToken = localStorage.getItem("authToken"); // Retrieve token from localStorage
-    return fetchAPI(`/test/${testId}/submit`, "POST", { responses }, false, authToken);
-};
-
-export const getLeaderboard = async (testId) => {
-    const authToken = localStorage.getItem("authToken"); // Retrieve token from localStorage
-    return fetchAPI(`/test/tests/${testId}/leaderboard`, "GET", null, false, authToken);
-};
-
-export const attemptedTest = async () => {
-    const authToken = localStorage.getItem("authToken"); // Retrieve token from localStorage
-    return fetchAPI("/test/attempted", "GET", null, false, authToken);
-};
-
-// Test Results API
-export const getTestResultDetails = async (resultId, studentId) => {
-    const authToken = localStorage.getItem("authToken");
-    return fetchAPI(`/test/results/${resultId}/${studentId}`, "GET", null, false, authToken);
 };

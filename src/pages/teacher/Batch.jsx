@@ -6,10 +6,12 @@ import {
   getBatchById,
   updateBatchById,
   deleteBatchById,
-} from "../api/auth";
+} from "../../api/auth";
 import toast from "react-hot-toast";
+import Sidebar from "../../components/Sidebar";
 
 const Batch = () => {
+    const [open, setOpen] = useState(false);
   const [batches, setBatches] = useState([]);
   const [batchData, setBatchData] = useState({ batch_name: "", description: "", start_date: "", end_date: "",cost:"" });
   const [selectedBatchId, setSelectedBatchId] = useState(null);
@@ -82,6 +84,13 @@ const Batch = () => {
   };
 
   return (
+    <div className="m-0">
+    <Sidebar open={open} setOpen={setOpen} />
+    <div
+      className={`transition-all duration-300 ${
+        open ? 'md:ml-[20rem] ml-56 mr-4 w-[40%] md:w-[75%]' : 'ml-24 mr-2'
+      } md:w-[90%]  w-[95%] md:mt`}
+    >
     <div className="p-6 max-w-4xl mx-auto bg-secondary-gray rounded-lg shadow-lg">
       <h2 className="text-2xl font-bold text-primary-purple mb-4">Batch Management</h2>
       {error && <p className="text-red-500">{error}</p>}
@@ -168,6 +177,8 @@ const Batch = () => {
           </li>
         ))}
       </ul>
+    </div>
+    </div>
     </div>
   );
 };

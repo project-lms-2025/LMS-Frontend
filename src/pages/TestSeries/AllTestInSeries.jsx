@@ -5,7 +5,7 @@ import Loading from '../../components/Loading';
 import Sidebar from '../../components/Sidebar';
 import { Plus } from 'lucide-react';
 import { getAllTests, getTestById } from '../../api/test';
-import { getAllTestInSeries } from '../../api/testSeries';
+import { getAllTestInSeries } from '../../api/test';
 
 const AllTestInSeries = () => {
   const { seriesId } = useParams();

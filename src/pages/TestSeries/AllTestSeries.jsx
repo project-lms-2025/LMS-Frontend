@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Toaster, toast } from 'react-hot-toast';
-import { getAllTestSeries } from '../../api/testSeries';
+import { getAllTestSeries } from '../../api/test';
 import Sidebar from '../../components/Sidebar';
 import { Plus } from 'lucide-react';
 

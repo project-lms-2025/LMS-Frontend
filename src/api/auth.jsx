@@ -1,5 +1,7 @@
 // Helper function to handle API requests
-const fetchAPI = async (endpoint, method = "GET", body = null, isFormData = false, authToken = null) => {
+const fetchAPI = async (endpoint, method = "GET", body = null, isFormData = false) => {
+    const authToken = localStorage.getItem("authToken"); // Retrieve token from localStorage
+
     const options = {
         method,
         headers: {
@@ -35,171 +37,175 @@ const fetchAPI = async (endpoint, method = "GET", body = null, isFormData = fals
     }
 };
 
+// Authentication API functions
 
-// Authentication APIs
+/** Registers a new user with the provided data */
 export const registerUser = async (userData) => {
     return fetchAPI("/auth/register", "POST", userData);
 };
 
-// Admin Register
+/** Registers a new teacher/admin with the provided data */
 export const registerTeacher = async (userData) => {
-    const authToken = localStorage.getItem("authToken"); // Retrieve the token from localStorage
-    return fetchAPI("/auth/create-user", "POST", userData, false, authToken);
+    return fetchAPI("/auth/create-user", "POST", userData);
 };
 
-// ye register wala ho gaya 
+/** Sends an OTP to the provided email address for verification */
 export const sendOtp = async (email) => {
     return fetchAPI("/otp/send", "POST", { email });
 };
 
-
+/** Sends a login OTP to the provided phone number */
 export const sendLoginOtp = async (phoneNumber) => {
     if (!phoneNumber) throw new Error("Phone number is required");
     return fetchAPI("/auth/send-login-otp", "POST", { phoneNumber });
 };
 
-// Function to 
+/** Verifies the OTP sent to the email */
 export const verifyOtp = async (email, otp) => {
     return fetchAPI("/otp/verify", "POST", { email, otp });
 };
 
+/** Logs in a user with the provided credentials */
 export const loginUser = async (credentials) => {
     return fetchAPI("/auth/login", "POST", credentials);
 };
 
+/** Logs out the user from the current session */
 export const logoutUser = async (email, deviceType = "mobile") => {
-    const authToken = localStorage.getItem("authToken"); // Retrieve token from localStorage
-    return fetchAPI("/auth/logout", "POST", { email, deviceType }, false, authToken);
+    return fetchAPI("/auth/logout", "POST", { email, deviceType });
 };
 
-
+/** Sends a forgot password request for the provided email */
 export const forgotPassword = async (email) => {
     return fetchAPI("/auth/forgot-password", "POST", { email });
 };
 
+/** Resets the password using the reset token and new password */
 export const resetPassword = async (resetToken, newPassword) => {
     return fetchAPI("/auth/reset-password", "POST", { resetToken, newPassword });
 };
 
-// Batch APIs
+// Batch API functions
+
+/** Creates a new batch with the provided data */
 export const createBatch = async (batchData) => {
-    const authToken = localStorage.getItem("authToken");
-    return fetchAPI("/batch", "POST", batchData, false, authToken);
+    return fetchAPI("/batch", "POST", batchData);
 };
 
+/** Retrieves all available batches */
 export const getAllBatches = async () => {
-    const authToken = localStorage.getItem("authToken");
-    return fetchAPI("/batch", "GET", null, false, authToken);
+    return fetchAPI("/batch", "GET");
 };
 
+/** Retrieves details of a specific batch by its ID */
 export const getBatchById = async (batchId) => {
     return fetchAPI(`/batch/${batchId}`, "GET");
 };
 
+/** Updates an existing batch with new data by its ID */
 export const updateBatchById = async (batchId, batchData) => {
-    const authToken = localStorage.getItem("authToken");
-    return fetchAPI(`/batch/${batchId}`, "PUT", batchData, false, authToken);
+    return fetchAPI(`/batch/${batchId}`, "PUT", batchData);
 };
 
+/** Deletes a specific batch by its ID */
 export const deleteBatchById = async (batchId) => {
-    const authToken = localStorage.getItem("authToken");
-    return fetchAPI(`/batch/${batchId}`, "DELETE", null, false, authToken);
+    return fetchAPI(`/batch/${batchId}`, "DELETE");
 };
 
+// Course API functions
 
-// Course APIs
+/** Creates a new course with the provided data */
 export const createCourse = async (courseData) => {
-    const authToken = localStorage.getItem("authToken");
-    return fetchAPI("/course", "POST", { ...courseData, allow_notes_download: true }, false, authToken);
+    return fetchAPI("/course", "POST", { ...courseData, allow_notes_download: true });
 };
 
+/** Retrieves details of a specific course by its ID */
 export const getCourseById = async (courseId) => {
     return fetchAPI(`/course/${courseId}`);
 };
 
+/** Updates an existing course with new data by its ID */
 export const updateCourse = async (courseId, courseData) => {
-    const authToken = localStorage.getItem("authToken"); // Retrieve token from localStorage
-    return fetchAPI(`/course/${courseId}`, "PUT", courseData, false, authToken);
+    return fetchAPI(`/course/${courseId}`, "PUT", courseData);
 };
 
+/** Deletes a specific course by its ID */
 export const deleteCourse = async (courseId) => {
-    const authToken = localStorage.getItem("authToken"); // Retrieve token from localStorage
-    return fetchAPI(`/course/${courseId}`, "DELETE", null, false, authToken);
+    return fetchAPI(`/course/${courseId}`, "DELETE");
 };
 
+/** Retrieves all courses for a specific batch */
 export const getCoursesByBatchId = async (batchId) => {
     return fetchAPI(`/course/batch/${batchId}`);
 };
+
+/** Retrieves all available courses */
 export const getAllCourses = async () => {
-    const authToken = localStorage.getItem("authToken"); // Retrieve token from localStorage
-    return fetchAPI(`/course/courses`,"GET", null, false, authToken);
+    return fetchAPI(`/course/courses`, "GET");
 };
 
-// Class APIs
-export const createClass = async (classData, authToken) => {
-    return fetchAPI("/class", "POST", classData, false, authToken);
+// Class API functions
+
+/** Creates a new class with the provided data */
+export const createClass = async (classData) => {
+    return fetchAPI("/class", "POST", classData);
 };
 
+/** Retrieves details of a specific class by its ID */
 export const getClassById = async (classId) => {
     return fetchAPI(`/class/${classId}`, "GET");
 };
 
-export const updateClass = async (classId, updatedData, authToken) => {
-    return fetchAPI(`/class/${classId}`, "PUT", updatedData, false, authToken);
+/** Updates an existing class with new data by its ID */
+export const updateClass = async (classId, updatedData) => {
+    return fetchAPI(`/class/${classId}`, "PUT", updatedData);
 };
 
+/** Retrieves all classes for a specific course */
 export const getClassesByCourseId = async (courseId) => {
     return fetchAPI(`/class/course/${courseId}`, "GET");
 };
 
-export const deleteClass = async (classId, authToken) => {
-    return fetchAPI(`/class/${classId}`, "DELETE", null, false, authToken);
+/** Deletes a specific class by its ID */
+export const deleteClass = async (classId) => {
+    return fetchAPI(`/class/${classId}`, "DELETE");
 };
 
+// User API functions
 
-
-// User APIs
+/** Retrieves a user by email */
 export const getUserByEmail = async (email) => {
-    const authToken = localStorage.getItem("authToken"); // Retrieve token from localStorage
-    if (!authToken) {
-        throw new Error("Authorization token is missing");
-    }
-    return fetchAPI(`/user/${encodeURIComponent(email)}`, "GET", null, false, authToken);
-};
-// Get User Profile
-export const getUserProfile = async () => {
-    const authToken = localStorage.getItem("authToken");
-    if (!authToken) {
-        throw new Error("Authorization token is missing");
-    }
-    return fetchAPI("/user/profile", "GET", null, false, authToken);
+    return fetchAPI(`/user/${encodeURIComponent(email)}`, "GET");
 };
 
-// File Upload API (Profile Picture & PDF)
+/** Retrieves the current user's profile */
+export const getUserProfile = async () => {
+    return fetchAPI("/user/profile", "GET");
+};
+
+/** Uploads files (profile picture, etc.) for the user */
 export const uploadFiles = async (formData) => {
     return fetchAPI("/user/upload", "POST", formData, true);
 };
+
+// Enrollment API functions
+
+/** Enrolls a user in a course or batch */
 export const enrollUser = async (enrollmentData) => {
-    const authToken = localStorage.getItem("authToken");
-    return fetchAPI("/enrollment/enroll-user", "POST", enrollmentData, false, authToken);
-};
-// Enroll User in Batch
-export const getEnrollmentBatches = async () => {
-    const authToken = localStorage.getItem("authToken");
-    if (!authToken) {
-        throw new Error("Authorization token is missing");
-    }
-    return fetchAPI("/enrollment/batch", "GET", null, false, authToken);
-};
-export const getEnrolledCourses = async () => {
-    const authToken = localStorage.getItem("authToken");
-    if (!authToken) {
-        throw new Error("Authorization token is missing");
-    }
-    return fetchAPI("/course/enrolled-courses", "GET", null, false, authToken);
+    return fetchAPI("/enrollment/enroll-user", "POST", enrollmentData);
 };
 
+/** Retrieves the list of batches the user is enrolled in */
+export const getEnrollmentBatches = async () => {
+    return fetchAPI("/enrollment/batch", "GET");
+};
+
+/** Retrieves the list of courses the user is enrolled in */
+export const getEnrolledCourses = async () => {
+    return fetchAPI("/course/enrolled-courses", "GET");
+};
+
+/** Creates a new payment order with the provided data */
 export const createPaymentOrder = async (paymentData) => {
-    const authToken = localStorage.getItem("authToken");
-    return fetchAPI("/payment/create-order", "POST", paymentData, false, authToken);
+    return fetchAPI("/payment/create-order", "POST", paymentData, false);
 };

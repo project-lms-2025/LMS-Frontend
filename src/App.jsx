@@ -32,8 +32,6 @@ import CreateTest from './pages/teacher/CreateTest';
 import SubmitTest from './pages/student/SubmitTest';
 import StudentTestList from './pages/student/StudentTestList';
 import NotFound from './components/NotFound';
-import Batch from './pages/student/Batch';
-import TBatch from './pages/teacher/Batches';
 import TestResultList from './pages/student/AttempedTestList';
 import StudentResponse from './pages/student/StudentResponse';
 import AllTestSeries from './pages/TestSeries/AllTestSeries';
@@ -49,6 +47,8 @@ import EnrolledTestSeries from './pages/student/EnrolledTestSeries';
 import BatchPayment from './pages/auth/BatchPayment';
 import TestSeriesPayment from './pages/auth/TestSeriesPayment'
 import { Toaster } from 'react-hot-toast';
+import Batch from './pages/teacher/Batch';
+import Course from './pages/teacher/Course';
 
 
 function App() {
@@ -80,7 +80,8 @@ function App() {
 
         {/* Teacher Routes */}
         <Route path="/teacherDashboard" element={<Teacher />} />
-        <Route path="/TBatches" element={<TBatch />} />
+        <Route path="/TBatches" element={<Batch />} />
+        <Route path="/TCourses" element={<Course />} />
         <Route path="/teacherProfile" element={<TeacherProfile />} />
         <Route path="/classes" element={<Classes />} />
         <Route path="/createtest" element={<CreateTest/>} /> {/* Test created by teacher */}
@@ -105,6 +106,7 @@ function App() {
 
         <Route path="/up" element={<FileUploadComponent />} />
         <Route path="/x" element={<Test />} />
+        {/* <Route path="/tbatch" element={<TBatch />} /> */}
         <Route path="/not" element={<NotFound />} />
 
         <Route path="/jupyter" element={<Jupyter />} />

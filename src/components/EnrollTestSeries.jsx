@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getEnrollmentBatches } from '../api/auth';
-import { getAllTestSeries, getEnrolledTestSeries } from '../api/testSeries';
 import Loading from './Loading';
+import { getAllTestSeries, getEnrolledTestSeries } from '../api/test';
 
 // Card Component for a Test Series
 const Testcard = ({ series, onEnroll, isEnrolled }) => {

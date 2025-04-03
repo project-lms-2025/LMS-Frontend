@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Sidebar from '../../components/Sidebar';
 import Loading from '../../components/Loading';
 import { getEnrollmentBatches } from '../../api/auth';
-import { getEnrolledTestSeries } from '../../api/testSeries';
+import { getEnrolledTestSeries } from '../../api/test';
 import toast, { Toaster } from 'react-hot-toast';
 
 const EnrolledTestSeries = () => {

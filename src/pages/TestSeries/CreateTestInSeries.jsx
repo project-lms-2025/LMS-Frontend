@@ -3,7 +3,7 @@ import { Plus, Trash2, Eye, Edit2, Clock, Save, Paperclip } from 'lucide-react';
 import {  uploadImageToS3 } from '../../api/test'; // Import API functions
 import { v4 as uuidv4 } from 'uuid';
 import { useNavigate } from 'react-router-dom';
-import { createTestWithQuestions } from '../../api/testSeries';
+import { createTestWithQuestions } from '../../api/test';
 import toast, { Toaster } from 'react-hot-toast';
 
 const CreateTestInSeries = () => {

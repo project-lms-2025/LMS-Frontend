@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import Loading from '../../components/Loading';
 import { createPaymentOrder, getUserProfile } from '../../api/auth';
-import { getTestSeriesById } from '../../api/testSeries';
+import { getTestSeriesById } from '../../api/test';
 
 const BatchPayment = () => {
     const { series_id } = useParams();
