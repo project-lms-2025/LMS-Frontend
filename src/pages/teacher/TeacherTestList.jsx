@@ -87,9 +87,8 @@ const TeacherTestList = () => {
         <div className="m-0">
             <Sidebar open={open} setOpen={setOpen} />
             <div
-                className={`transition-all duration-300 ${
-                    open ? "md:ml-[20rem] ml-56 mr-4 w-[40%] md:w-[75%]" : "ml-24 mr-2"
-                } md:w-[90%] w-[95%]`}
+                className={`transition-all duration-300 ${open ? "md:ml-[20rem] ml-56 mr-4 w-[40%] md:w-[75%]" : "ml-24 mr-2"
+                    } md:w-[90%] w-[95%]`}
             >
                 <div className="p-6 flex justify-center min-h-[90vh]">
                     <Toaster />
@@ -128,6 +127,21 @@ const TeacherTestList = () => {
 
                                 {/* Create Test Link */}
                                 <a
+                                    onClick={(e) => {
+                                        // Validate if batch is selected
+                                        if (!selectedBatchId) {
+                                            e.preventDefault(); // Prevent navigation
+                                            toast.error("Please select a batch before creating the test.");
+                                            return;
+                                        }
+
+                                        // Validate if course is selected
+                                        if (!selectedCourseId) {
+                                            e.preventDefault(); // Prevent navigation
+                                            toast.error("Please select a course before creating the test.");
+                                            return;
+                                        }
+                                    }}
                                     className="flex justify-center no-underline hover:no-underline items-center gap-2 px-4 py-2 rounded-lg bg-white border border-gray-300 hover:bg-gray-50"
                                     href={`/createtest?type=COURSE_TEST&course_id=${selectedCourseId}`}
                                 >

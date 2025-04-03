@@ -209,60 +209,108 @@ const CreateTest = () => {
   };
 
   // Validation Function
-  const validateFields = () => {
-    // Validate test details
-    if (!questionPaper.title.trim()) {
-      toast.error("Please enter a test title.");
+  // Validation Function
+const validateFields = () => {
+  // Validate test details
+  if (!questionPaper.title.trim()) {
+    toast.error("Test title is required.");
+    return false;
+  }
+
+  if (!questionPaper.duration || questionPaper.duration <= 0) {
+    toast.error("Duration must be a positive number.");
+    return false;
+  }
+
+  if (!questionPaper.schedule_start) {
+    toast.error("Schedule start time is required.");
+    return false;
+  }
+
+  if (!questionPaper.schedule_end) {
+    toast.error("Schedule end time is required.");
+    return false;
+  }
+
+  if (!questionPaper.description.trim()) {
+    toast.error("Test description is required.");
+    return false;
+  }
+
+  // Validate positive_marks and negative_marks for each question
+  for (let q of questionPaper.questions) {
+    if (q.positive_marks <= 0 || isNaN(q.positive_marks)) {
+      toast.error("Each question must have a valid positive mark.");
+      return false;
+    }
+    
+    if (q.negative_marks < 0 || isNaN(q.negative_marks)) {
+      toast.error("Each question must have a valid negative mark (cannot be negative).");
+      return false;
+    }
+  }
+
+  // Validate 'isCorrect' option for each question
+  for (let q of questionPaper.questions) {
+    if (q.options.length === 0) {
+      toast.error("Each question must have at least one option.");
       return false;
     }
 
-    if (!questionPaper.duration || questionPaper.duration <= 0) {
-      toast.error("Please enter a valid test duration (greater than 0 minutes).");
-      return false;
-    }
+    const correctOptions = q.options.filter(opt => opt.is_correct === true);
 
-    if (!questionPaper.schedule_start) {
-      toast.error("Please select a scheduled start for the test.");
-      return false;
-    }
-
-    if (!questionPaper.schedule_end) {
-      toast.error("Please select a scheduled end for the test.");
-      return false;
-    }
-
-    if (!questionPaper.description.trim()) {
-      toast.error("Please enter a test description.");
-      return false;
-    }
-
-    // Validate questions
-    if (questionPaper.questions.length === 0) {
-      toast.error("Please add at least one question to the test.");
-      return false;
-    }
-
-    for (let q of questionPaper.questions) {
-      if (!q.question_text) {
-        toast.error("Please fill in the question text.");
+    if (q.question_type === "MCQ") {
+      // For MCQs, ensure exactly one option is marked as correct
+      if (correctOptions.length !== 1) {
+        toast.error("For MCQs, exactly one option must be marked as correct.");
         return false;
       }
-      if (q.question_type === "NAT") {
-        if (!q.options[0].option_text) {
-          toast.error("Please fill in the option text for NAT question.");
+    } else if (q.question_type === "MSQ") {
+      // For MSQs, ensure at least one option is marked as correct
+      if (correctOptions.length === 0) {
+        toast.error("For MSQs, at least one option must be marked as correct.");
+        return false;
+      }
+    }
+
+    // Ensure each option has a valid 'isCorrect' field
+    for (let opt of q.options) {
+      if (typeof opt.is_correct !== "boolean") {
+        toast.error("Each option must have a valid 'isCorrect' field (true or false).");
+        return false;
+      }
+    }
+  }
+
+  // Validate questions
+  if (questionPaper.questions.length === 0) {
+    toast.error("You must add at least one question.");
+    return false;
+  }
+
+  for (let q of questionPaper.questions) {
+    if (!q.question_text) {
+      toast.error("Each question must have text.");
+      return false;
+    }
+
+    if (q.question_type === "NAT") {
+      if (!q.options[0].option_text) {
+        toast.error("NAT questions must have an option text.");
+        return false;
+      }
+    } else {
+      for (let opt of q.options) {
+        if (!opt.option_text) {
+          toast.error("All options must have text.");
           return false;
-        }
-      } else {
-        for (let opt of q.options) {
-          if (!opt.option_text) {
-            toast.error("Please fill in all option texts.");
-            return false;
-          }
         }
       }
     }
-    return true;
-  };
+  }
+
+  return true;
+};
 
   // Test Creation Function
   const savePaper = async () => {
@@ -272,7 +320,7 @@ const CreateTest = () => {
       if (!validateFields()) return;
       const testPayload = { ...questionPaper };
       console.log(testPayload);
-      const result = await createTestWithQuestions(testPayload);
+      // const result = await createTestWithQuestions(testPayload);
       toast.success('Test created successfully!');
       console.log(result);
     } catch (error) {
