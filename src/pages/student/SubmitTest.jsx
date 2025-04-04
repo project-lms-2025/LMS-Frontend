@@ -5,6 +5,7 @@ import { getTestById, submitTest } from '../../api/test'; // Import API function
 import { useLocation } from 'react-router-dom';
 import toast, { Toaster } from 'react-hot-toast';
 import SuccessPopup from '../../components/SuccessPopup';
+import Loading from '../../components/Loading';
 
 const SubmitTest = () => {
   // States for test data and UI
@@ -26,20 +27,85 @@ const SubmitTest = () => {
   useEffect(() => {
     async function fetchTest() {
       try {
-        console.log("Test ",test_id)
         const data = await getTestById(test_id);
-        console.log(data);
+        console.log(data.questions);
+  
+        // Store the fetched test data in the state
         setTestData(data);
-        setTimeLeft(data.duration * 60);
+  
+        // Retrieve the saved time left from localStorage
+        const storedTimeLeft = localStorage.getItem("timeLeft");
+        if (storedTimeLeft) {
+          setTimeLeft(parseInt(storedTimeLeft));
+        } else {
+          setTimeLeft(data.duration * 60); // Set the timer from test duration if not available in localStorage
+        }
+  
+        // Retrieve answers from localStorage
+        const savedAnswers = JSON.parse(localStorage.getItem("studentAnswers"));
+        if (savedAnswers) {
+          // Map over each question and apply saved answers
+          const updatedQuestions = data.questions.map(q => {
+            const savedAnswer = savedAnswers[q.question_id];
+            
+            if (savedAnswer) {
+              // For MCQ (single selection)
+              if (q.question_type === "MCQ") {
+                q.studentAnswer = savedAnswer; // Set single answer
+              }
+              // For MSQ (multiple selections)
+              if (q.question_type === "MSQ") {
+                q.studentAnswers = savedAnswer; // Set multiple selected answers
+              }
+            }
+            return q;
+          });
+  
+          // Update the state with the saved answers applied to the questions
+          setTestData(prevData => ({
+            ...prevData,
+            questions: updatedQuestions,
+          }));
+        }
+  
         setLoading(false);
       } catch (error) {
         toast.error("Failed to load test.");
-        console.error("Error fetching test:", error);
         setLoading(false);
       }
     }
+  
     if (test_id) fetchTest();
   }, [test_id]);
+  
+
+  // Save student answers to localStorage whenever they change
+  const saveAnswersToLocalStorage = () => {
+    if (!testData || !testData.questions) return;
+    const answers = testData.questions.reduce((acc, q) => {
+      // For MCQ (single selection)
+      if (q.question_type === "MCQ") {
+        acc[q.question_id] = [q.studentAnswer]; // Store a single option_id for MCQ
+      }
+      // For MSQ (multiple selections)
+      else if (q.question_type === "MSQ") {
+        acc[q.question_id] = q.studentAnswers || []; // Store multiple option_ids for MSQ
+      }
+      // For NAT (text entry)
+      else if (q.question_type === "NAT") {
+        acc[q.question_id] = q.response_text || ""; // Store text for NAT
+      }
+      return acc;
+    }, {});
+
+    // Store the answers object in localStorage
+    localStorage.setItem("studentAnswers", JSON.stringify(answers));
+  };
+
+  // UseEffect to detect changes in testData and store to localStorage after updates
+  useEffect(() => {
+    saveAnswersToLocalStorage();
+  }, [testData]);
 
   // Extract sections and filter questions
   const sectionLabels = {
@@ -54,11 +120,18 @@ const SubmitTest = () => {
   useEffect(() => {
     if (timeLeft > 0) {
       const timerId = setInterval(() => {
-        setTimeLeft(prev => (prev <= 1 ? 0 : prev - 1));
+        setTimeLeft(prev => {
+          const newTimeLeft = prev <= 1 ? 0 : prev - 1;
+          localStorage.setItem("timeLeft", newTimeLeft); // Store time left in localStorage
+          return newTimeLeft;
+        });
       }, 1000);
       return () => clearInterval(timerId);
+    } else {
+      handleSubmitTest(); // Automatically submit the test once time is up
     }
   }, [timeLeft]);
+
 
   // Helper to format time
   const formatTime = (secs) => {
@@ -78,19 +151,19 @@ const SubmitTest = () => {
   // ---------------------
   // For MCQ: store the selected option id in studentAnswer
   const handleMCQAnswer = (questionId, optionId) => {
-    setTestData(prevData => ({
-      ...prevData,
-      questions: prevData.questions.map(q =>
+    setTestData(prevData => {
+      const updatedQuestions = prevData.questions.map(q =>
         q.question_id === questionId ? { ...q, studentAnswer: optionId } : q
-      )
-    }));
+      );
+      saveAnswersToLocalStorage(); // Save to localStorage
+      return { ...prevData, questions: updatedQuestions };
+    });
   };
 
   // For MSQ: store selected option ids in studentAnswers (array)
   const handleMSQAnswer = (questionId, optionId, checked) => {
-    setTestData(prevData => ({
-      ...prevData,
-      questions: prevData.questions.map(q => {
+    setTestData(prevData => {
+      const updatedQuestions = prevData.questions.map(q => {
         if (q.question_id === questionId) {
           let answers = q.studentAnswers ? [...q.studentAnswers] : [];
           if (checked) {
@@ -101,55 +174,75 @@ const SubmitTest = () => {
           return { ...q, studentAnswers: answers };
         }
         return q;
-      })
-    }));
+      });
+      saveAnswersToLocalStorage(); // Save to localStorage
+      return { ...prevData, questions: updatedQuestions };
+    });
   };
+
 
   // For NAT: store the entered text in response_text
   const handleNATAnswer = (questionId, value) => {
-    setTestData(prevData => ({
-      ...prevData,
-      questions: prevData.questions.map(q =>
+    setTestData(prevData => {
+      const updatedQuestions = prevData.questions.map(q =>
         q.question_id === questionId ? { ...q, response_text: value } : q
-      )
-    }));
+      );
+      saveAnswersToLocalStorage(); // Save to localStorage
+      return { ...prevData, questions: updatedQuestions };
+    });
   };
 
-  // ---------------------
+
   // Submit Functionality
-  // ---------------------
   // Build responses array from testData and call the submitTest API.
+  const handleSubmitTest = async () => {
+    // Check if all questions have been answered
+    const unansweredQuestions = testData.questions.filter(q => {
+      if (q.question_type === "MSQ") {
+        return !q.studentAnswers || q.studentAnswers.length === 0;
+      } else {
+        return !q.studentAnswer;
+      }
+    });
 
-const handleSubmitTest = async () => {
-  const responses = testData.questions.map(q => {
-    if (q.question_type === "MSQ") {
-      return {
-        question_id: q.question_id,
-        options_chosen: q.studentAnswers || [],
-        response_text: q.response_text || ""
-      };
-    } else {
-      return {
-        question_id: q.question_id,
-        options_chosen: q.studentAnswer ? [q.studentAnswer] : [],
-        response_text: q.response_text || ""
-      };
+    if (unansweredQuestions.length > 0) {
+      const confirmation = window.confirm(
+        "You have unanswered questions. Are you sure you want to submit the test?"
+      );
+      if (!confirmation) return;
     }
-  });
 
-  try {
-    console.log("Submitting responses:", responses);
-    const result = await submitTest(testData.test_id, responses);
-    toast.success("Test submitted successfully!");
-    setShowSuccess(true); // Show popup
-  } catch (error) {
-    toast.error("Error submitting test.");
-    console.error("Submit test error:", error);
-  }
-};
+    // Build responses array from testData
+    const responses = testData.questions.map(q => {
+      if (q.question_type === "MSQ") {
+        return {
+          question_id: q.question_id,
+          options_chosen: q.studentAnswers || [],
+          response_text: q.response_text || ""
+        };
+      } else {
+        return {
+          question_id: q.question_id,
+          options_chosen: q.studentAnswer ? [q.studentAnswer] : [],
+          response_text: q.response_text || ""
+        };
+      }
+    });
 
+    try {
+      console.log("Submitting responses:", responses);
+      const result = await submitTest(testData.test_id, responses);
+      toast.success("Test submitted successfully!");
+      localStorage.removeItem("timeLeft"); // Clear the timer from localStorage after submission
+      localStorage.removeItem("studentAnswers");
+      setShowSuccess(true); // Show popup
+    } catch (error) {
+      toast.error("Error submitting test.");
+      console.error("Submit test error:", error);
+    }
+  };
 
-  if (loading) return <div>Loading test...</div>;
+  if (loading) return <Loading />;
   if (!testData) return <div>No test data available.</div>;
 
   return (
