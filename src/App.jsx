@@ -49,6 +49,7 @@ import TestSeriesPayment from './pages/auth/TestSeriesPayment'
 import { Toaster } from 'react-hot-toast';
 import Batch from './pages/teacher/Batch';
 import Course from './pages/teacher/Course';
+import TeacherLanding from './pages/TeacherLanding';
 
 
 function App() {
@@ -110,6 +111,7 @@ function App() {
         <Route path="/not" element={<NotFound />} />
 
         <Route path="/jupyter" element={<Jupyter />} />
+        <Route path="/tl" element={<TeacherLanding />} />
       </Routes>
     </Router>
   )

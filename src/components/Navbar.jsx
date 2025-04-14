@@ -56,9 +56,9 @@ export const Navbar = () => {
   };
 
   return (
-    <header className="sticky top-0 z-50 border-b lg:px-16 dark:border-primary-purple/20 bg-primary-white dark:bg-primary-purple">
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
+    <header className="sticky top-4 z-50 -b lg:px-16 mt-4    bg-none dark:bg-primary-purple">
+      <div className="container mx-auto px-4 bg-white rounded-xl border border-b-4 border-r-4 border-slate-600 dark:bg-primary-purple/20 dark:border-accent-yellow/20 shadow-lg">
+        <div className="flex mx-4 items-center justify-between h-16">
           {/* Logo Section */}
           <div className="flex items-center space-x-2">
             <GraduationCap className="w-8 h-8 text-primary-purple dark:text-accent-yellow" />
