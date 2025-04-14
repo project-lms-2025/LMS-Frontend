@@ -508,24 +508,24 @@ const TeacherLanding = () => {
                                 <h2 className="text-lg font-semibold text-purple-900 mb-3">
                                     Company
                                 </h2>
-                                <ul className="space-y-2">
+                                <ul className="space-y-2 text-black">
                                     <li>
-                                        <a href="#about" className="hover:text-purple-700">
+                                        <a href="#about" className="hover:text-purple-700 text-black">
                                             About
                                         </a>
                                     </li>
                                     <li>
-                                        <a href="#contact-us" className="hover:text-purple-700">
+                                        <a href="#contact-us" className="hover:text-purple-700 text-black">
                                             Contact us
                                         </a>
                                     </li>
                                     <li>
-                                        <a href="#careers" className="hover:text-purple-700">
+                                        <a href="#careers" className="hover:text-purple-700 text-black">
                                             Careers
                                         </a>
                                     </li>
                                     <li>
-                                        <a href="#culture" className="hover:text-purple-700">
+                                        <a href="#culture" className="hover:text-purple-700 text-black">
                                             Culture
                                         </a>
                                     </li>
@@ -539,27 +539,27 @@ const TeacherLanding = () => {
                                 </h2>
                                 <ul className="space-y-2">
                                     <li>
-                                        <a href="#getting-started" className="hover:text-purple-700">
+                                        <a href="#getting-started" className="hover:text-purple-700 text-black">
                                             Getting started
                                         </a>
                                     </li>
                                     <li>
-                                        <a href="#help-center" className="hover:text-purple-700">
+                                        <a href="#help-center" className="hover:text-purple-700 text-black">
                                             Help center
                                         </a>
                                     </li>
                                     <li>
-                                        <a href="#server-status" className="hover:text-purple-700">
+                                        <a href="#server-status" className="hover:text-purple-700 text-black">
                                             Server status
                                         </a>
                                     </li>
                                     <li>
-                                        <a href="#report-bug" className="hover:text-purple-700">
+                                        <a href="#report-bug" className="hover:text-purple-700 text-black">
                                             Report a bug
                                         </a>
                                     </li>
                                     <li>
-                                        <a href="#chat-support" className="hover:text-purple-700">
+                                        <a href="#chat-support" className="hover:text-purple-700 text-black">
                                             Chat support
                                         </a>
                                     </li>
@@ -586,7 +586,7 @@ const TeacherLanding = () => {
                                                 d="M3 5a1 1 0 011-1h3.28a1 1 0 01.71.29l2.3 2.3a1 1 0 01.29.7v3.28a1 1 0 01-1 1H8l-5-5V6a1 1 0 011-1zM13 5h3a2 2 0 012 2v3m-4.24 3.76l1.24.62c.57.28 1.21.42 1.85.42a2 2 0 002-2v-1a2 2 0 00-2-2h-3c-1.6 0-3.13.64-4.24 1.76l-5.76 5.76a2 2 0 000 2.83l1.17 1.17a2 2 0 002.83 0l5.76-5.76z"
                                             />
                                         </svg>
-                                        <a href="#phone" className="hover:text-purple-700">
+                                        <a href="#phone" className="hover:text-purple-700 text-black">
                                             8479680909
                                         </a>
                                     </li>
@@ -604,7 +604,7 @@ const TeacherLanding = () => {
                                                 d="M3.75 4.75l8.25 8.25 8.25-8.25M3.75 19.25l8.25-8.25 8.25 8.25"
                                             />
                                         </svg>
-                                        <a href="#location" className="hover:text-purple-700">
+                                        <a href="#location" className="hover:text-purple-700 text-black">
                                             Jaipur, Rajasthan
                                         </a>
                                     </li>
