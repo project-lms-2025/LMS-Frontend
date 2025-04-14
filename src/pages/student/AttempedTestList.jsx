@@ -39,7 +39,7 @@ const AttempedTestList = () => {
             <div
                 className={`transition-all duration-300 p-6 ${open ? "md:ml-[20rem] ml-56 mr-4 w-[40%] md:w-[75%]" : "ml-24 mr-2"} md:w-[90%] w-[95%]`}
             >
-                <h1 className="text-2xl font-bold mb-6">Attempted Tests</h1>
+                <h1 className="text-2xl font-bold mb-6">Your Attempts</h1>
                 
                 {loading ? (
                     <div className="text-center text-gray-500">Loading tests...</div>
@@ -50,11 +50,11 @@ const AttempedTestList = () => {
                         {tests.map((test) => (
                             <div
                                 key={test.test_id}
-                                className="bg-white border rounded-lg shadow-md p-4 flex justify-between items-center"
+                                className="bg-primary-purple/70 border rounded-lg shadow-md p-4 flex justify-between items-center"
                             >
                                 <div>
-                                    <h2 className="text-lg font-semibold">{test.title}</h2>
-                                    <p className="text-sm text-gray-500">
+                                    <h2 className="text-lg text-white font-semibold">{test.title}</h2>
+                                    <p className="text-sm text-black">
                                         Scheduled: {new Date(test.schedule_date).toLocaleDateString()}
                                         {' '}at{' '}
                                         {test.schedule_time}
@@ -62,10 +62,9 @@ const AttempedTestList = () => {
                                 </div>
                                 <button
                                     onClick={() => handleViewTestDetails(test.test_id)}
-                                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                                    className="flex items-center gap-2 px-4 py-2 bg-white text-primary-purple rounded-md hover:bg-primary-purple/30 transition-colors"
                                 >
-                                    <Eye className="w-5 h-5" />
-                                    View Details
+                                    See Result
                                 </button>
                             </div>
                         ))}

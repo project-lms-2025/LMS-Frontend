@@ -1,11 +1,12 @@
+import { CalendarClock, Clock, File } from "lucide-react";
 import React, { useState } from "react";
 import { Badge, Calendar } from "rsuite";
 // Dummy data for tests (replace with API data as needed)
 const upcomingTestsData = [
-  { id: 1, title: "Module 1: Programming in Python", questionsCount: 40, date: "Mar 5, 2025, 5:00 PM" },
-  { id: 2, title: "Module 2: Advanced Python", questionsCount: 30, date: "Mar 8, 2025, 3:00 PM" },
-  { id: 3, title: "Module 3: Data Structures", questionsCount: 25, date: "Mar 9, 2025, 4:00 PM" },
-  { id: 4, title: "Module 4: OOP Concepts", questionsCount: 35, date: "Mar 12, 2025, 1:00 PM" },
+  { id: 1, title: "Module 1: Programming in Python", questionsCount: 40, date: "Mar 5, 2025, 5:00 PM", duration: "2 hours" },
+  { id: 2, title: "Module 2: Advanced Python", questionsCount: 30, date: "Mar 8, 2025, 3:00 PM", duration: "2 hours" },
+  { id: 3, title: "Module 3: Data Structures", questionsCount: 25, date: "Mar 9, 2025, 4:00 PM", duration: "2 hours" },
+  { id: 4, title: "Module 4: OOP Concepts", questionsCount: 35, date: "Mar 12, 2025, 1:00 PM", duration: "2 hours" },
 ];
 
 const ongoingTestsData = [
@@ -84,42 +85,45 @@ export default function StudentDashboard() {
   const maxMissedPage = Math.ceil(missedTestsData.length / itemsPerPage) - 1;
 
   return (
-    <div className="min-h-screen bg-secondary-gray dark:bg-gray-900 p-6">
+    <div className="min-h-screen bg-secondar dark:bg-gray-900 p-6">
       <div className="max-w-7xl mx-auto">
         {/* Top Bar: Greeting & Date */}
         <div className="flex items-center justify-between ">
-          <h1 className="text-2xl font-bold text-gray-800 dark:text-white">Welcome, Naira!</h1>
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-white">👋 Welcome, Naira!</h1>
           <span className="text-gray-500 dark:text-gray-400">12 Jan, 2025, Friday</span>
         </div>
 
         {/* Main Content Row */}
         <div className="flex flex-col w-full justify-between lg:flex-row gap-6 my-6">
           {/* Left: Test Series Card */}
-          <div className="w-2/3 bg-primary-white dark:bg-gray-800 rounded-lg shadow p-6 flex items-center justify-between">
-            <div>
-              <h2 className="text-xl font-semibold text-gray-800 dark:text-white">
-                Gate AI–CSE 2026 Online Test Series
-              </h2>
-              <p className="text-gray-600 dark:text-gray-300 mt-2">56 of 466 completed (18%)</p>
-              <button className="mt-4 px-4 py-2 bg-primary-purple text-white rounded hover:bg-primary-purple/80 transition-colors">
-                Resume
-              </button>
-            </div>
-            <div>
-              <img src="https://via.placeholder.com/150" alt="Test Series Illustration" className="w-40" />
+          <div className="w-2/3 bg-primary-white dark:bg-gray-800 rounded-lg shadow p-6 ">
+            <h2 className="text-xl font-semibold text-gray-800 dark:text-white">
+              Gate AI–CSE 2026 Online Test Series
+            </h2>
+            <div className="flex items-center justify-between" >
+              <div className="w-2/3" >
+                <p className="text-gray-600 dark:text-gray-300 mt-2">56 of 466 completed (18%)</p>
+                <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5 mt-2">
+                  <div className="bg-primary-purple h-2.5 rounded-full" style={{ width: '18%' }}></div>
+                </div>
+                <button className="mt-4 px-4 py-2 bg-primary-purple text-white rounded hover:bg-primary-purple/80 transition-colors">
+                  Resume
+                </button>
+              </div>
+              <img src="/progress.png" alt="Test Series Illustration" className="w-40" />
             </div>
           </div>
 
           {/* Right: RSuite Calendar */}
-          <div className="w-[40%] flex bg-primary-white dark:bg-gray-800 rounded-lg shadow p-4">
+          <div className="w-[70%] flex bg-primary-white dark:bg-gray-800 rounded-lg shadow p-4">
             <Calendar compact renderCell={renderCell} onSelect={setSelectedDate} style={{ width: 320 }} />
             {selectedDate && getTodoList(selectedDate).length > 0 && (
-              <div className="mt-4">
+              <div className="mt-4 w-3/4">
                 <h3 className="text-lg font-semibold text-gray-800 dark:text-white">Classes</h3>
-                <ul className="mt-2 space-y-1">
+                <ul className="mt-2 space-y-1 w-full">
                   {getTodoList(selectedDate).map((item) => (
-                    <li key={item.time} className="text-sm text-gray-600 dark:text-gray-300">
-                       <span className="font-bold" >{item.time}</span>  <br /> {item.title}
+                    <li key={item.time} className="text-sm text-gray-600 border-2 px-2 py-1 w-full dark:text-gray-300">
+                      <span className="font-bold" >{item.time}</span>  <br /> {item.title}
                     </li>
                   ))}
                 </ul>
@@ -181,22 +185,27 @@ export default function StudentDashboard() {
                 upcomingTests.map((test) => (
                   <div
                     key={test.id}
-                    className="flex justify-between items-center p-4 bg-primary-white dark:bg-gray-800 rounded-lg shadow"
+                    className="flex justify-between bg-primary-purple/70 items-center p-4  dark:bg-gray-800 rounded-lg shadow"
                   >
                     {/* Left side - test info */}
                     <div className="flex flex-col">
-                      <h3 className="text-lg font-semibold text-gray-800 dark:text-primary-white">
+                      <h3 className="text-lg font-semibold mb-2 text-white dark:text-primary-white">
                         {test.title}
                       </h3>
-                      <p className="text-sm text-gray-500 dark:text-gray-300">
-                        {test.questionsCount} Questions
-                      </p>
-                      <p className="text-sm text-gray-500 dark:text-gray-300">
-                        Held on {test.date}
-                      </p>
+                      <div className="flex items-center gap-4">
+                        <p className="text-base items-center text-black dark:text-gray-300">
+                          <File size={25} className="inline bg-white p-1 text-primary-purple rounded-lg" /> {test.questionsCount} Questions
+                        </p>
+                        <p className="text-sm m-0 text-black dark:text-gray-300">
+                          <Clock size={25} className="inline bg-white p-1 text-primary-purple rounded-lg" /> Duration {test.duration}
+                        </p>
+                        <p className="text-sm m-0 text-black dark:text-gray-300">
+                          <CalendarClock size={25} className="inline bg-white p-1 text-primary-purple rounded-lg" /> Held on {test.date}
+                        </p>
+                      </div>
                     </div>
                     {/* Right side - status label */}
-                    <span className="text-sm font-semibold text-primary-purple bg-primary-purple/10 px-4 py-1 rounded-full">
+                    <span className="text-sm font-semibold text-accent-yellow bg-white px-4 py-1 rounded-full">
                       Upcoming
                     </span>
                   </div>
@@ -243,26 +252,31 @@ export default function StudentDashboard() {
                 ongoingTests.map((test) => (
                   <div
                     key={test.id}
-                    className="flex justify-between items-center p-4 bg-primary-white dark:bg-gray-800 rounded-lg shadow"
+                    className="flex justify-between items-center bg-primary-purple/70 p-4  dark:bg-gray-800 rounded-lg shadow"
                   >
                     {/* Left side - test info */}
                     <div className="flex flex-col">
-                      <h3 className="text-lg font-semibold text-gray-800 dark:text-primary-white">
+                      <h3 className="text-lg font-semibold mb-2 text-white dark:text-primary-white">
                         {test.title}
                       </h3>
-                      <p className="text-sm text-gray-500 dark:text-gray-300">
-                        {test.questionsCount} Questions
-                      </p>
-                      <p className="text-sm text-gray-500 dark:text-gray-300">
-                        Held on {test.date}
-                      </p>
+                      <div className="flex items-center gap-4">
+                        <p className="text-base items-center text-black dark:text-gray-300">
+                          <File size={25} className="inline bg-white p-1 text-primary-purple rounded-lg" /> {test.questionsCount} Questions
+                        </p>
+                        <p className="text-sm m-0 text-black dark:text-gray-300">
+                          <Clock size={25} className="inline bg-white p-1 text-primary-purple rounded-lg" /> Duration {test.duration}
+                        </p>
+                        <p className="text-sm m-0 text-black dark:text-gray-300">
+                          <CalendarClock size={25} className="inline bg-white p-1 text-primary-purple rounded-lg" /> Held on {test.date}
+                        </p>
+                      </div>
                     </div>
                     {/* Right side - status and start button */}
                     <div className="flex items-center space-x-4">
                       <span className="px-3 py-1 text-sm font-semibold text-green-700 bg-green-100 rounded-full">
                         {test.status}
                       </span>
-                      <button className="px-4 py-2 bg-primary-purple text-white rounded-lg hover:bg-primary-purple/80 transition-colors">
+                      <button className="px-4 py-2 text-primary-purple bg-white rounded-lg hover:bg-primary-purple/30 transition-colors">
                         Start Test
                       </button>
                     </div>
@@ -310,19 +324,24 @@ export default function StudentDashboard() {
                 attemptedTests.map((test) => (
                   <div
                     key={test.id}
-                    className="flex justify-between items-center p-4 bg-primary-white dark:bg-gray-800 rounded-lg shadow"
+                    className="flex justify-between items-center bg-primary-purple/70 p-4  dark:bg-gray-800 rounded-lg shadow"
                   >
                     {/* Left side - test info */}
                     <div className="flex flex-col">
-                      <h3 className="text-lg font-semibold text-gray-800 dark:text-primary-white">
+                      <h3 className="text-lg font-semibold mb-2 text-white dark:text-primary-white">
                         {test.title}
                       </h3>
-                      <p className="text-sm text-gray-500 dark:text-gray-300">
-                        {test.questionsCount} Questions
-                      </p>
-                      <p className="text-sm text-gray-500 dark:text-gray-300">
-                        Held on {test.date}
-                      </p>
+                      <div className="flex items-center gap-4">
+                        <p className="text-base items-center text-black dark:text-gray-300">
+                          <File size={25} className="inline bg-white p-1 text-primary-purple rounded-lg" /> {test.questionsCount} Questions
+                        </p>
+                        <p className="text-sm m-0 text-black dark:text-gray-300">
+                          <Clock size={25} className="inline bg-white p-1 text-primary-purple rounded-lg" /> Duration {test.duration}
+                        </p>
+                        <p className="text-sm m-0 text-black dark:text-gray-300">
+                          <CalendarClock size={25} className="inline bg-white p-1 text-primary-purple rounded-lg" /> Held on {test.date}
+                        </p>
+                      </div>
                     </div>
                     {/* Right side - label or result button */}
                     <div className="flex items-center space-x-4">
@@ -377,19 +396,21 @@ export default function StudentDashboard() {
                 missedTests.map((test) => (
                   <div
                     key={test.id}
-                    className="flex justify-between items-center p-4 bg-primary-white dark:bg-gray-800 rounded-lg shadow"
+                    className="flex justify-between items-center bg-primary-purple/70 p-4  dark:bg-gray-800 rounded-lg shadow"
                   >
                     {/* Left side - test info */}
                     <div className="flex flex-col">
-                      <h3 className="text-lg font-semibold text-gray-800 dark:text-primary-white">
+                      <h3 className="text-lg font-semibold mb-2 text-white dark:text-primary-white">
                         {test.title}
                       </h3>
-                      <p className="text-sm text-gray-500 dark:text-gray-300">
-                        {test.questionsCount} Questions
-                      </p>
-                      <p className="text-sm text-gray-500 dark:text-gray-300">
-                        Held on {test.date}
-                      </p>
+                      <div className="flex items-center gap-4">
+                        <p className="text-base items-center text-black dark:text-gray-300">
+                          <File size={25} className="inline bg-white p-1 text-primary-purple rounded-lg" /> {test.questionsCount} Questions
+                        </p>
+                        <p className="text-sm m-0 text-black dark:text-gray-300">
+                          <CalendarClock size={25} className="inline bg-white p-1 text-primary-purple rounded-lg" /> Held on {test.date}
+                        </p>
+                      </div>
                     </div>
                     {/* Right side - label */}
                     <span className="px-3 py-1 text-sm font-semibold text-red-700 bg-red-100 rounded-full">
