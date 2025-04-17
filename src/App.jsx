@@ -50,6 +50,7 @@ import { Toaster } from 'react-hot-toast';
 import Batch from './pages/teacher/Batch';
 import Course from './pages/teacher/Course';
 import TeacherLanding from './pages/TeacherLanding';
+import Instructions from './components/Instruction';
 
 
 function App() {
@@ -77,6 +78,7 @@ function App() {
         <Route path="/rank" element={<Rank />} />
         <Route path="/batchrank" element={<RankBoard />} />
         <Route path="/resultList" element={<TestResultList />} />
+        <Route path="/instructions" element={<Instructions />} />
 
 
         {/* Teacher Routes */}

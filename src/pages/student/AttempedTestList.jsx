@@ -33,14 +33,9 @@ const AttempedTestList = () => {
 
     return (
         <div className='m-0'>
-            <Sidebar open={open} setOpen={setOpen} />
-            <Toaster />
             {/* Main content */}
-            <div
-                className={`transition-all duration-300 p-6 ${open ? "md:ml-[20rem] ml-56 mr-4 w-[40%] md:w-[75%]" : "ml-24 mr-2"} md:w-[90%] w-[95%]`}
-            >
+            <Toaster />
                 <h1 className="text-2xl font-bold mb-6">Your Attempts</h1>
-                
                 {loading ? (
                     <div className="text-center text-gray-500">Loading tests...</div>
                 ) : tests.length === 0 ? (
@@ -70,7 +65,6 @@ const AttempedTestList = () => {
                         ))}
                     </div>
                 )}
-            </div>
         </div>
     );
 }

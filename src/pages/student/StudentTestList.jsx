@@ -103,7 +103,7 @@ const StudentTestList = () => {
                         ) : !isTestDatePassed(test.schedule_date, test.schedule_time) ? (
                           <button
                             onClick={() =>
-                              navigate('/submittest', { state: { test_id: test.test_id } })
+                              navigate('/instructions', { state: { test_id: test.test_id } })
                             }
                             className="flex items-center px-4 py-2 bg-primary-purple text-white rounded-lg hover:bg-purple-700 transition-colors duration-200"
                           >

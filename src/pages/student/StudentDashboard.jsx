@@ -1,6 +1,8 @@
 import { CalendarClock, Clock, File } from "lucide-react";
 import React, { useState } from "react";
 import { Badge, Calendar } from "rsuite";
+import AttempedTestList from "./AttempedTestList";
+import Announcement from "../../components/Announcement";
 // Dummy data for tests (replace with API data as needed)
 const upcomingTestsData = [
   { id: 1, title: "Module 1: Programming in Python", questionsCount: 40, date: "Mar 5, 2025, 5:00 PM", duration: "2 hours" },
@@ -83,6 +85,14 @@ export default function StudentDashboard() {
   const maxOngoingPage = Math.ceil(ongoingTestsData.length / itemsPerPage) - 1;
   const maxAttemptedPage = Math.ceil(attemptedTestsData.length / itemsPerPage) - 1;
   const maxMissedPage = Math.ceil(missedTestsData.length / itemsPerPage) - 1;
+
+  const leaderboardData = [
+    { ranking: 1, name: 'John Smith', marks: 1195 },
+    { ranking: 2, name: 'Jolie Hoskins', marks: 1195 },
+    { ranking: 3, name: 'Pennington Joy', marks: 1196 },
+    { ranking: 4, name: 'Millie Marsden', marks: 1185 },
+    { ranking: 5, name: 'John Smith', marks: 1185 },
+  ];
 
   return (
     <div className="min-h-screen bg-secondar dark:bg-gray-900 p-6">
@@ -451,22 +461,55 @@ export default function StudentDashboard() {
 
         {activeTab === "result" && (
           <div className="text-gray-700 dark:text-primary-white">
-            <h2 className="text-xl font-bold mb-4">Result Section</h2>
-            <p>Here you can show the student's results or scores.</p>
+            <AttempedTestList/>
           </div>
         )}
 
         {activeTab === "leaderboard" && (
-          <div className="text-gray-700 dark:text-primary-white">
-            <h2 className="text-xl font-bold mb-4">Leaderboard Section</h2>
-            <p>Here you can show the student's leaderboard ranking.</p>
+          <div className="bg-white shadow rounded-md p-6">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-lg font-semibold text-gray-900">Test Result Leaderboard</h2>
+            {/* Placeholder for an options menu */}
+            <button className="text-gray-500 hover:text-gray-700 focus:outline-none" aria-label="Leaderboard Options">
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+              >
+                <circle cx="12" cy="5" r="1" />
+                <circle cx="12" cy="12" r="1" />
+                <circle cx="12" cy="19" r="1" />
+              </svg>
+            </button>
           </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="bg-gray-100">
+                  <th className="px-4 py-2 text-sm font-medium text-gray-600">Ranking</th>
+                  <th className="px-4 py-2 text-sm font-medium text-gray-600">Name</th>
+                  <th className="px-4 py-2 text-sm font-medium text-gray-600">Marks</th>
+                </tr>
+              </thead>
+              <tbody>
+                {leaderboardData.map((entry) => (
+                  <tr key={entry.ranking} className="border-b last:border-b-0 hover:bg-gray-50">
+                    <td className="px-4 py-2 text-gray-800 font-semibold">{entry.ranking}</td>
+                    <td className="px-4 py-2 text-gray-700">{entry.name}</td>
+                    <td className="px-4 py-2 text-gray-700">{entry.marks}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
         )}
 
         {activeTab === "announcement" && (
           <div className="text-gray-700 dark:text-primary-white">
-            <h2 className="text-xl font-bold mb-4">Announcement Section</h2>
-            <p>Here you can show general announcements or notifications.</p>
+            <Announcement/>
           </div>
         )}
       </div>
