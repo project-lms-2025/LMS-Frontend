@@ -53,13 +53,9 @@ const StudentTestList = () => {
 
   return (
     <div className='m-0'>
-      <Sidebar open={open} setOpen={setOpen} />
-      <div
-        className={`transition-all duration-300 ${open ? "md:ml-[20rem] ml-56 mr-4 w-[40%] md:w-[75%]" : "ml-24 mr-2"} md:w-[90%] w-[95%] md:mt`}
-      >
-        <div className="min-h-screen dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
+        <div className=" dark:bg-gray-900 py-12 px-">
           <Toaster />
-          <div className="max-w-4xl mx-auto">
+          <div className="w-full mx-aut">
             <div className="flex justify-between items-center mb-3">
               <h1 className="text-3xl font-bold text-gray-900 dark:text-primary-white">
                 My Tests
@@ -121,7 +117,6 @@ const StudentTestList = () => {
             </div>
           </div>
         </div>
-      </div>
     </div>
   );
 };

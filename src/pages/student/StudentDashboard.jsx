@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { Badge, Calendar } from "rsuite";
 import AttempedTestList from "./AttempedTestList";
 import Announcement from "../../components/Announcement";
+import StudentTestList from "./StudentTestList";
 // Dummy data for tests (replace with API data as needed)
 const upcomingTestsData = [
   { id: 1, title: "Module 1: Programming in Python", questionsCount: 40, date: "Mar 5, 2025, 5:00 PM", duration: "2 hours" },
@@ -184,6 +185,7 @@ export default function StudentDashboard() {
         {/* Conditional content based on active tab */}
         {activeTab === "test" && (
           <>
+          <StudentTestList/>
             {/* UPCOMING TEST SECTION */}
             <h2 className="text-xl font-bold mb-4 text-gray-800 dark:text-primary-white">
               Upcoming Test
