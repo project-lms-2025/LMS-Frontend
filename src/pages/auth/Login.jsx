@@ -67,7 +67,7 @@ const Login = () => {
         // Navigate after a 1-second delay according to user role
         setTimeout(() => {
           if (response.role === "student") {
-            navigate("/batches"); // adjust student route as needed
+            navigate("/studentClass"); // adjust student route as needed
           } else if (response.role === "teacher") {
             navigate("/teacherDashboard"); // adjust teacher route as needed
           } else {

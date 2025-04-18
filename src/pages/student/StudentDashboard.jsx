@@ -4,6 +4,8 @@ import { Badge, Calendar } from "rsuite";
 import AttempedTestList from "./AttempedTestList";
 import Announcement from "../../components/Announcement";
 import StudentTestList from "./StudentTestList";
+import EnrolledBatches from "./EnrolledBatches";
+import Rank from "./Rank";
 // Dummy data for tests (replace with API data as needed)
 const upcomingTestsData = [
   { id: 1, title: "Module 1: Programming in Python", questionsCount: 40, date: "Mar 5, 2025, 5:00 PM", duration: "2 hours" },
@@ -101,7 +103,7 @@ export default function StudentDashboard() {
         {/* Top Bar: Greeting & Date */}
         <div className="flex items-center justify-between ">
           <h1 className="text-2xl font-bold text-gray-800 dark:text-white">👋 Welcome, Naira!</h1>
-          <span className="text-gray-500 dark:text-gray-400">12 Jan, 2025, Friday</span>
+          <span className="text-gray-500 text-xl dark:text-gray-400">{new Date().toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
         </div>
 
         {/* Main Content Row */}
@@ -126,18 +128,23 @@ export default function StudentDashboard() {
           </div>
 
           {/* Right: RSuite Calendar */}
-          <div className="w-[70%] flex bg-primary-white dark:bg-gray-800 rounded-lg shadow p-4">
+          <div className="w-[80%] flex bg-primary-white dark:bg-gray-800 rounded-lg shadow p-4">
             <Calendar compact renderCell={renderCell} onSelect={setSelectedDate} style={{ width: 320 }} />
-            {selectedDate && getTodoList(selectedDate).length > 0 && (
+            {selectedDate && getTodoList(selectedDate).length > 0 ? (
               <div className="mt-4 w-3/4">
-                <h3 className="text-lg font-semibold text-gray-800 dark:text-white">Classes</h3>
+                <h3 className="text-lg font-semibold text-center text-gray-800 dark:text-white">Classes</h3>
                 <ul className="mt-2 space-y-1 w-full">
                   {getTodoList(selectedDate).map((item) => (
-                    <li key={item.time} className="text-sm text-gray-600 border-2 px-2 py-1 w-full dark:text-gray-300">
-                      <span className="font-bold" >{item.time}</span>  <br /> {item.title}
+                    <li key={item.time} className="text-sm text-gray-600 border-2 rounded-full px-2 py-1 w-full dark:text-gray-300">
+                      <span className="font-bold" >{item.time}</span>  - <a href="#" className="text-primary-purple">{item.title}</a> 
                     </li>
                   ))}
                 </ul>
+              </div>
+            ) : (
+              <div className="mt-4 w-3/4 text-center">
+                <h3 className="text-lg font-semibold text-gray-800 dark:text-white">No classes</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-300">There is no class on the selected date.</p>
               </div>
             )}
           </div>
@@ -145,9 +152,37 @@ export default function StudentDashboard() {
         {/* Tabs */}
         <div className="flex justify-center text-sm space-x-8 border-b border-gray-300 pb-2 mb-4 text-gray-600 dark:text-gray-300">
           <button
+            className={`${activeTab === "class"
+              ? "text-white px-3 py-2 rounded-xl font-semibold bg-primary-purple"
+              : "hover:text-primary-purple bg-gray-100 px-3 py-2 rounded-xl"
+              } `}
+            onClick={() => setActiveTab("class")}
+          >
+            Class
+          </button>
+          <button
+            className={`${activeTab === "batch"
+              ? "text-white px-3 py-2 rounded-xl font-semibold bg-primary-purple"
+              : "hover:text-primary-purple bg-gray-100 px-3 py-2 rounded-xl"
+              } `}
+            onClick={() => setActiveTab("batch")}
+          >
+            Batch
+          </button>
+          <button
+            className={`${activeTab === "upcoming-batch"
+              ? "text-white px-3 py-2 rounded-xl font-semibold bg-primary-purple"
+              : "hover:text-primary-purple bg-gray-100 px-3 py-2 rounded-xl"
+              } `}
+            onClick={() => setActiveTab("upcoming-batch")}
+          >
+            Upcoming Batches
+            <sup className=" bg-red-500 text-white px-1 py-1 rounded-full ml-1">New</sup>
+          </button>
+          <button
             className={`${activeTab === "test"
               ? "text-white px-3 py-2 rounded-xl font-semibold bg-primary-purple"
-              : "hover:text-primary-purple"
+              : "hover:text-primary-purple bg-gray-100 px-3 py-2 rounded-xl"
               } `}
             onClick={() => setActiveTab("test")}
           >
@@ -156,7 +191,7 @@ export default function StudentDashboard() {
           <button
             className={`${activeTab === "result"
               ? "text-white px-3 py-2 rounded-xl font-semibold bg-primary-purple"
-              : "hover:text-primary-purple"
+              : "hover:text-primary-purple bg-gray-100 px-3 py-2 rounded-xl"
               } `}
             onClick={() => setActiveTab("result")}
           >
@@ -165,7 +200,7 @@ export default function StudentDashboard() {
           <button
             className={`${activeTab === "leaderboard"
               ? "text-white px-3 py-2 rounded-xl font-semibold bg-primary-purple"
-              : "hover:text-primary-purple"
+              : "hover:text-primary-purple bg-gray-100 px-3 py-2 rounded-xl"
               } `}
             onClick={() => setActiveTab("leaderboard")}
           >
@@ -174,7 +209,7 @@ export default function StudentDashboard() {
           <button
             className={`${activeTab === "announcement"
               ? "text-white px-3 py-2 rounded-xl font-semibold bg-primary-purple"
-              : "hover:text-primary-purple"
+              : "hover:text-primary-purple bg-gray-100 px-3 py-2 rounded-xl"
               } `}
             onClick={() => setActiveTab("announcement")}
           >
@@ -185,7 +220,7 @@ export default function StudentDashboard() {
         {/* Conditional content based on active tab */}
         {activeTab === "test" && (
           <>
-          <StudentTestList/>
+            <StudentTestList />
             {/* UPCOMING TEST SECTION */}
             <h2 className="text-xl font-bold mb-4 text-gray-800 dark:text-primary-white">
               Upcoming Test
@@ -461,57 +496,27 @@ export default function StudentDashboard() {
           </>
         )}
 
+        {activeTab === "batch" && (
+          <div className="text-gray-700 dark:text-primary-white">
+            <EnrolledBatches />
+          </div>
+        )}
+
         {activeTab === "result" && (
           <div className="text-gray-700 dark:text-primary-white">
-            <AttempedTestList/>
+            <AttempedTestList />
           </div>
         )}
 
         {activeTab === "leaderboard" && (
-          <div className="bg-white shadow rounded-md p-6">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-lg font-semibold text-gray-900">Test Result Leaderboard</h2>
-            {/* Placeholder for an options menu */}
-            <button className="text-gray-500 hover:text-gray-700 focus:outline-none" aria-label="Leaderboard Options">
-              <svg
-                className="w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                viewBox="0 0 24 24"
-              >
-                <circle cx="12" cy="5" r="1" />
-                <circle cx="12" cy="12" r="1" />
-                <circle cx="12" cy="19" r="1" />
-              </svg>
-            </button>
+          <div>
+            <Rank/>
           </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="bg-gray-100">
-                  <th className="px-4 py-2 text-sm font-medium text-gray-600">Ranking</th>
-                  <th className="px-4 py-2 text-sm font-medium text-gray-600">Name</th>
-                  <th className="px-4 py-2 text-sm font-medium text-gray-600">Marks</th>
-                </tr>
-              </thead>
-              <tbody>
-                {leaderboardData.map((entry) => (
-                  <tr key={entry.ranking} className="border-b last:border-b-0 hover:bg-gray-50">
-                    <td className="px-4 py-2 text-gray-800 font-semibold">{entry.ranking}</td>
-                    <td className="px-4 py-2 text-gray-700">{entry.name}</td>
-                    <td className="px-4 py-2 text-gray-700">{entry.marks}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
         )}
 
         {activeTab === "announcement" && (
           <div className="text-gray-700 dark:text-primary-white">
-            <Announcement/>
+            <Announcement />
           </div>
         )}
       </div>

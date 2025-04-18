@@ -90,11 +90,6 @@ const Rank = () => {
 
   return (
     <div className='m-0' >
-      <Sidebar open={open} setOpen={setOpen} />
-      {/* Main content */}
-      <div
-        className={`transition-all duration-300 ${open ? "md:ml-[20rem] ml-56 mr-4  w-[40%] md:w-[75%]" : "ml-24 mr-2"} md:w-[90%]  w-[95%] md:mt `}
-      >
         <div className="max-w-4xl mx-auto">
           <Toaster />
           {!selectedTestId ? (
@@ -191,7 +186,6 @@ const Rank = () => {
             </>
           )}
         </div>
-      </div>
     </div>
   );
 };
