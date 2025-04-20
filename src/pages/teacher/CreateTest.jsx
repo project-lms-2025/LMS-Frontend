@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Plus, Trash2, Eye, Edit2, Clock, Save, Paperclip } from 'lucide-react';
 import { createTestWithQuestions, uploadImageToS3 } from '../../api/test'; // Import API functions
 import { v4 as uuidv4 } from 'uuid';
@@ -19,20 +19,29 @@ const CreateTest = () => {
   const courseId = queryParams.get("course_id");
   const seriesId = queryParams.get("seriesId");
   // Initialize paper state with an empty questions array.
-  const [questionPaper, setQuestionPaper] = useState({
-    test_id: uuidv4(),
-    ...(courseId ? { course_id: courseId } : {}),
-    ...(seriesId ? { series_id: seriesId } : {}),
-    title: "",
-    description: "",
-    duration: "", // in minutes
-    schedule_start: "",
-    schedule_end: "",
-    totalMarks: "",
-    test_type: type,
-    questions: [], // No default question here
+  const [questionPaper, setQuestionPaper] = useState(() => {
+    const saved = sessionStorage.getItem("draftTestPaper");
+    if (saved) {
+      return JSON.parse(saved);
+    }
+    return {
+      test_id: uuidv4(),
+      ...(courseId ? { course_id: courseId } : {}),
+      ...(seriesId ? { series_id: seriesId } : {}),
+      title: "",
+      description: "",
+      duration: "",
+      schedule_start: "",
+      schedule_end: "",
+      totalMarks: "",
+      test_type: type,
+      questions: [],
+    };
   });
 
+  useEffect(() => {
+    sessionStorage.setItem("draftTestPaper", JSON.stringify(questionPaper));
+  }, [questionPaper]);
   // Derived filtered questions by section
   const filteredQuestions = questionPaper.questions.filter(
     (q) => q.section === selectedSection
@@ -210,107 +219,107 @@ const CreateTest = () => {
 
   // Validation Function
   // Validation Function
-const validateFields = () => {
-  // Validate test details
-  if (!questionPaper.title.trim()) {
-    toast.error("Test title is required.");
-    return false;
-  }
-
-  if (!questionPaper.duration || questionPaper.duration <= 0) {
-    toast.error("Duration must be a positive number.");
-    return false;
-  }
-
-  if (!questionPaper.schedule_start) {
-    toast.error("Schedule start time is required.");
-    return false;
-  }
-
-  if (!questionPaper.schedule_end) {
-    toast.error("Schedule end time is required.");
-    return false;
-  }
-
-  if (!questionPaper.description.trim()) {
-    toast.error("Test description is required.");
-    return false;
-  }
-
-  // Validate positive_marks and negative_marks for each question
-  for (let q of questionPaper.questions) {
-    if (q.positive_marks <= 0 || isNaN(q.positive_marks)) {
-      toast.error("Each question must have a valid positive mark.");
-      return false;
-    }
-    
-    if (q.negative_marks < 0 || isNaN(q.negative_marks)) {
-      toast.error("Each question must have a valid negative mark (cannot be negative).");
-      return false;
-    }
-  }
-
-  // Validate 'isCorrect' option for each question
-  for (let q of questionPaper.questions) {
-    if (q.options.length === 0) {
-      toast.error("Each question must have at least one option.");
+  const validateFields = () => {
+    // Validate test details
+    if (!questionPaper.title.trim()) {
+      toast.error("Test title is required.");
       return false;
     }
 
-    const correctOptions = q.options.filter(opt => opt.is_correct === true);
+    if (!questionPaper.duration || questionPaper.duration <= 0) {
+      toast.error("Duration must be a positive number.");
+      return false;
+    }
 
-    if (q.question_type === "MCQ") {
-      // For MCQs, ensure exactly one option is marked as correct
-      if (correctOptions.length !== 1) {
-        toast.error("For MCQs, exactly one option must be marked as correct.");
+    if (!questionPaper.schedule_start) {
+      toast.error("Schedule start time is required.");
+      return false;
+    }
+
+    if (!questionPaper.schedule_end) {
+      toast.error("Schedule end time is required.");
+      return false;
+    }
+
+    if (!questionPaper.description.trim()) {
+      toast.error("Test description is required.");
+      return false;
+    }
+
+    // Validate positive_marks and negative_marks for each question
+    for (let q of questionPaper.questions) {
+      if (q.positive_marks <= 0 || isNaN(q.positive_marks)) {
+        toast.error("Each question must have a valid positive mark.");
         return false;
       }
-    } else if (q.question_type === "MSQ") {
-      // For MSQs, ensure at least one option is marked as correct
-      if (correctOptions.length === 0) {
-        toast.error("For MSQs, at least one option must be marked as correct.");
+
+      if (q.negative_marks < 0 || isNaN(q.negative_marks)) {
+        toast.error("Each question must have a valid negative mark (cannot be negative).");
         return false;
       }
     }
 
-    // Ensure each option has a valid 'isCorrect' field
-    for (let opt of q.options) {
-      if (typeof opt.is_correct !== "boolean") {
-        toast.error("Each option must have a valid 'isCorrect' field (true or false).");
+    // Validate 'isCorrect' option for each question
+    for (let q of questionPaper.questions) {
+      if (q.options.length === 0) {
+        toast.error("Each question must have at least one option.");
         return false;
       }
-    }
-  }
 
-  // Validate questions
-  if (questionPaper.questions.length === 0) {
-    toast.error("You must add at least one question.");
-    return false;
-  }
+      const correctOptions = q.options.filter(opt => opt.is_correct === true);
 
-  for (let q of questionPaper.questions) {
-    if (!q.question_text) {
-      toast.error("Each question must have text.");
-      return false;
-    }
-
-    if (q.question_type === "NAT") {
-      if (!q.options[0].option_text) {
-        toast.error("NAT questions must have an option text.");
-        return false;
+      if (q.question_type === "MCQ") {
+        // For MCQs, ensure exactly one option is marked as correct
+        if (correctOptions.length !== 1) {
+          toast.error("For MCQs, exactly one option must be marked as correct.");
+          return false;
+        }
+      } else if (q.question_type === "MSQ") {
+        // For MSQs, ensure at least one option is marked as correct
+        if (correctOptions.length === 0) {
+          toast.error("For MSQs, at least one option must be marked as correct.");
+          return false;
+        }
       }
-    } else {
+
+      // Ensure each option has a valid 'isCorrect' field
       for (let opt of q.options) {
-        if (!opt.option_text) {
-          toast.error("All options must have text.");
+        if (typeof opt.is_correct !== "boolean") {
+          toast.error("Each option must have a valid 'isCorrect' field (true or false).");
           return false;
         }
       }
     }
-  }
 
-  return true;
-};
+    // Validate questions
+    if (questionPaper.questions.length === 0) {
+      toast.error("You must add at least one question.");
+      return false;
+    }
+
+    for (let q of questionPaper.questions) {
+      if (!q.question_text) {
+        toast.error("Each question must have text.");
+        return false;
+      }
+
+      if (q.question_type === "NAT") {
+        if (!q.options[0].option_text) {
+          toast.error("NAT questions must have an option text.");
+          return false;
+        }
+      } else {
+        for (let opt of q.options) {
+          if (!opt.option_text) {
+            toast.error("All options must have text.");
+            return false;
+          }
+        }
+      }
+    }
+
+    return true;
+  };
 
   // Test Creation Function
   const savePaper = async () => {
@@ -322,7 +331,11 @@ const validateFields = () => {
       console.log(testPayload);
       const result = await createTestWithQuestions(testPayload);
       toast.success('Test created successfully!');
+      sessionStorage.removeItem("draftTestPaper");
       console.log(result);
+      setTimeout(() => {
+        navigate('/testList');
+      }, 2000);
     } catch (error) {
       toast.error('Error creating test.');
       console.error(error);

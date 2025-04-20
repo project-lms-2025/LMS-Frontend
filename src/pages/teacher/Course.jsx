@@ -19,7 +19,7 @@ const Course = () => {
     const [error, setError] = useState("");
     const [newCourseName, setNewCourseName] = useState("");
     const [selectedBatchId, setSelectedBatchId] = useState("");
-
+    const [courseImage, setCourseImage] = useState(null);
     useEffect(() => {
         fetchBatches();
     }, []);
@@ -152,6 +152,30 @@ const Course = () => {
                                     </option>
                                 ))}
                             </select>
+                            <div className="flex items-center space-x-2">
+                                <input
+                                    type="file"
+                                    name="course_image"
+                                    onChange={(e) => {
+                                        const file = e.target.files[0];
+                                        if (file) {
+                                            const reader = new FileReader();
+                                            reader.onload = () => {
+                                                setCourseImage(reader.result);
+                                            };
+                                            reader.readAsDataURL(file);
+                                        }
+                                    }}
+                                    className="bg-white dark:bg-gray-700 rounded px-2 py-1 text-gray-900 dark:text-white"
+                                />
+                                {courseImage && (
+                                    <img
+                                        src={courseImage}
+                                        alt="Course Image"
+                                        className="w-20 h-20 rounded"
+                                    />
+                                )}
+                            </div>
                             <button
                                 onClick={handleCreateCourse}
                                 className="flex items-center justify-center bg-primary-purple text-white px-4 py-2 rounded transition-all hover:bg-purple-700"

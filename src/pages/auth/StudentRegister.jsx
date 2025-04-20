@@ -159,7 +159,7 @@ function Register() {
             </div>
 
             {/* OTP Verification */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 ">
               {!otpSent ? (
                 <button
                   onClick={sendOtpToEmail}
@@ -192,13 +192,13 @@ function Register() {
                   </button>
                 </>
               )}
-            </div>;
+            </div>
 
             {/* Submit Button */}
           </div>
           <button
             type="submit"
-            className="w-full py-2 bg-primary-purple text-white rounded-lg hover:bg-primary-dark transition-all duration-300"
+            className="w-full mt-2 py-2 bg-primary-purple text-white rounded-lg hover:bg-primary-dark transition-all duration-300"
           >
             Register
           </button>

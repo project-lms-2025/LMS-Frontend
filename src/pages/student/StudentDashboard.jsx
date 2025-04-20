@@ -151,25 +151,7 @@ export default function StudentDashboard() {
         </div>
         {/* Tabs */}
         <div className="flex justify-center text-sm space-x-8 border-b border-gray-300 pb-2 mb-4 text-gray-600 dark:text-gray-300">
-          <button
-            className={`${activeTab === "class"
-              ? "text-white px-3 py-2 rounded-xl font-semibold bg-primary-purple"
-              : "hover:text-primary-purple bg-gray-100 px-3 py-2 rounded-xl"
-              } `}
-            onClick={() => setActiveTab("class")}
-          >
-            Class
-          </button>
-          <button
-            className={`${activeTab === "batch"
-              ? "text-white px-3 py-2 rounded-xl font-semibold bg-primary-purple"
-              : "hover:text-primary-purple bg-gray-100 px-3 py-2 rounded-xl"
-              } `}
-            onClick={() => setActiveTab("batch")}
-          >
-            Batch
-          </button>
-          <button
+        <button
             className={`${activeTab === "upcoming-batch"
               ? "text-white px-3 py-2 rounded-xl font-semibold bg-primary-purple"
               : "hover:text-primary-purple bg-gray-100 px-3 py-2 rounded-xl"
@@ -178,6 +160,15 @@ export default function StudentDashboard() {
           >
             Upcoming Batches
             <sup className=" bg-red-500 text-white px-1 py-1 rounded-full ml-1">New</sup>
+          </button>
+          <button
+            className={`${activeTab === "class"
+              ? "text-white px-3 py-2 rounded-xl font-semibold bg-primary-purple"
+              : "hover:text-primary-purple bg-gray-100 px-3 py-2 rounded-xl"
+              } `}
+            onClick={() => setActiveTab("class")}
+          >
+            Classes
           </button>
           <button
             className={`${activeTab === "test"

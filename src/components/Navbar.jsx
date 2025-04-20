@@ -46,8 +46,8 @@ export const Navbar = () => {
       { name: "Dashboard", href: "/teacherDashboard" },
     ],
     student: [
-      { name: "Home", href: "/" },
-      { name: "Batch", href: "/batches" },
+      // { name: "Home", href: "/" },
+      // { name: "Dashboard", href: "/studentClass" },
     ],
     admin: [
       { name: "Home", href: "/" },

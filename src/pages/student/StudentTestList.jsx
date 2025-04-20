@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getEnrolledTests, attemptedTest } from '../../api/test';
 import { Toaster, toast } from 'react-hot-toast';
-import { ChevronRight, Eye, ArrowLeftRight, CheckCircle, Clock, CalendarClock } from 'lucide-react';
+import { ChevronRight, Eye, ArrowLeftRight, CheckCircle, Clock, CalendarClock, File } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '../../components/Sidebar';
 import Loading from '../../components/Loading';
@@ -76,7 +76,7 @@ const StudentTestList = () => {
                     </h3>
                     <div className="flex items-center gap-4">
                       <p className="text-base items-center text-black dark:text-gray-300">
-                        {/* <File size={25} className="inline bg-white p-1 text-primary-purple rounded-lg" /> {test?.questionsCount} Questions */}
+                        <File size={25} className="inline bg-white p-1 text-primary-purple rounded-lg" /> {test?.questions_count} Questions
                       </p>
                       <p className="text-sm m-0 text-black dark:text-gray-300">
                         <Clock size={25} className="inline bg-white p-1 text-primary-purple rounded-lg" /> Duration {test.duration}
