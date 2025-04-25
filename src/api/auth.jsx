@@ -148,7 +148,12 @@ export const getAllCourses = async () => {
 
 /** Creates a new class with the provided data */
 export const createClass = async (classData) => {
-    return fetchAPI("/class", "POST", classData);
+    return fetchAPI("/class/classes", "POST", classData);
+};
+
+/** Retrieves all available classes */
+export const getClasses = async () => {
+    return fetchAPI('/class/classes', 'GET');
 };
 
 /** Retrieves details of a specific class by its ID */

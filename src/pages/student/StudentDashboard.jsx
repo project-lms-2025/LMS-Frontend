@@ -1,11 +1,12 @@
 import { CalendarClock, Clock, File } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Badge, Calendar } from "rsuite";
 import AttempedTestList from "./AttempedTestList";
 import Announcement from "../../components/Announcement";
 import StudentTestList from "./StudentTestList";
 import EnrolledBatches from "./EnrolledBatches";
 import Rank from "./Rank";
+import { getClasses } from "../../api/auth";
 // Dummy data for tests (replace with API data as needed)
 const upcomingTestsData = [
   { id: 1, title: "Module 1: Programming in Python", questionsCount: 40, date: "Mar 5, 2025, 5:00 PM", duration: "2 hours" },
@@ -88,6 +89,8 @@ export default function StudentDashboard() {
   const maxOngoingPage = Math.ceil(ongoingTestsData.length / itemsPerPage) - 1;
   const maxAttemptedPage = Math.ceil(attemptedTestsData.length / itemsPerPage) - 1;
   const maxMissedPage = Math.ceil(missedTestsData.length / itemsPerPage) - 1;
+  const [classes, setClasses] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const leaderboardData = [
     { ranking: 1, name: 'John Smith', marks: 1195 },
@@ -96,6 +99,23 @@ export default function StudentDashboard() {
     { ranking: 4, name: 'Millie Marsden', marks: 1185 },
     { ranking: 5, name: 'John Smith', marks: 1185 },
   ];
+
+  const fetchAllClasses = async () => {
+    try {
+      setLoading(true);
+      const response = await getClasses();
+      setClasses(response.data || []);
+      console.log("Classes", response.data);
+    } catch (err) {
+      setError("Failed to load all classes");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchAllClasses();
+  }, []);
 
   return (
     <div className="min-h-screen bg-secondar dark:bg-gray-900 p-6">
@@ -136,7 +156,7 @@ export default function StudentDashboard() {
                 <ul className="mt-2 space-y-1 w-full">
                   {getTodoList(selectedDate).map((item) => (
                     <li key={item.time} className="text-sm text-gray-600 border-2 rounded-full px-2 py-1 w-full dark:text-gray-300">
-                      <span className="font-bold" >{item.time}</span>  - <a href="#" className="text-primary-purple">{item.title}</a> 
+                      <span className="font-bold" >{item.time}</span>  - <a href="#" className="text-primary-purple">{item.title}</a>
                     </li>
                   ))}
                 </ul>
@@ -151,7 +171,7 @@ export default function StudentDashboard() {
         </div>
         {/* Tabs */}
         <div className="flex justify-center text-sm space-x-8 border-b border-gray-300 pb-2 mb-4 text-gray-600 dark:text-gray-300">
-        <button
+          <button
             className={`${activeTab === "upcoming-batch"
               ? "text-white px-3 py-2 rounded-xl font-semibold bg-primary-purple"
               : "hover:text-primary-purple bg-gray-100 px-3 py-2 rounded-xl"
@@ -487,6 +507,52 @@ export default function StudentDashboard() {
           </>
         )}
 
+        {activeTab === "classes" && (
+          <div className="mt-6 space-y-4">
+            {loading ? (
+              <p>Loading...</p>
+            ) : classes.length > 0 ? (
+              classes.map((cls) => (
+                <div key={cls.class_id} className="flex justify-between items-center border rounded-lg p-5 shadow-sm bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
+                  <div className="w-full pr-4">
+                    <div className="flex justify-between items-center w-full">
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{cls.class_title}</h3>
+                      <p className="text-gray-600 dark:text-gray-400 text-sm">
+                        📅 {new Date(cls.class_date_time).toLocaleString()}
+                      </p>
+                    </div>
+                    <div className="flex justify-between items-center w-full">
+                      {cls.recording_url && (
+                        <a href={cls.recording_url} className="text-blue-500 flex items-center mt-2 hover:underline" target="_blank" rel="noopener noreferrer">
+                          <Video size={18} className="mr-2" />
+                          View Recording
+                        </a>
+                      )}
+                      {cls.zoom_meeting_url && (
+                        <a href={cls.zoom_meeting_url} className="text-blue-500 flex items-center mt-2 hover:underline" target="_blank" rel="noopener noreferrer">
+                          <Video size={18} className="mr-2" />
+                          Join Zoom
+                        </a>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex justify-center space-x-3 mt-4">
+                    <button onClick={() => handleUpdateClass(cls.class_id)} className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg">
+                      <Pencil size={16} />
+                    </button>
+                    <button onClick={() => handleDeleteClass(cls.class_id)} className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg">
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <p className="text-center text-gray-500">No classes available</p>
+            )}
+          </div>
+        )}
+
         {activeTab === "batch" && (
           <div className="text-gray-700 dark:text-primary-white">
             <EnrolledBatches />
@@ -499,9 +565,10 @@ export default function StudentDashboard() {
           </div>
         )}
 
+
         {activeTab === "leaderboard" && (
           <div>
-            <Rank/>
+            <Rank />
           </div>
         )}
 
