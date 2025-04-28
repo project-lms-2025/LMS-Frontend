@@ -11,6 +11,9 @@
   },
   "dependencies": {
     "@headlessui/react": "^2.2.0",
+    "@zoom/meetingsdk": "^3.13.1",
+    "@zoom/videosdk-ui-toolkit": "^2.1.10-2",
+    "@zoomus/websdk": "^2.18.3",
     "chart.js": "^4.4.7",
     "lucide-react": "^0.473.0",
     "mathjs": "^14.2.1",

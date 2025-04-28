@@ -33,3 +33,14 @@ html, body{
   width: 6px;
   height: 6px;
 } 
+
+/* keep the Zoom canvas hidden until we actually join */
+#zmmtg-root {
+  display: none;           /* hide by default */
+  position: fixed;         /* when shown, fill the screen */
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1000;
+}
