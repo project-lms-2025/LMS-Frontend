@@ -45,12 +45,12 @@ export const getAllTests = async (testType) => {
 
 // Get a specific test by ID
 export const getTestById = async (testId) => {
-    return fetchAPI(`/test/${testId}`, "GET");
+    return fetchAPI(`/test/tests/${testId}`, "GET");
 };
 
 // Submit answers for a specific test
 export const submitTest = async (testId, responses) => {
-    return fetchAPI(`/test/${testId}/submit`, "POST", { responses });
+    return fetchAPI(`/test/tests/${testId}/submit`, "POST", { responses });
 };
 
 // Create a new test with questions
@@ -92,7 +92,7 @@ export const deleteTestSeries = async (seriesId) => {
 
 // Get all enrolled tests
 export const getEnrolledTests = async () => {
-    return fetchAPI("/test/enrolled", "GET", null, false);
+    return fetchAPI("/test/tests/enrolled", "GET", null, false);
 };
 
 // Get leaderboard for a specific test
@@ -102,7 +102,7 @@ export const getLeaderboard = async (testId) => {
 
 // Get tests that have been attempted by the user
 export const attemptedTest = async () => {
-    return fetchAPI("/test/attempted", "GET", null, false);
+    return fetchAPI("/test/tests/attempted", "GET", null, false);
 };
 
 // Get detailed test results for a specific student and result

@@ -32,9 +32,8 @@ const StudentTestList = () => {
           attemptedTest()
         ]);
 
-        setTests(allTests);
-        console.log(allTests)
-        setAttemptedTests(attempted);
+        setTests(allTests.data);
+        setAttemptedTests(attempted.data);
         setLoading(false);
       } catch (error) {
         toast.error("Failed to load tests");

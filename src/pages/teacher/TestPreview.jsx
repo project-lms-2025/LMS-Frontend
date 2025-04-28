@@ -25,7 +25,8 @@ const TestPreview = () => {
   useEffect(() => {
     async function fetchTest() {
       try {
-        const data = await getTestById(test_id);
+        const response = await getTestById(test_id);
+        const data = response.data;
         console.log(data)
         setTestData(data);
         setLoading(false);
@@ -292,7 +293,7 @@ const TestPreview = () => {
                   <div className="text-gray-600">
                     Total Questions: {filteredQuestions.length}
                   </div>
-                  <div className="text-gray-600">Total Marks: {questionPaper.totalMarks}</div>
+                  <div className="text-gray-600">Total Marks: {questionPaper.total_marks}</div>
                 </div>
               </div>
             </div>

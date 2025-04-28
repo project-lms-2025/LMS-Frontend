@@ -28,7 +28,8 @@ const SubmitTest = () => {
     async function fetchTest() {
       try {
         // Fetch from backend
-        const data = await getTestById(test_id);
+        const response = await getTestById(test_id);
+        const data = response.data;
         console.log(data.questions);
 
         // Restore or initialize timer
@@ -482,7 +483,7 @@ const SubmitTest = () => {
                   <div className="text-gray-600">
                     Total Questions: {filteredQuestions.length}
                   </div>
-                  {/* <div className="text-gray-600">Total Marks: {questionPaper?.totalMarks}</div> */}
+                  {/* <div className="text-gray-600">Total Marks: {questionPaper?.total_marks}</div> */}
                 </div>
               </div>
             </div>

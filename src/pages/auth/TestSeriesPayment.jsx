@@ -43,7 +43,7 @@ const BatchPayment = () => {
                 currency: "INR",
             });
 
-            const { id: order_id, amount, currency } = order;
+            const { id: order_id, amount, currency } = order.data;
 
             const options = {
                 key: import.meta.env.VITE_Test_key_id,

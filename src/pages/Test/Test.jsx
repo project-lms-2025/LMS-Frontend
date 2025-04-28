@@ -13,7 +13,7 @@ const Test = () => {
         duration: '', // duration in minutes
         schedule_date: '',
         schedule_time: '',
-        totalMarks: '',
+        total_marks: '',
         questions: [
             {
                 question_id: uuidv4(), // Automatically generated question ID
@@ -190,8 +190,8 @@ const Test = () => {
                         <label className="block mb-1 font-medium">Total Marks</label>
                         <input
                             type="number"
-                            name="totalMarks"
-                            value={formData.totalMarks}
+                            name="total_marks"
+                            value={formData.total_marks}
                             onChange={handleChange}
                             className="w-full border p-2 rounded"
                             placeholder="Enter total marks"

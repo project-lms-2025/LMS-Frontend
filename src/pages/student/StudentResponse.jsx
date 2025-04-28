@@ -27,7 +27,8 @@ const StudentResponse = () => {
 
     const fetchTestResults = async (studentId) => {
       try {
-        const data = await getTestResultDetails(resultId, studentId); // Fetch test results using resultId and studentId
+        const response = await getTestResultDetails(resultId, studentId); // Fetch test results using resultId and studentId
+        const data = response.data;
         setTestData(data);
         setLoading(false);
       } catch (err) {
@@ -184,7 +185,8 @@ const StudentResponse = () => {
             Total Questions: {testData.questions.length} | Duration: {testData.duration} minutes
           </p>
           <p className="text-sm text-gray-600">
-            Scheduled for: {new Date(testData.schedule_date).toLocaleDateString()} at {testData.schedule_time}
+            Scheduled for: {new Date(testData.schedule_start).toLocaleDateString()} at {new Date(testData.schedule_start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+          }
           </p>
         </div>
         <div className="flex flex-col lg:items-end mt-2 lg:mt-0">

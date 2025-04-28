@@ -29,15 +29,15 @@ const Login = () => {
     }
     try {
       setIsOtpSending(true);
-      const data = await sendLoginOtp(formData.phoneNumber);
-
-      if (data.success && data.email) {
+      const response = await sendLoginOtp(formData.phoneNumber);
+      const data = response.data;
+      if (response.success && data.email) {
         localStorage.setItem("email", data.email);
         setFormData((prev) => ({ ...prev, email: data.email })); // Update email in formData
         setOtpSent(true); // OTP has been sent, show login button
         toast.success(`OTP sent successfully to ${data.email}!`);
       } else {
-        toast.error(data.message || "Failed to send OTP.");
+        toast.error(response.message || "Failed to send OTP.");
       }
     } catch (error) {
       toast.error(error.message || "Error sending OTP");
@@ -58,17 +58,18 @@ const Login = () => {
     try {
       const response = await loginUser(formData);
       console.log(response);
-      if (response.success && response.authToken) {
-        localStorage.setItem("authToken", response.authToken);
-        localStorage.setItem("role", response.role);
-        login(response.role); // Update role in AuthContext
+      const data = response.data;
+      if (response.success && data.authToken) {
+        localStorage.setItem("authToken", data.authToken);
+        localStorage.setItem("role", data.role);
+        login(data.role); // Update role in AuthContext
         toast.success("Login successful!");
 
         // Navigate after a 1-second delay according to user role
         setTimeout(() => {
-          if (response.role === "student") {
+          if (data.role === "student") {
             navigate("/studentClass"); // adjust student route as needed
-          } else if (response.role === "teacher") {
+          } else if (data.role === "teacher") {
             navigate("/teacherDashboard"); // adjust teacher route as needed
           } else {
             navigate("/"); // default route

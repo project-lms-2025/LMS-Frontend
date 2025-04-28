@@ -26,7 +26,8 @@ const SubmitTest = () => {
   useEffect(() => {
     async function fetchTest() {
       try {
-        const data = await getTestById(test_id);
+        const response = await getTestById(test_id);
+        const data = response.data;
         console.log(data);
         setTestData(data);
         setTimeLeft(data.duration * 60);
