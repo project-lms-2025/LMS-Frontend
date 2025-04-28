@@ -87,7 +87,7 @@ function App() {
         <Route path="/TCourses" element={<Course />} />
         <Route path="/teacherProfile" element={<TeacherProfile />} />
         <Route path="/classes" element={<Classes />} />
-        <Route path="/createtest" element={<CreateTest/>} /> {/* Test created by teacher */}
+        <Route path="/createtest" element={<CreateTest/>} /> {/* Test created by teacher merge */}
         <Route path="/testList" element={<TeacherTestList />} />
         <Route path="/testpreview" element={<TestPreview />} />  {/* test given by students */}
 
