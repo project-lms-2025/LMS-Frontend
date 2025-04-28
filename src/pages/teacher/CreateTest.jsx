@@ -33,7 +33,7 @@ const CreateTest = () => {
       duration: "",
       schedule_start: "",
       schedule_end: "",
-      totalMarks: "",
+      total_marks: "",
       test_type: type,
       questions: [],
     };
@@ -150,7 +150,7 @@ const CreateTest = () => {
     setQuestionPaper((prev) => ({
       ...prev,
       questions: [...prev.questions, newQuestion],
-      totalMarks: parseInt(prev.totalMarks || 0) + 1,
+      total_marks: parseInt(prev.total_marks || 0) + 1,
     }));
   };
 
@@ -160,7 +160,7 @@ const CreateTest = () => {
       return {
         ...prev,
         questions: prev.questions.filter((q) => q.question_id !== question_id),
-        totalMarks: parseInt(prev.totalMarks || 0) - (parseInt(question?.positive_marks || 0)),
+        total_marks: parseInt(prev.total_marks || 0) - (parseInt(question?.positive_marks || 0)),
       };
     });
   };
@@ -781,7 +781,7 @@ const CreateTest = () => {
               <div className="text-gray-600">
                 Total Questions: {questionPaper.questions.length}
               </div>
-              <div className="text-gray-600">Total Marks: {questionPaper.totalMarks}</div>
+              <div className="text-gray-600">Total Marks: {questionPaper.total_marks}</div>
             </div>
           </div>
           <div className="flex justify-between gap-4 mt-2">

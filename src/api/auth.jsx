@@ -185,7 +185,7 @@ export const getUserByEmail = async (email) => {
 
 /** Retrieves the current user's profile */
 export const getUserProfile = async () => {
-    return fetchAPI("/user/profile", "GET");
+    return fetchAPI("/auth/user/profile", "GET");
 };
 
 /** Uploads files (profile picture, etc.) for the user */
@@ -202,7 +202,7 @@ export const enrollUser = async (enrollmentData) => {
 
 /** Retrieves the list of batches the user is enrolled in */
 export const getEnrollmentBatches = async () => {
-    return fetchAPI("/enrollment/batch", "GET");
+    return fetchAPI("/batch/my-batches", "GET");
 };
 
 /** Retrieves the list of courses the user is enrolled in */

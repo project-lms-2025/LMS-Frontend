@@ -69,6 +69,7 @@ const EnrollBatch = () => {
   const fetchEnrolledBatches = async () => {
     try {
       const response = await getEnrollmentBatches();
+      console.log(response)
       // console.log("Raw enrolled batches response:", response);
       if (response && response.success) {
         const enrolledData = Array.isArray(response.data)

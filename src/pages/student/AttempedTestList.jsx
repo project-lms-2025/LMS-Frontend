@@ -16,7 +16,7 @@ const AttempedTestList = () => {
             try {
                 const fetchedTests = await attemptedTest();
                 console.log(fetchedTests)
-                setTests(fetchedTests);
+                setTests(fetchedTests.data);
                 setLoading(false);
             } catch (error) {
                 toast.error('Failed to fetch attempted tests');

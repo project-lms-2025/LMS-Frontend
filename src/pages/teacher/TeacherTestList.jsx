@@ -20,9 +20,9 @@ const TeacherTestList = () => {
     useEffect(() => {
         async function fetchTests() {
             try {
-                const data = await getAllTests("COURSE_TEST");
-                console.log("Tests:", data);
-                setTests(data);
+                const response = await getAllTests("COURSE_TEST");
+                console.log("Tests:", response.data);
+                setTests(response.data);
                 setLoading(false);
             } catch (error) {
                 toast.error("Failed to load tests");
