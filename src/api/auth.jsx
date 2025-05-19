@@ -51,8 +51,9 @@ export const registerTeacher = async (userData) => {
 
 /** Sends an OTP to the provided email address for verification */
 export const sendOtp = async (email) => {
-    return fetchAPI("/otp/send", "POST", { email });
+    return fetchAPI("/auth/send-signup-otp", "POST", { email });
 };
+
 
 /** Sends a login OTP to the provided phone number */
 export const sendLoginOtp = async (phoneNumber) => {
@@ -62,8 +63,9 @@ export const sendLoginOtp = async (phoneNumber) => {
 
 /** Verifies the OTP sent to the email */
 export const verifyOtp = async (email, otp) => {
-    return fetchAPI("/otp/verify", "POST", { email, otp });
+    return fetchAPI("/otp/verify-signup-otp", "POST", { email, otp });
 };
+
 
 /** Logs in a user with the provided credentials */
 export const loginUser = async (credentials) => {
@@ -152,18 +154,21 @@ export const createClass = async (classData) => {
 };
 
 /** Retrieves all available classes */
-export const getClasses = async () => {
+export const getAllClasses = async () => {
     return fetchAPI('/class/classes', 'GET');
+};
+export const getClasses = async () => {
+    return fetchAPI('/class/classes/my-classes', 'GET');
 };
 
 /** Retrieves details of a specific class by its ID */
 export const getClassById = async (classId) => {
-    return fetchAPI(`/class/${classId}`, "GET");
+    return fetchAPI(`/class/classes/${classId}`, "GET");
 };
 
 /** Updates an existing class with new data by its ID */
 export const updateClass = async (classId, updatedData) => {
-    return fetchAPI(`/class/${classId}`, "PUT", updatedData);
+    return fetchAPI(`/class/classes/${classId}`, "PUT", updatedData);
 };
 
 /** Retrieves all classes for a specific course */
@@ -173,7 +178,7 @@ export const getClassesByCourseId = async (courseId) => {
 
 /** Deletes a specific class by its ID */
 export const deleteClass = async (classId) => {
-    return fetchAPI(`/class/${classId}`, "DELETE");
+    return fetchAPI(`/class/classes/${classId}`, "DELETE");
 };
 
 // User API functions

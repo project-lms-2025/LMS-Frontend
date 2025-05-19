@@ -4,17 +4,14 @@ import Sidebar from '../../components/Sidebar';
 import { Toaster, toast } from 'react-hot-toast';
 import {
   createClass,
+  deleteClass,
   getAllBatches,
   getClasses,
   getCoursesByBatchId,
+  updateClass,
 } from '../../api/auth';
 
-import { ZoomMtg } from '@zoom/meetingsdk';
 
-// Configure Zoom Meeting SDK (v3.13.1)
-ZoomMtg.setZoomJSLib('https://source.zoom.us/3.13.1/lib', '/av');
-ZoomMtg.preLoadWasm();
-ZoomMtg.prepareWebSDK();
 
 const Classes = () => {
   const [open, setOpen] = useState(false);
@@ -28,6 +25,8 @@ const Classes = () => {
     class_date_time: '',
     recording_url: '',
   });
+  const [editingClass, setEditingClass] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -38,6 +37,7 @@ const Classes = () => {
     try {
       setLoading(true);
       const res = await getAllBatches();
+      console.log(res);
       setBatches(res.data || []);
     } catch (err) {
       setError(err.message);
@@ -62,6 +62,7 @@ const Classes = () => {
     try {
       setLoading(true);
       const res = await getClasses();
+      console.log(res);
       setClasses(res.data || []);
     } catch {
       setError('Failed to load classes');
@@ -97,49 +98,62 @@ const Classes = () => {
     }
   };
 
-  // Join Zoom Meeting using Meeting SDK
-  const joinClass = async (cls) => {
-    const m = cls.zoom_meeting_url.match(/j\/(\d+)/);
-    if (!m) return toast.error('Invalid meeting URL');
-    const meetingNumber = m[1];
-    const meetingPassword = cls.session_passcode || '';
-
-    // Fetch signature from backend
-    let signature;
-    try {
-      const res = await fetch(
-        'https://testapi.teachertech.in/api/zoom/generate-signature',
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ meetingNumber, role: 1 }), // host
-        },
-      );
-      const data = await res.json();
-      signature = data.signature;
-      if (!signature) throw new Error('No signature returned');
-    } catch (err) {
-      console.error(err);
-      return toast.error('Could not get Zoom signature');
-    }
-    const zmRoot = document.getElementById('zmmtg-root');
-    zmRoot.style.display = 'block';
-    // Initialize & join
-    ZoomMtg.init({
-      leaveUrl: window.location.href,
-      success: () => {
-        ZoomMtg.join({
-          sdkKey: process.env.REACT_APP_ZOOM_SDK_KEY,
-          signature,
-          meetingNumber,
-          passWord: meetingPassword,
-          userName: 'Teacher',
-          success: () => console.log('✅ Joined meeting'),
-          error: err => console.error('❌ join error', err),
-        });
-      },
-      error: err => console.error('❌ init error', err),
+  // Edit class
+  const handleEditClass = (cls) => {
+    setEditingClass(cls);
+    setNewClass({
+      class_title: cls.class_title,
+      class_date_time: cls.class_date_time ? new Date(cls.class_date_time).toISOString().slice(0, 16) : '',
+      recording_url: cls.recording_url || '',
     });
+    setIsEditing(true);
+    setSelectedCourseId(cls.course_id);
+  };
+
+  // Update class
+  const handleUpdateClass = async () => {
+    if (!selectedCourseId || !newClass.class_title || !newClass.class_date_time) {
+      return toast.error('Please fill all required fields');
+    }
+    try {
+      setLoading(true);
+      await updateClass(
+        editingClass.class_id, 
+        { ...newClass, course_id: selectedCourseId }
+      );
+      toast.success('Class updated successfully');
+      setNewClass({ class_title: '', class_date_time: '', recording_url: '' });
+      setIsEditing(false);
+      setEditingClass(null);
+      fetchAllClasses();
+    } catch (err) {
+      toast.error(err.message || 'Failed to update class');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Delete class
+  const handleDeleteClass = async (classId) => {
+    if (!window.confirm('Are you sure you want to delete this class?')) return;
+    
+    try {
+      setLoading(true);
+      await deleteClass(classId);
+      toast.success('Class deleted successfully');
+      fetchAllClasses();
+    } catch (err) {
+      toast.error(err.message || 'Failed to delete class');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Cancel editing
+  const handleCancelEdit = () => {
+    setIsEditing(false);
+    setEditingClass(null);
+    setNewClass({ class_title: '', class_date_time: '', recording_url: '' });
   };
 
   return (
@@ -176,10 +190,9 @@ const Classes = () => {
               value={selectedCourseId}
               onChange={e => setSelectedCourseId(e.target.value)}
               className="border p-2 w-full"
+              disabled={!selectedBatchId}
             >
-              <option value="" disabled={!selectedBatchId}>
-                {selectedBatchId ? 'Select a course' : 'Select a batch first'}
-              </option>
+              <option value="">Select a course</option>
               {courses[selectedBatchId]?.map(c => (
                 <option key={c.course_id} value={c.course_id}>
                   {c.course_name}
@@ -188,9 +201,11 @@ const Classes = () => {
             </select>
           </div>
 
-          {/* Create class form */}
+          {/* Create/Edit class form */}
           <div className="border p-4 my-4">
-            <h3 className="text-lg font-semibold">Create Class</h3>
+            <h3 className="text-lg font-semibold">
+              {isEditing ? 'Edit Class' : 'Create New Class'}
+            </h3>
             <input
               type="text"
               placeholder="Class Title"
@@ -204,63 +219,92 @@ const Classes = () => {
               onChange={e => setNewClass(prev => ({ ...prev, class_date_time: e.target.value }))}
               className="border p-2 my-2 w-full"
             />
-            <button
-              onClick={handleCreateClass}
-              className="bg-blue-500 text-white px-4 py-2 rounded"
-              disabled={loading}
-            >
-              {loading ? 'Creating...' : 'Create Class'}
-            </button>
+            <input
+              type="text"
+              placeholder="Recording URL"
+              value={newClass.recording_url}
+              onChange={e => setNewClass(prev => ({ ...prev, recording_url: e.target.value }))}
+              className="border p-2 my-2 w-full"
+            />
+            <div className="flex gap-2 mt-2">
+              {isEditing ? (
+                <>
+                  <button
+                    onClick={handleUpdateClass}
+                    className="bg-blue-500 text-white px-4 py-2 rounded"
+                    disabled={loading}
+                  >
+                    Update Class
+                  </button>
+                  <button
+                    onClick={handleCancelEdit}
+                    className="bg-gray-500 text-white px-4 py-2 rounded"
+                  >
+                    Cancel
+                  </button>
+                </>
+              ) : (
+                <button
+                  onClick={handleCreateClass}
+                  className="bg-green-500 text-white px-4 py-2 rounded"
+                  disabled={loading || !selectedCourseId}
+                >
+                  Create Class
+                </button>
+              )}
+            </div>
           </div>
 
-          {/* List classes */}
-          <div className="mt-6 space-y-4">
-            {classes.length > 0 ? (
-              classes.map(cls => (
-                <div
-                  key={cls.class_id}
-                  className="flex justify-between items-center border rounded-lg p-5 shadow-sm bg-gray-50 dark:bg-gray-800 dark:border-gray-700"
-                >
-                  <div className="w-full pr-4">
-                    <div className="flex justify-between items-center">
-                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                        {cls.class_title}
-                      </h3>
-                      <p className="text-gray-600 dark:text-gray-400 text-sm">
-                        📅 {new Date(cls.class_date_time).toLocaleString()}
-                      </p>
-                    </div>
-                    <div className="flex gap-4 mt-2">
-                      {cls.recording_url && (
-                        <a
-                          href={cls.recording_url}
-                          className="text-blue-500 flex items-center hover:underline"
-                          target="_blank"
-                          rel="noopener noreferrer"
+          {/* Classes list */}
+          <div className="border p-4 my-4">
+            <h3 className="text-lg font-semibold">Classes</h3>
+            {classes.length === 0 ? (
+              <p>No classes available</p>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+                {classes.map(cls => (
+                  <div key={cls.class_id} className="border p-4 rounded">
+                    <h4 className="font-semibold">{cls.class_title}</h4>
+                    <p>Date: {new Date(cls.class_date_time).toLocaleString()}</p>
+                    {cls.recording_url && (
+                      <a
+                        href={cls.recording_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-500 hover:underline"
+                      >
+                        Recording
+                      </a>
+                    )}
+                    <div className="flex gap-2 mt-2">
+                      {cls.zoom_meeting_url && (
+                        <button
+                          onClick={() => joinClass(cls)}
+                          className="bg-blue-500 text-white px-3 py-1 rounded text-sm"
                         >
-                          Recording
-                        </a>
+                          Join
+                        </button>
                       )}
                       <button
-                        onClick={() => joinClass(cls)}
-                        className="bg-purple-600 text-white px-3 py-1 rounded flex items-center hover:bg-purple-700"
+                        onClick={() => handleEditClass(cls)}
+                        className="bg-yellow-500 text-white px-3 py-1 rounded text-sm"
                       >
-                        Join Class
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDeleteClass(cls.class_id)}
+                        className="bg-red-500 text-white px-3 py-1 rounded text-sm"
+                      >
+                        Delete
                       </button>
                     </div>
                   </div>
-                </div>
-              ))
-            ) : (
-              <p className="text-center text-gray-500">No classes available</p>
+                ))}
+              </div>
             )}
           </div>
         </div>
       </div>
-
-      {/* Meeting SDK mount points */}
-      <div id="zmmtg-root"></div>
-      <div id="aria-notify-area"></div>
     </div>
   );
 };
