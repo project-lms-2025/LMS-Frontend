@@ -6,28 +6,22 @@ import { logoutUser, getUserProfile } from "../api/auth";
 import { useAuth } from "../context/AuthContext";
 
 export const Navbar = () => {
-  const { role, email, logout } = useAuth(); // Use AuthContext for reactive updates
+  const { role, authToken, logout, initialized } = useAuth(); // Use AuthContext for reactive updates
   const { theme, toggleTheme } = useContext(ThemeContext);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const [loadingProfile, setLoadingProfile] = useState(false);
 
   // Fetch user data on mount
   useEffect(() => {
-    const fetchUserProfile = async () => {
-      try {
-        const userProfile = await getUserProfile(); // Fetch user data
-        // console.log(userProfile.data);
-        setUser(userProfile.data); // Set user profile data
-        setLoading(false); // Stop loading once data is fetched
-      } catch (err) {
-        console.error("Error fetching user profile:", err);
-        setLoading(false); // Stop loading if there's an error
-      }
-    };
-
-    fetchUserProfile(); // Call the function to fetch user data
-  }, []);
+    if (!authToken) return;
+    setLoadingProfile(true);
+    getUserProfile()
+      .then((res) => setUser(res.data))
+      .catch(console.error)
+      .finally(() => setLoadingProfile(false));
+  }, [authToken]);
 
   const handleLogout = async () => {
     try {
@@ -54,7 +48,7 @@ export const Navbar = () => {
       { name: "New Registration", href: "/teacherRegister" },
     ],
   };
-
+  if (!initialized) return null;
   return (
     <header className="sticky top-4 z-50 -b lg:px-16 mt-4    bg-none dark:bg-primary-purple">
       <div className="container mx-auto px-4 bg-white rounded-xl border border-b-4 border-r-4 border-slate-600 dark:bg-primary-purple/20 dark:border-accent-yellow/20 shadow-lg">

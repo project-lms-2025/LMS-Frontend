@@ -54,7 +54,9 @@ import Instructions from './components/Instruction';
 
 
 function App() {
-  const { role } = useAuth();
+  const { role, isLoggedIn } = useAuth();
+  console.log("Role:", role);
+  console.log("IsLoggedIn:", isLoggedIn);
   return (
     <Router className="h-screen" >
       <Toaster autoClose={3000} />
@@ -68,44 +70,42 @@ function App() {
         <Route path="/studentSignup2" element={<StudentRegister />} />   {/* Student registration */}
         <Route path="/payment_batch/:batch_id" element={<BatchPayment />} />
         {/* Student Routes */}
-        <Route path="/studentClass" element={<StudentDashboard />} />
-        <Route path="/studentProfile" element={<StudentProfile />} />
-        <Route path="/batches" element={<EnrolledBatches />} />
-        <Route path="/courses" element={<EnrolledCourses />} />
-        <Route path="/studentTestList" element={<StudentTestList />} />
-        <Route path="/submittest" element={<SubmitTest/>} />
-        <Route path="/studentresponse/:resultId" element={<StudentResponse/>} /> 
-        <Route path="/rank" element={<Rank />} />
-        <Route path="/batchrank" element={<RankBoard />} />
-        <Route path="/resultList" element={<TestResultList />} />
-        <Route path="/instructions" element={<Instructions />} />
-
+        <Route path="/studentClass" element={isLoggedIn && role === 'student' ? <StudentDashboard /> : <Navigate to="/" />} />
+        <Route path="/studentProfile" element={isLoggedIn && role === 'student' ? <StudentProfile /> : <Navigate to="/" />} />
+        <Route path="/batches" element={isLoggedIn && role === 'student' ? <EnrolledBatches /> : <Navigate to="/" />} />
+        <Route path="/courses" element={isLoggedIn && role === 'student' ? <EnrolledCourses /> : <Navigate to="/" />} />
+        <Route path="/studentTestList" element={isLoggedIn && role === 'student' ? <StudentTestList /> : <Navigate to="/" />} />
+        <Route path="/submittest" element={isLoggedIn && role === 'student' ? <SubmitTest/> : <Navigate to="/" />} />
+        <Route path="/studentresponse/:resultId" element={isLoggedIn && role === 'student' ? <StudentResponse/> : <Navigate to="/" />} /> 
+        <Route path="/rank" element={isLoggedIn && role === 'student' ? <Rank /> : <Navigate to="/" />} />
+        <Route path="/batchrank" element={isLoggedIn && role === 'student' ? <RankBoard /> : <Navigate to="/" />} />
+        <Route path="/resultList" element={isLoggedIn && role === 'student' ? <TestResultList /> : <Navigate to="/" />} />
+        <Route path="/instructions" element={isLoggedIn && role === 'student' ? <Instructions /> : <Navigate to="/" />} />
 
         {/* Teacher Routes */}
-        <Route path="/teacherDashboard" element={<Teacher />} />
-        <Route path="/TBatches" element={<Batch />} />
-        <Route path="/TCourses" element={<Course />} />
-        <Route path="/teacherProfile" element={<TeacherProfile />} />
-        <Route path="/classes" element={<Classes />} />
-        <Route path="/createtest" element={<CreateTest/>} /> {/* Test created by teacher merge */}
-        <Route path="/testList" element={<TeacherTestList />} />
-        <Route path="/testpreview" element={<TestPreview />} />  {/* test given by students */}
+        <Route path="/teacherDashboard" element={isLoggedIn && role === 'teacher' ? <Teacher /> : <Navigate to="/" />} />
+        <Route path="/TBatches" element={isLoggedIn && role === 'teacher' ? <Batch /> : <Navigate to="/" />} />
+        <Route path="/TCourses" element={isLoggedIn && role === 'teacher' ? <Course /> : <Navigate to="/" />} />
+        <Route path="/teacherProfile" element={isLoggedIn && role === 'teacher' ? <TeacherProfile /> : <Navigate to="/" />} />
+        <Route path="/classes" element={isLoggedIn && role === 'teacher' ? <Classes /> : <Navigate to="/" />} />
+        <Route path="/createtest" element={isLoggedIn && role === 'teacher' ? <CreateTest/> : <Navigate to="/" />} /> {/* Test created by teacher merge */}
+        <Route path="/testList" element={isLoggedIn && role === 'teacher' ? <TeacherTestList /> : <Navigate to="/" />} />
+        <Route path="/testpreview" element={isLoggedIn && role === 'teacher' ? <TestPreview /> : <Navigate to="/" />} />  {/* test given by students */}
 
         {/* Test Series */}
-        <Route path="/testSeries" element={<AllTestSeries />} />  {/* test given by students DONE */} 
-        <Route path="/testInSeries/:seriesId" element={<AllTestInSeries />} />  {/* test given by students */}
-        <Route path="/enrolledTestSeries" element={<EnrolledTestSeries />} />  {/* enrolled test series */}
-        <Route path="/createTestSeries" element={<CreateTestSeries />} />  {/* test given by students */}
-        <Route path="/createTestInSeries" element={<CreateTestInSeries/>} /> {/* Test created by teacher DONE */} 
-        <Route path="/test_series_preview" element={<TestPreview />} />  {/* test given by students */}
-        <Route path="/payment_ts/:series_id" element={<TestSeriesPayment />} />
+        <Route path="/testSeries" element={isLoggedIn && role === 'teacher' ? <AllTestSeries /> : <Navigate to="/" />} />  {/* test given by students DONE */} 
+        <Route path="/testInSeries/:seriesId" element={isLoggedIn && role === 'teacher' ? <AllTestInSeries /> : <Navigate to="/" />} />  {/* test given by students */}
+        <Route path="/enrolledTestSeries" element={isLoggedIn && role === 'student' ? <EnrolledTestSeries /> : <Navigate to="/" />} />  {/* enrolled test series */}
+        <Route path="/createTestSeries" element={isLoggedIn && role === 'teacher' ? <CreateTestSeries /> : <Navigate to="/" />} />  {/* test given by students */}
+        <Route path="/createTestInSeries" element={isLoggedIn && role === 'teacher' ? <CreateTestInSeries/> : <Navigate to="/" />} /> {/* Test created by teacher DONE */} 
+        <Route path="/test_series_preview" element={isLoggedIn && role === 'teacher' ? <TestPreview /> : <Navigate to="/" />} />  {/* test given by students */}
+        <Route path="/payment_ts/:series_id" element={isLoggedIn && role === 'student' ? <TestSeriesPayment /> : <Navigate to="/" />} />
         {/* Owner Routes */}
-        <Route path="/teacherRegister" element={<AdminRegister />} />
-        <Route path="/StudentList" element={<StudentList/>} />
-        <Route path="/TeacherList" element={<TeacherList/>} />
-        <Route path="/BatchOverview" element={<BatchOverview/>} />
-        <Route path="/TeacherDetail" element={<TeacherDetail/>} />
-
+        <Route path="/teacherRegister" element={isLoggedIn && role === 'admin' ? <AdminRegister /> : <Navigate to="/" />} />
+        <Route path="/StudentList" element={isLoggedIn && role === 'admin' ? <StudentList/> : <Navigate to="/" />} />
+        <Route path="/TeacherList" element={isLoggedIn && role === 'admin' ? <TeacherList/> : <Navigate to="/" />} />
+        <Route path="/BatchOverview" element={isLoggedIn && role === 'admin' ? <BatchOverview/> : <Navigate to="/" />} />
+        <Route path="/TeacherDetail" element={isLoggedIn && role === 'admin' ? <TeacherDetail/> : <Navigate to="/" />} />
 
         <Route path="/up" element={<FileUploadComponent />} />
         <Route path="/x" element={<Test />} />

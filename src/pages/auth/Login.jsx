@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { loginUser, sendLoginOtp } from "../../api/auth";
-import { useAuth } from "../../context/AuthContext";
+import { AuthContext } from "../../context/AuthContext";
 import toast, { Toaster } from "react-hot-toast";
 
 const Login = () => {
@@ -14,7 +14,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [otpSent, setOtpSent] = useState(false);
   const [isOtpSending, setIsOtpSending] = useState(false);
-  const { login } = useAuth();
+  const { login } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -59,12 +59,10 @@ const Login = () => {
       const response = await loginUser(formData);
       console.log(response);
       const data = response.data;
+      console.log("Login response:",data);
       if (response.success && data.authToken) {
-        localStorage.setItem("authToken", data.authToken);
-        localStorage.setItem("role", data.role);
-        login(data.role); // Update role in AuthContext
+        login(data.role,data.authToken); // Update role in AuthContext
         toast.success("Login successful!");
-
         // Navigate after a 1-second delay according to user role
         setTimeout(() => {
           if (data.role === "student") {

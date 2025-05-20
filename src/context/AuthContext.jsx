@@ -1,45 +1,48 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useEffect, useMemo } from "react";
 
-// Create Auth Context
-const AuthContext = createContext();
+export const AuthContext = createContext({
+  role: null,
+  authToken: null,
+  initialized: false,
+  login: () => {},
+  logout: () => {},
+  isLoggedIn: () => false,
+});
 
-// Custom hook to use AuthContext
 export const useAuth = () => useContext(AuthContext);
 
-// AuthProvider component
 export const AuthProvider = ({ children }) => {
   const [role, setRole] = useState(() => localStorage.getItem("role"));
-  const [email, setEmail] = useState(() => localStorage.getItem("email"));
+  const [authToken, setAuthToken] = useState(() => localStorage.getItem("authToken"));
+  const [initialized, setInitialized] = useState(false);
 
-  // Sync role and email when localStorage changes
   useEffect(() => {
-    const handleStorageChange = () => {
-      setRole(localStorage.getItem("role"));
-      setEmail(localStorage.getItem("email"));
-    };
-
-    window.addEventListener("storage", handleStorageChange);
-    return () => window.removeEventListener("storage", handleStorageChange);
+    // make sure we sync once, immediately
+    setRole(localStorage.getItem("role"));
+    setAuthToken(localStorage.getItem("authToken"));
+    setInitialized(true);
   }, []);
 
-  // Login function
-  const login = (userRole ) => {
+  const login = (userRole, token) => {
     localStorage.setItem("role", userRole);
+    localStorage.setItem("authToken", token);
     setRole(userRole);
+    setAuthToken(token);
   };
 
-  // Logout function
   const logout = () => {
     localStorage.removeItem("role");
-    localStorage.removeItem("email");
     localStorage.removeItem("authToken");
     setRole(null);
-    setEmail(null);
+    setAuthToken(null);
   };
 
-  return (
-    <AuthContext.Provider value={{ role, email, login, logout }}>
-      {children}
-    </AuthContext.Provider>
+  const isLoggedIn = () => Boolean(authToken);
+
+  const value = useMemo(
+    () => ({ role, authToken, initialized, login, logout, isLoggedIn }),
+    [role, authToken, initialized]
   );
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
