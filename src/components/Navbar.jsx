@@ -25,6 +25,7 @@ export const Navbar = () => {
 
   const handleLogout = async () => {
     try {
+      const email = localStorage.getItem("email");
       if (!email) throw new Error("No user email found");
       await logoutUser(email); // Call logout API
       logout(); // Update AuthContext state
@@ -50,7 +51,7 @@ export const Navbar = () => {
   };
   if (!initialized) return null;
   return (
-    <header className="sticky top-4 z-50 -b lg:px-16 mt-4    bg-none dark:bg-primary-purple">
+    <header className="sticky z-50 -b lg:px-16 pt-4    bg-none dark:bg-primary-purple">
       <div className="container mx-auto px-4 bg-white rounded-xl border border-b-4 border-r-4 border-slate-600 dark:bg-primary-purple/20 dark:border-accent-yellow/20 shadow-lg">
         <div className="flex mx-4 items-center justify-between h-16">
           {/* Logo Section */}

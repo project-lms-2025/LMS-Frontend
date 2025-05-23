@@ -17,6 +17,7 @@ function AdminRegister() {
     role: "",
     is_email_verified: false,
     otp: "", // Added OTP field
+    institution_id: import.meta.env.VITE_Insitution_Id,
   });
 
   // Handles input field changes

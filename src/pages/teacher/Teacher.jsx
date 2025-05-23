@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Sidebar from '../../components/Sidebar';
 import { getAllBatches, getCoursesByBatchId } from '../../api/auth';
 import { ChevronDown, ChevronUp } from 'lucide-react';
+import Loading from '../../components/Loading';
 
 const Teacher = () => {
   const [open, setOpen] = useState(false);
@@ -58,23 +59,27 @@ const Teacher = () => {
     }));
   };
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <div className="m-0">
+    <Sidebar open={open} setOpen={setOpen} />
+    <div
+      className={`transition-all duration-300 ${open ? 'md:ml-[20rem] ml-56 mr-4 w-[40%] md:w-[75%]' : 'ml-24 mr-2'
+        } md:w-[90%]  w-[95%] md:mt`}
+    >
+      <Loading/>
+    </div></div>;
 
   return (
     <div className="m-0">
       <Sidebar open={open} setOpen={setOpen} />
       <div
-        className={`transition-all duration-300 ${
-          open ? 'md:ml-[20rem] ml-56 mr-4 w-[40%] md:w-[75%]' : 'ml-24 mr-2'
-        } md:w-[90%]  w-[95%] md:mt`}
+        className={`transition-all duration-300 ${open ? 'md:ml-[20rem] ml-56 mr-4 w-[40%] md:w-[75%]' : 'ml-24 mr-2'
+          } md:w-[90%]  w-[95%] md:mt`}
       >
         <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
           <div className="max-w-7xl mx-auto">
             <h1 className="text-4xl font-extrabold text-blue-600 mb-6 text-center">
               Teacher Dashboard
             </h1>
-            {error && <div className="text-red-500 text-center">{error}</div>}
-
             {/* Displaying all batches and corresponding courses */}
             {batches.length > 0 ? (
               batches.map((batch) => {

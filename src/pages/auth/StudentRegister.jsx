@@ -11,6 +11,7 @@ function Register() {
   const [isOtpSending, setIsOtpSending] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
+    institution_id: import.meta.env.VITE_Insitution_Id,
     name: "",
     email: "",
     phoneNumber: "",

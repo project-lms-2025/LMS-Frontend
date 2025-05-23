@@ -74,7 +74,7 @@ const Sidebar = ({ open, setOpen }) => {
   }, [open]);
 
   return (
-    <div className={`${open ? "md:w-72" : "w-20"} border-r-[1px] h-screen p-5 pt-2 fixed duration-300 bg-dark-purple/90 backdrop-blur-sm`}>
+    <div className={`${open ? "md:w-72" : "w-20"} border-r-[1px] h-screen bg-white dark:bg-primary-purple p-5 pt-2 fixed duration-300 bg-dark-purple/90 backdrop-blur-sm`}>
       {/* Toggle Sidebar Button */}
       <button
         onClick={() => setOpen(!open)}
@@ -88,11 +88,17 @@ const Sidebar = ({ open, setOpen }) => {
           return (
             <li
               key={index}
-              className={`flex rounded-md py-2 px-2 mb-2 cursor-pointer hover:bg-primary-purple/50 text-primary-white text-md items-center gap-x-4 ${isActive && "bg-primary-purple text-white"}`}
+              className={`flex rounded-md py-2 px-2 mb-2 cursor-pointer hover:bg-primary-purple/50 text-primary-white dark:text-primary-purple text-md items-center gap-x-4 ${isActive && "bg-primary-purple dark:bg-white text-primary-purple"}`}
               onClick={() => handleNavigation(Menu.url, index)}
             >
-              <div className={`text-primary-purple ${isActive && " text-white"}`}>{Menu.icon}</div>
-              <span className={`${!open && "hidden"} origin-left text-gray-900 hover:font-bold hover:text-primary-purple duration-200`}>
+              <div className={isActive ? "dark:text-primary-purple" : "text-primary-purple dark:text-white"}>
+                {Menu.icon}
+              </div>
+              <span
+                className={`${!open && "hidden"}  hover:font-bold hover:text-primary-purple duration-200 ${
+                  isActive ? "text-white dark:text-primary-purple" : "text-primary-purple dark:text-white"
+                }`}
+              >
                 {Menu.title}
               </span>
             </li>

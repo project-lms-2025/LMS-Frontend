@@ -12,6 +12,7 @@ function StudentRegister() {
   const [otpSent, setOtpSent] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [formData, setFormData] = useState({
+    institution_id: import.meta.env.VITE_Insitution_Id,
     name: "",
     phoneNumber: "",
     dob: "",

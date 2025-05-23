@@ -56,14 +56,14 @@ export const sendOtp = async (email) => {
 
 
 /** Sends a login OTP to the provided phone number */
-export const sendLoginOtp = async (phoneNumber) => {
-    if (!phoneNumber) throw new Error("Phone number is required");
-    return fetchAPI("/auth/send-login-otp", "POST", { phoneNumber });
+export const sendLoginOtp = async (email_or_phone) => {
+    if (!email_or_phone) throw new Error("Phone number is required");
+    return fetchAPI("/auth/send-login-otp", "POST", { email_or_phone });
 };
 
 /** Verifies the OTP sent to the email */
 export const verifyOtp = async (email, otp) => {
-    return fetchAPI("/otp/verify-signup-otp", "POST", { email, otp });
+    return fetchAPI("/auth/verify-signup-otp", "POST", { email, otp });
 };
 
 

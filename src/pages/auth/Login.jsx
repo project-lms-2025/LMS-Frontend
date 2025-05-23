@@ -6,7 +6,7 @@ import toast, { Toaster } from "react-hot-toast";
 
 const Login = () => {
   const [formData, setFormData] = useState({
-    phoneNumber: "",
+    email_or_phone: "",
     email: "",
     otp: "",
     deviceType: "mobile",
@@ -23,16 +23,15 @@ const Login = () => {
   };
 
   const sendOtpToPhone = async () => {
-    if (!formData.phoneNumber.trim()) {
+    if (!formData.email_or_phone.trim()) {
       toast.error("Please enter a valid phone number");
       return;
     }
     try {
       setIsOtpSending(true);
-      const response = await sendLoginOtp(formData.phoneNumber);
+      const response = await sendLoginOtp(formData.email_or_phone);
       const data = response.data;
       if (response.success && data.email) {
-        localStorage.setItem("email", data.email);
         setFormData((prev) => ({ ...prev, email: data.email })); // Update email in formData
         setOtpSent(true); // OTP has been sent, show login button
         toast.success(`OTP sent successfully to ${data.email}!`);
@@ -61,7 +60,7 @@ const Login = () => {
       const data = response.data;
       console.log("Login response:",data);
       if (response.success && data.authToken) {
-        login(data.role,data.authToken); // Update role in AuthContext
+        login(data.role,data.authToken, data.email, data.device_type); // Update role in AuthContext
         toast.success("Login successful!");
         // Navigate after a 1-second delay according to user role
         setTimeout(() => {
@@ -101,12 +100,12 @@ const Login = () => {
             {/* Phone Number Input */}
             <div>
               <input
-                id="phoneNumber"
-                name="phoneNumber"
+                id="email_or_phone"
+                name="email_or_phone"
                 type="tel"
                 required
                 placeholder="Phone Number"
-                value={formData.phoneNumber}
+                value={formData.email_or_phone}
                 onChange={handleChange}
                 className="w-full px-4 py-2 border rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-primary-purple focus:border-primary-purple"
               />

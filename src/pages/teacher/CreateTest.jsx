@@ -38,7 +38,7 @@ const CreateTest = () => {
       questions: [],
     };
   });
-
+  const [validationErrors, setValidationErrors] = useState({});
   useEffect(() => {
     sessionStorage.setItem("draftTestPaper", JSON.stringify(questionPaper));
   }, [questionPaper]);
@@ -104,6 +104,7 @@ const CreateTest = () => {
     console.log(joinedOptionIds)
     updateQuestion(question.question_id, "correct_option_id", joinedOptionIds);
   };
+
 
   // NAT Selection: always mark the single option as correct
   const handleNATSelection = (question, value) => {
@@ -218,107 +219,100 @@ const CreateTest = () => {
   };
 
   // Validation Function
-  // Validation Function
   const validateFields = () => {
+    let hasErrors = false;
+    const errors = {};
+
     // Validate test details
     if (!questionPaper.title.trim()) {
       toast.error("Test title is required.");
-      return false;
+      hasErrors = true;
     }
 
     if (!questionPaper.duration || questionPaper.duration <= 0) {
       toast.error("Duration must be a positive number.");
-      return false;
+      hasErrors = true;
     }
 
     if (!questionPaper.schedule_start) {
       toast.error("Schedule start time is required.");
-      return false;
+      hasErrors = true;
     }
 
     if (!questionPaper.schedule_end) {
       toast.error("Schedule end time is required.");
-      return false;
-    }
-
-    if (!questionPaper.description.trim()) {
-      toast.error("Test description is required.");
-      return false;
-    }
-
-    // Validate positive_marks and negative_marks for each question
-    for (let q of questionPaper.questions) {
-      if (q.positive_marks <= 0 || isNaN(q.positive_marks)) {
-        toast.error("Each question must have a valid positive mark.");
-        return false;
-      }
-
-      if (q.negative_marks < 0 || isNaN(q.negative_marks)) {
-        toast.error("Each question must have a valid negative mark (cannot be negative).");
-        return false;
-      }
-    }
-
-    // Validate 'isCorrect' option for each question
-    for (let q of questionPaper.questions) {
-      if (q.options.length === 0) {
-        toast.error("Each question must have at least one option.");
-        return false;
-      }
-
-      const correctOptions = q.options.filter(opt => opt.is_correct === true);
-
-      if (q.question_type === "MCQ") {
-        // For MCQs, ensure exactly one option is marked as correct
-        if (correctOptions.length !== 1) {
-          toast.error("For MCQs, exactly one option must be marked as correct.");
-          return false;
-        }
-      } else if (q.question_type === "MSQ") {
-        // For MSQs, ensure at least one option is marked as correct
-        if (correctOptions.length === 0) {
-          toast.error("For MSQs, at least one option must be marked as correct.");
-          return false;
-        }
-      }
-
-      // Ensure each option has a valid 'isCorrect' field
-      for (let opt of q.options) {
-        if (typeof opt.is_correct !== "boolean") {
-          toast.error("Each option must have a valid 'isCorrect' field (true or false).");
-          return false;
-        }
-      }
+      hasErrors = true;
     }
 
     // Validate questions
     if (questionPaper.questions.length === 0) {
       toast.error("You must add at least one question.");
-      return false;
+      hasErrors = true;
     }
 
-    for (let q of questionPaper.questions) {
-      if (!q.question_text) {
-        toast.error("Each question must have text.");
-        return false;
+    // Check each question for errors
+    questionPaper.questions.forEach((q, index) => {
+      const questionId = q.question_id;
+      errors[questionId] = { hasError: false, emptyOptions: [] };
+
+      // Check if question text is empty
+      if (!q.question_text.trim()) {
+        errors[questionId].hasError = true;
+        errors[questionId].emptyQuestion = true;
+        hasErrors = true;
       }
 
+      // Check positive and negative marks
+      if (q.positive_marks <= 0 || isNaN(q.positive_marks)) {
+        errors[questionId].hasError = true;
+        hasErrors = true;
+      }
+
+      if (q.negative_marks < 0 || isNaN(q.negative_marks)) {
+        errors[questionId].hasError = true;
+        hasErrors = true;
+      }
+
+      // Check options
       if (q.question_type === "NAT") {
-        if (!q.options[0].option_text) {
-          toast.error("NAT questions must have an option text.");
-          return false;
+        if (!q.options[0].option_text.trim()) {
+          errors[questionId].hasError = true;
+          errors[questionId].emptyOptions.push(0);
+          toast.error(`Question ${index + 1}: Answer field is empty`);
+          hasErrors = true;
         }
       } else {
-        for (let opt of q.options) {
-          if (!opt.option_text) {
-            toast.error("All options must have text.");
-            return false;
+        // For MCQ and MSQ
+        q.options.forEach((opt, optIndex) => {
+          if (!opt.option_text.trim()) {
+            errors[questionId].hasError = true;
+            errors[questionId].emptyOptions.push(optIndex);
+            hasErrors = true;
           }
+        });
+
+        if (errors[questionId].emptyOptions.length > 0) {
+          toast.error(`Question ${index + 1}: Some options are empty`);
+        }
+
+        // Check if any correct option is selected for MCQ/MSQ
+        const correctOptions = q.options.filter(opt => opt.is_correct === true);
+        if (q.question_type === "MCQ" && correctOptions.length !== 1) {
+          errors[questionId].hasError = true;
+          errors[questionId].noCorrectOption = true;
+          toast.error(`Question ${index + 1}: Select exactly one correct option`);
+          hasErrors = true;
+        } else if (q.question_type === "MSQ" && correctOptions.length === 0) {
+          errors[questionId].hasError = true;
+          errors[questionId].noCorrectOption = true;
+          toast.error(`Question ${index + 1}: Select at least one correct option`);
+          hasErrors = true;
         }
       }
-    }
+    });
 
-    return true;
+    setValidationErrors(errors);
+    return !hasErrors;
   };
 
   // Test Creation Function
@@ -464,7 +458,9 @@ const CreateTest = () => {
         <div className="w-[66.5%] mt-[0px] h-[55vh] overflow-y-auto">
           {filteredQuestions.length > 0 ? (
             filteredQuestions.map((question, idx) => (
-              <div key={question.question_id} className="bg-white border rounded-lg shadow p-6 mb-4">
+              <div key={question.question_id} className={`bg-white p-4 rounded-lg shadow-md mb-4 ${
+                validationErrors[question.question_id]?.hasError ? 'border-2 border-red-500' : ''
+              }`}>
                 <div className="flex justify-between items-center gap-4 mb-4">
                   <h2 className="text-xl font-semibold">Question No.  {idx + 1}</h2>
                   <div className="flex gap-6">
@@ -743,13 +739,14 @@ const CreateTest = () => {
               if (q.status === "Answered") btnColor = "bg-green-200 text-green-800";
               if (q.status === "Marked for Review") btnColor = "bg-yellow-200 text-yellow-800";
               return (
-                <button
-                  key={index + 1}
-                  onClick={() => setCurrentQuestionIndex(index)}
-                  className={`w-10 h-10 rounded ${btnColor} hover:opacity-80`}
-                >
-                  {index + 1}
-                </button>
+                <div key={q.question_id} className={`bg-white w-10 h-10 p- rounded-lg shadow-md  ${ validationErrors[q.question_id]?.hasError ? 'border-2 border-red-500' : ''              } ${currentQuestionIndex === index ? 'bg-blue-100 border-2' : 'border-2'}`}>
+                  <button
+                    onClick={() => setCurrentQuestionIndex(index)}
+                    className={`w-9 h-9 rounded-md ${btnColor} hover:opacity-80`}
+                  >
+                    {index + 1}
+                  </button>
+                </div>
               );
             })}
           </div>
