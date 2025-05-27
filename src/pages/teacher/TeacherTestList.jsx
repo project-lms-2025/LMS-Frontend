@@ -5,6 +5,7 @@ import Sidebar from '../../components/Sidebar';
 import Loading from '../../components/Loading';
 import { getAllBatches, getCoursesByBatchId } from '../../api/auth';
 import { getAllTests } from '../../api/test';
+import { Dialog, DialogTitle } from '@headlessui/react';
 
 const TeacherTestList = () => {
     const [tests, setTests] = useState([]);
@@ -15,6 +16,7 @@ const TeacherTestList = () => {
     const [filteredTests, setFilteredTests] = useState([]); // State to hold filtered tests
     const [loading, setLoading] = useState(true);
     const [open, setOpen] = useState(false);
+    const [showDialog, setShowDialog] = useState(false);
 
     // Fetch tests on mount
     useEffect(() => {
@@ -93,61 +95,98 @@ const TeacherTestList = () => {
                 <div className="p-6 flex justify-center min-h-[90vh]">
                     <Toaster />
                     <div className="w-full max-w-5xl">
-                        <div className="flex justify-between items-center mb-4">
-                            <h1 className="text-3xl font-bold">All tests</h1>
-                            <div className="flex items-center gap-4">
-                                {/* Batch Dropdown */}
-                                <select
-                                    value={selectedBatchId}
-                                    onChange={(e) => setSelectedBatchId(e.target.value)}
-                                    className="border border-gray-300 rounded px-4 py-2"
-                                >
-                                    <option value="">Select Batch</option>
-                                    {batches.map((batch) => (
-                                        <option key={batch.batch_id} value={batch.batch_id}>
-                                            {batch.batch_name}
-                                        </option>
-                                    ))}
-                                </select>
+                        <Dialog
+                            as="div"
+                            className="fixed z-10 bg-black/80 inset-0 overflow-y-auto"
+                            onClose={() => setShowDialog(false)}
+                            open={showDialog}
+                        >
+                            <div className="flex items-center justify-center min-h-screen">
 
-                                {/* Course Dropdown */}
-                                <select
-                                    value={selectedCourseId}
-                                    onChange={(e) => setSelectedCourseId(e.target.value)}
-                                    className="border border-gray-300 rounded px-4 py-2"
-                                    disabled={!selectedBatchId}
-                                >
-                                    <option value="">Select Course</option>
-                                    {courses.map((course) => (
-                                        <option key={course.course_id} value={course.course_id}>
-                                            {course.course_name}
-                                        </option>
-                                    ))}
-                                </select>
+                                <div className="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full">
+                                    <DialogTitle as="h3" className="text-xl text-center leading-6 font-medium text-gray-900 px-4 py-2">
+                                        Create Test
+                                    </DialogTitle>
 
-                                {/* Create Test Link */}
-                                <a
-                                    onClick={(e) => {
-                                        // Validate if batch is selected
-                                        if (!selectedBatchId) {
-                                            e.preventDefault(); // Prevent navigation
-                                            toast.error("Please select a batch before creating the test.");
-                                            return;
-                                        }
+                                    <div className="bg-gray-50 px-4 py-5 sm:p-6">
 
-                                        // Validate if course is selected
-                                        if (!selectedCourseId) {
-                                            e.preventDefault(); // Prevent navigation
-                                            toast.error("Please select a course before creating the test.");
-                                            return;
-                                        }
-                                    }}
-                                    className="flex justify-center no-underline hover:no-underline items-center gap-2 px-4 py-2 rounded-lg bg-white border border-gray-300 hover:bg-gray-50"
-                                    href={`/createtest?type=COURSE_TEST&course_id=${selectedCourseId}`}
-                                >
-                                    Create Test <Plus />
-                                </a>
+
+                                        {/* Batch Dropdown */}
+                                        <select
+                                            value={selectedBatchId}
+                                            onChange={(e) => setSelectedBatchId(e.target.value)}
+                                            className="border border-gray-300 rounded px-4 py-2"
+                                        >
+                                            <option value="">Select Batch</option>
+                                            {batches.map((batch) => (
+                                                <option key={batch.batch_id} value={batch.batch_id}>
+                                                    {batch.batch_name}
+                                                </option>
+                                            ))}
+                                        </select>
+
+                                        {/* Course Dropdown */}
+                                        <select
+                                            value={selectedCourseId}
+                                            onChange={(e) => setSelectedCourseId(e.target.value)}
+                                            className="border border-gray-300 rounded px-4 py-2"
+                                            disabled={!selectedBatchId}
+                                        >
+                                            <option value="">Select Course</option>
+                                            {courses.map((course) => (
+                                                <option key={course.course_id} value={course.course_id}>
+                                                    {course.course_name}
+                                                </option>
+                                            ))}
+                                        </select>
+
+                                        {/* Create Test Link */}
+                                        <a
+                                            onClick={(e) => {
+                                                // Validate if batch is selected
+                                                if (!selectedBatchId) {
+                                                    e.preventDefault(); // Prevent navigation
+                                                    toast.error("Please select a batch before creating the test.");
+                                                    return;
+                                                }
+
+                                                // Validate if course is selected
+                                                if (!selectedCourseId) {
+                                                    e.preventDefault(); // Prevent navigation
+                                                    toast.error("Please select a course before creating the test.");
+                                                    return;
+                                                }
+                                            }}
+                                            className="flex justify-center no-underline hover:no-underline items-center gap-2 px-4 py-2 rounded-lg bg-white border border-gray-300 hover:bg-gray-50"
+                                            href={`/createtest?type=COURSE_TEST&course_id=${selectedCourseId}&batch_id=${selectedBatchId}`}
+                                        >
+                                            Create Test <Plus />
+                                        </a>
+                                    </div>
+
+                                    <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                                        <button
+                                            type="button"
+                                            className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:ml-3 sm:w-auto sm:text-sm"
+                                            onClick={() => setShowDialog(false)}
+                                        >
+                                            Close
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
+                        </Dialog>
+                        <div className="flex justify-between">
+                            <div className="flex justify-between items-center mb-4">
+                                <h1 className="text-3xl font-bold">All tests</h1>
+                            </div>
+                            <button
+                                type="button"
+                                className="flex justify-center no-underline hover:no-underline items-center gap-2 px-4 py-2 rounded-lg bg-white border border-gray-300 hover:bg-gray-50"
+                                onClick={() => setShowDialog(true)}
+                            >
+                                Create Test <Plus />
+                            </button>
                         </div>
 
                         <div className="grid grid-cols-1 gap-4">

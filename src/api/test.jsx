@@ -122,46 +122,99 @@ export const getTestInSeries = async (seriesId, testId) => {
 
 
 // Upload an image file to S3 using a presigned URL and return that URL
-export const uploadImageToS3 = async (imageFile, testId, type, id) => {
+export const uploadImageToS3 = async (
+    imageFile,
+    testId,
+    type,
+    id,
+    testType,
+    course_id,
+    batch_id,
+    institution_id
+) => {
     try {
-        // Determine the file extension from the image file type
-        console.log("TEST ID", testId)
-        console.log("type ID", type)
-        console.log("ID", id)
-        const fileType = imageFile.type.split('/')[1];
-        let imageName = '';
-
-        // Construct the image path based on the type (option or question)
-        if (type === 'option') {
-            imageName = `${testId}/options/${id}.${fileType}`;
-        } else if (type === 'question') {
-            imageName = `${testId}/questions/${id}.${fileType}`;
-        } else {
-            throw new Error('Invalid image type');
+        if (!imageFile.type || !imageFile.type.includes("/")) {
+            throw new Error("Invalid file type");
         }
 
-        // Construct the endpoint with query parameters as per the provided curl
-        const endpoint = `/generatePresignedUrl?fileName=${encodeURIComponent(imageName)}&fileType=${encodeURIComponent(imageFile.type)}`;
+        const fileType = imageFile.type.split("/")[1];
+        const filename = `${type}_${id}.${fileType}`; // e.g., question_88.png
+        let category, metadata = {};
 
-        // Call fetchAPI using GET (no body required)
-        const { presignedUrl } = await fetchAPI(endpoint, "GET");
+        if (type === "option") {
+            category = "option_image";
+            metadata = {
+                institution_id,
+                batch_id,
+                course_id,
+                test_id: testId,
+                question_id: id.split("_")[0],
+                option_id: id,
+                testType,
+            };
+        } else if (type === "question") {
+            category = "question_image";
+            metadata = {
+                institution_id,
+                batch_id,
+                course_id,
+                test_id: testId,
+                question_id: id,
+                testType,
+            };
+        } else {
+            throw new Error("Invalid image type");
+        }
 
-        // Upload the image file directly to S3 using the presigned URL
+        const requestBody = {
+            category,
+            filename,
+            fileType: imageFile.type,
+            metadata,
+        };
+
+        console.log("Upload metadata:", requestBody);
+
+        // Call API to get presigned URL
+        const response = await fetch("https://testapi.teachertech.in/api/v2/s3/generate-upload-url", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Accept: "application/json",
+                Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+            },
+            body: JSON.stringify(requestBody),
+        });
+
+        const result = await response.json();
+        console.log("Result:", result);
+        const presignedUrl = result?.data?.uploadURL;
+
+        if (!presignedUrl) {
+            throw new Error("No presigned URL returned");
+        }
+
+        console.log("Presigned URL:", presignedUrl);
+
+        // Upload the image file directly to S3
         const uploadResponse = await fetch(presignedUrl, {
             method: "PUT",
             headers: {
                 "Content-Type": imageFile.type,
+
             },
             body: imageFile,
         });
 
         if (!uploadResponse.ok) {
+            const errorText = await uploadResponse.text();
+            console.error("Upload failed:", errorText);
             throw new Error("Error uploading image to S3");
         }
 
-        // Return the presigned URL upon successful upload
-        const publicUrl = presignedUrl.split('?')[0];
-        console.log(publicUrl);
+        // Return the public URL (without query params)
+        const publicUrl = presignedUrl.split("?")[0];
+        console.log("Uploaded Image URL:", publicUrl);
         return publicUrl;
     } catch (error) {
         console.error("Error during image upload:", error);

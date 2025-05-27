@@ -17,6 +17,7 @@ const CreateTest = () => {
   const queryParams = new URLSearchParams(location.search);
   const type = queryParams.get("type");
   const courseId = queryParams.get("course_id");
+  const batchId = queryParams.get("batch_id");
   const seriesId = queryParams.get("seriesId");
   // Initialize paper state with an empty questions array.
   const [questionPaper, setQuestionPaper] = useState(() => {
@@ -174,12 +175,12 @@ const CreateTest = () => {
     if (file.type.startsWith("image/")) {
       let url;
       if (optionIndex === "question") {
-        url = await uploadImageToS3(file, questionPaper.test_id, "question", questionId);
+        url = await uploadImageToS3(file, questionPaper.test_id, "question", questionId, type, courseId, batchId, seriesId);
         if (url) {
           updateQuestionAttachment(questionId, url);
         }
       } else {
-        url = await uploadImageToS3(file, questionPaper.test_id, "option", `${questionId}-${optionIndex}`);
+        url = await uploadImageToS3(file, questionPaper.test_id, "option", `${questionId}_${optionIndex}`, type, courseId, batchId, seriesId);
         if (url) {
           setQuestionPaper((prev) => ({
             ...prev,
@@ -197,6 +198,7 @@ const CreateTest = () => {
           }));
         }
       }
+      console.log("url", url);
     } else {
       console.warn("Only image uploads are supported in this demo.");
     }
