@@ -39,6 +39,7 @@ const CreateTest = () => {
       questions: [],
     };
   });
+  console.log(questionPaper.total_marks);
   const [validationErrors, setValidationErrors] = useState({});
   useEffect(() => {
     sessionStorage.setItem("draftTestPaper", JSON.stringify(questionPaper));
@@ -50,14 +51,24 @@ const CreateTest = () => {
 
   // Update Functions
   const updateQuestion = (question_id, field, value) => {
-    setQuestionPaper((prev) => ({
-      ...prev,
-      questions: prev.questions.map((q) =>
+    setQuestionPaper((prev) => {
+      const updatedQuestions = prev.questions.map((q) =>
         q.question_id === question_id ? { ...q, [field]: value } : q
-      ),
-    }));
+      );
+      
+      // Recalculate total marks whenever a question is updated
+      const totalMarks = updatedQuestions.reduce(
+        (sum, q) => sum + (parseInt(q.positive_marks) || 0),
+        0
+      );
+      
+      return {
+        ...prev,
+        questions: updatedQuestions,
+        total_marks: totalMarks,
+      };
+    });
   };
-
   const updateOption = (questionId, optionIndex, value, isCorrect = false) => {
     setQuestionPaper((prev) => ({
       ...prev,
@@ -149,20 +160,32 @@ const CreateTest = () => {
             })),
       marks: 1,
     };
-    setQuestionPaper((prev) => ({
-      ...prev,
-      questions: [...prev.questions, newQuestion],
-      total_marks: parseInt(prev.total_marks || 0) + 1,
-    }));
+    setQuestionPaper((prev) => {
+      // Recalculate total marks by summing all positive_marks
+      const updatedQuestions = [...prev.questions, newQuestion];
+      const totalMarks = updatedQuestions.reduce((sum, q) => 
+        sum + (parseInt(q.positive_marks) || 0), 0);
+      
+      return {
+        ...prev,
+        questions: updatedQuestions,
+        total_marks: totalMarks
+      };
+    });
   };
 
   const removeQuestion = (question_id) => {
     setQuestionPaper((prev) => {
-      const question = prev.questions.find((q) => q.question_id === question_id);
+      const updatedQuestions = prev.questions.filter((q) => q.question_id !== question_id);
+      
+      // Recalculate total marks by summing all positive_marks
+      const totalMarks = updatedQuestions.reduce((sum, q) => 
+        sum + (parseInt(q.positive_marks) || 0), 0);
+      
       return {
         ...prev,
-        questions: prev.questions.filter((q) => q.question_id !== question_id),
-        total_marks: parseInt(prev.total_marks || 0) - (parseInt(question?.positive_marks || 0)),
+        questions: updatedQuestions,
+        total_marks: totalMarks
       };
     });
   };
