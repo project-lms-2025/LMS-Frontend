@@ -38,7 +38,7 @@ const data = [
 const LandingPage2 = () => {
   return (
     <div>
-      <div className="bg-[url(./Subtract.png)] bg-contain bg-center h-screen">
+      <div className="bg-[url(/Subtract.png)] bg-contain bg-center h-screen">
         <div className="flex flex-col justify-center items-center h-full pt-40">
           <h3 className=" bg-white font-bold p-2 px-4 rounded-full text-sm  mb-8">
             Experience a broad learning platform
@@ -54,7 +54,7 @@ const LandingPage2 = () => {
           <button className=" p-2 px-4 bg-black text-white font-bold rounded-xl hover:bg-primary-purple transition-colors">
             Start Demo
           </button>
-          <img src="./hero1.png" alt="" className="w-[70%]" />
+          <img src="/hero1.png" alt="" className="w-[70%]" />
         </div>
         <section className="py-12 bg-white">
           {/* Header */}
