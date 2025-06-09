@@ -51,6 +51,7 @@ import Batch from './pages/teacher/Batch';
 import Course from './pages/teacher/Course';
 import TeacherLanding from './pages/TeacherLanding';
 import Instructions from './components/Instruction';
+import LandingPage2 from './pages/LandingPage2';
 
 
 function App() {
@@ -60,9 +61,10 @@ function App() {
   return (
     <Router className="h-screen" >
       <Toaster autoClose={3000} />
-      <Navbar role={role} />
+      <Navbar  role={role} />
       <Routes>
-        <Route path="/" element={<LandingPage />} />
+        <Route path="/" element={<LandingPage2 />} />
+        <Route path="/a" element={<LandingPage />} />
         <Route path="/signin" element={<Login />} />
         <Route path="/forgot" element={<Forgot />} />
         <Route path="/reset-password" element={<ResetPassword />} />

@@ -32,7 +32,6 @@ const AllTestInSeries = () => {
         }
       } catch (err) {
         setError(err.message);
-        toast.error("Failed to fetch tests in series.");
       } finally {
         setLoading(false);
       }
@@ -68,7 +67,7 @@ const AllTestInSeries = () => {
             {loading ? (
               <Loading />
             ) : error ? (
-              <div className="text-center text-red-500">{error}</div>
+              <div className="text-center text-white">No test created in this series.</div>
             ) : tests.length === 0 ? (
               <div className="text-center text-primary-purple dark:text-accent-skyblue">
                 No tests found in this series.
