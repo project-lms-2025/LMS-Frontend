@@ -113,8 +113,8 @@ const LandingPage2 = () => {
   return (
     <div>
       <div className="bg-[url(/Subtract.png)] lg:bg-cover bg-no-repeat bg-center h-screen">
-        <div className="flex flex-col justify-center items-center h-full pt-10 lg:pt-40">
-          <h3 className=" bg-white font-bold p-2 px-4 rounded-full text-sm  mb-8">
+        <div className="flex flex-col justify-center items-center h-full pt-14 md:pt-[24dvh]">
+          <h3 className=" bg-white font-bold p-2 px-4 rounded-full text-sm  mb-4">
             Experience a broad learning platform
           </h3>
           <h1 className="text-3xl text-center lg:text-5xl font-bold mb-6 ">
