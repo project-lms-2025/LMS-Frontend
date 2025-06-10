@@ -112,15 +112,15 @@ const LandingPage2 = () => {
   };
   return (
     <div>
-      <div className="bg-[url(/Subtract.png)] bg-contain bg-center h-screen">
-        <div className="flex flex-col justify-center items-center h-full pt-40">
+      <div className="bg-[url(/Subtract.png)] lg:bg-cover bg-no-repeat bg-center h-screen">
+        <div className="flex flex-col justify-center items-center h-full pt-10 lg:pt-40">
           <h3 className=" bg-white font-bold p-2 px-4 rounded-full text-sm  mb-8">
             Experience a broad learning platform
           </h3>
-          <h1 className="text-5xl font-bold mb-6 ">
+          <h1 className="text-3xl text-center lg:text-5xl font-bold mb-6 ">
             Teach Anyone, Anytime, Anywhere
           </h1>
-          <p className="text-lg  max-w-2xl font-light text-center mb-4">
+          <p className="text-md lg:text-lg  max-w-2xl text-center font-light mb-4">
             {" "}
             Empowering educators with smart tools to manage classroom track
             progress and engage student all in one place
@@ -128,9 +128,9 @@ const LandingPage2 = () => {
           <button className=" p-2 px-4 bg-black text-white font-bold rounded-xl hover:bg-primary-purple transition-colors">
             Start Demo
           </button>
-          <img src="/hero1.png" alt="" className="w-[70%]" />
+          <img src="/hero1.png" alt="" className="w-[90%] lg:w-[70%]" />
         </div>
-        <section className="py-32 bg-white">
+        <section className="lg:py-32 bg-white">
           {/* Header */}
           <div className="max-w-6xl mt-10 mx-auto px-4 mb-8 flex flex-col md:flex-row md:items-center">
             <h2 className="text-4xl font-bold text-gray-900">Stats</h2>
@@ -258,7 +258,7 @@ const LandingPage2 = () => {
             </div>
           </div>
         </section>
-        <section className="py-20 pb-32">
+        <section id="product" className="py-20 pb-32">
           <div className="max-w-6xl mx-auto px-4 lg:px-8 text-center">
             <h2 className="text-4xl font-bold text-gray-800 mb-4">
               Discover Our Services
@@ -377,7 +377,7 @@ const LandingPage2 = () => {
                   <div className="flex items-center">
                     <Phone className="w-6 h-6 mr-3 opacity-90" />
                     <a
-                      href="tel:+918471968909"
+                      href="tel:+918472868805"
                       className="hover:underline text-white"
                     >
                       +91-84719-68909
@@ -644,7 +644,7 @@ const LandingPage2 = () => {
 
           {/* Large brand stamp */}
           <div className="pb-8 text-center">
-            <span className="text-[10rem] font-extrabold">TeacherTech</span>
+            <span className="lg:text-[10rem] text-[3rem] font-extrabold">TeacherTech</span>
           </div>
         </section>
       </div>

@@ -51,8 +51,8 @@ export const Navbar = () => {
   };
   if (!initialized) return null;
   return (
-    <header className="flex justify-center z-50  lg:px-16     ">
-      <div className="container absolute top-4 mx-auto px-1 bg-white rounded-full border border-b-4 border-r-4 border-slate-600 dark:bg-primary-purple dark:border-accent-yellow/20 shadow-lg">
+    <header className="flex justify-center z-50  px-4  ">
+      <div className="container absolute top-4  lg:mx-auto  px-1 bg-white rounded-full border border-b-4 border-r-4 border-slate-600 dark:bg-primary-purple dark:border-accent-yellow/20 shadow-lg">
         <div className="flex mx-4 items-center justify-between h-16">
           {/* Logo Section */}
           <div className="flex items-center space-x-2">
@@ -63,6 +63,25 @@ export const Navbar = () => {
               </span>
             </a>
           </div>
+          <div className="flex gap-8">
+            <a
+              href="#product"
+              className="hidden md:block dark:text-secondary-gray text-primary-purple   hover:text-primary-purple/50 dark:text-primary-white/80 dark:hover:text-accent-yellow transition-colors"
+            >
+              Product & Services
+            </a>
+            <a
+              href="/pricing"
+              className="hidden md:block dark:text-secondary-gray text-primary-purple   hover:text-primary-purple/50 dark:text-primary-white/80 dark:hover:text-accent-yellow transition-colors"
+            >
+              Pricing
+            </a>
+            <a
+              href="#contact"
+              className="hidden md:block dark:text-secondary-gray text-primary-purple   hover:text-primary-purple/50 dark:text-primary-white/80 dark:hover:text-accent-yellow transition-colors"
+            >
+              Contact Us
+            </a>
 
           {/* Navigation Links - Hidden if role is null */}
           {role && (
@@ -78,15 +97,18 @@ export const Navbar = () => {
               ))}
             </nav>
           )}
+          </div>
 
           {/* Theme Toggle & Logout Button */}
           <div className="flex items-center space-x-4">
             {/* Show user name if logged in */}
             {user && !loading && (
-              <span className="text-black dark:text-white">{user.name || user.email}</span>
+              <span className="text-black dark:text-white">
+                {user.name || user.email}
+              </span>
             )}
 
-            <button
+            {/* <button
               onClick={toggleTheme}
               className="p-2 rounded-full hover:bg-secondary-gray/20 dark:hover:bg-primary-purple/30 border border-secondary-gray/120 dark:border-primary-white/20 transition-colors"
               aria-label="Toggle theme"
@@ -96,10 +118,13 @@ export const Navbar = () => {
               ) : (
                 <Moon className="w-5 h-5 text-primary-purple dark:text-accent-yellow" />
               )}
-            </button>
+            </button> */}
 
+            <button className="px-4 py-2 bg-primary-purple dark:bg-white dark:text-primary-purple text-white rounded-full hover:bg-blue-600 transition-colors">
+              Get In Touch
+            </button>
             {/* Conditionally render Login / Logout button */}
-            {user ? (
+            {/* {user ? (
               <button
                 onClick={handleLogout}
                 className="px-4 py-2 bg-red-500/90 text-white rounded-full hover:bg-red-600 transition-colors"
@@ -113,7 +138,7 @@ export const Navbar = () => {
               >
                 Login
               </button>
-            )}
+            )} */}
           </div>
         </div>
       </div>

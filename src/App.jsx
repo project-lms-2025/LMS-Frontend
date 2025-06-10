@@ -52,7 +52,7 @@ import Course from './pages/teacher/Course';
 import TeacherLanding from './pages/TeacherLanding';
 import Instructions from './components/Instruction';
 import LandingPage2 from './pages/LandingPage2';
-
+import Pricing from './pages/Pricing';
 
 function App() {
   const { role, isLoggedIn } = useAuth();
@@ -71,6 +71,7 @@ function App() {
         <Route path="/studentSignup" element={<Register />} />   {/* Student registration */}
         <Route path="/studentSignup2" element={<StudentRegister />} />   {/* Student registration */}
         <Route path="/payment_batch/:batch_id" element={<BatchPayment />} />
+        <Route path="/pricing" element={<Pricing />} />
         {/* Student Routes */}
         <Route path="/studentClass" element={isLoggedIn && role === 'student' ? <StudentDashboard /> : <Navigate to="/" />} />
         <Route path="/studentProfile" element={isLoggedIn && role === 'student' ? <StudentProfile /> : <Navigate to="/" />} />
