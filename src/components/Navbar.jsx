@@ -52,51 +52,51 @@ export const Navbar = () => {
   if (!initialized) return null;
   return (
     <header className="flex justify-center z-50  px-4  ">
-      <div className="container absolute top-4  lg:mx-auto  px-1 bg-white rounded-full border border-b-4 border-r-4 border-slate-600 dark:bg-primary-purple dark:border-accent-yellow/20 shadow-lg">
+      <div className="container absolute top-4  lg:mx-auto  px-1 bg-white rounded-full  shadow-lg">
         <div className="flex mx-4 items-center justify-between h-16">
           {/* Logo Section */}
           <div className="flex items-center space-x-2">
-            <GraduationCap className="w-8 h-8 text-primary-purple dark:text-accent-yellow" />
+            <GraduationCap className="w-8 h-8 text-primary-purple " />
             <a href="/" className="no-underline hover:no-underline">
-              <span className="text-xl font-bold hover: text-primary-purple dark:text-primary-white">
+              <span className="text-xl font-bold hover: text-primary-purple ">
                 TeacherTech
               </span>
             </a>
           </div>
-          <div className="flex gap-8">
+          <div className="flex gap-8  ">
             <a
               href="#product"
-              className="hidden md:block dark:text-secondary-gray text-primary-purple   hover:text-primary-purple/50 dark:text-primary-white/80 dark:hover:text-accent-yellow transition-colors"
+              className="hidden md:block  text-primary-purple  hover:text-primary-purple/50  dark:hover:text-accent-yellow transition-colors"
             >
               Product & Services
             </a>
             <a
               href="/pricing"
-              className="hidden md:block dark:text-secondary-gray text-primary-purple   hover:text-primary-purple/50 dark:text-primary-white/80 dark:hover:text-accent-yellow transition-colors"
+              className="hidden md:block  text-primary-purple  hover:text-primary-purple/50  dark:hover:text-accent-yellow transition-colors"
             >
               Pricing
             </a>
             <a
               href="#contact"
-              className="hidden md:block dark:text-secondary-gray text-primary-purple   hover:text-primary-purple/50 dark:text-primary-white/80 dark:hover:text-accent-yellow transition-colors"
+              className="hidden md:block  text-primary-purple  hover:text-primary-purple/50  dark:hover:text-accent-yellow transition-colors"
             >
               Contact Us
             </a>
 
           {/* Navigation Links - Hidden if role is null */}
-          {role && (
+          {/* {role && (
             <nav className="hidden md:flex items-center space-x-8">
               {navLinks[role]?.map((link) => (
                 <a
                   key={link.name}
                   href={link.href}
-                  className="dark:text-secondary-gray text-primary-purple   hover:text-primary-purple/50 dark:text-primary-white/80 dark:hover:text-accent-yellow transition-colors"
+                  className="dark:text-black text-primary-purple   hover:text-primary-purple/50 dark:text-primary-white/80 dark:hover:text-accent-yellow transition-colors"
                 >
                   {link.name}
                 </a>
               ))}
             </nav>
-          )}
+          )} */}
           </div>
 
           {/* Theme Toggle & Logout Button */}
@@ -120,9 +120,9 @@ export const Navbar = () => {
               )}
             </button> */}
 
-            <button className="px-4 py-2 bg-primary-purple dark:bg-white dark:text-primary-purple text-white rounded-full hover:bg-blue-600 transition-colors">
+            <a href="#contact" className="px-4 py-2 font-medium border bg-primary-purple  dark:text-white text-white rounded-full hover:bg-primary-purple/50 transition-colors">
               Get In Touch
-            </button>
+            </a>
             {/* Conditionally render Login / Logout button */}
             {/* {user ? (
               <button

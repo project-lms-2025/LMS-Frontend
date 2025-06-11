@@ -13,6 +13,8 @@ import {
   ArrowRight,
   Mail,
   Phone,
+  ChevronDown,
+  ChevronUp,
   MapPin,
   Facebook,
   Twitter,
@@ -35,30 +37,33 @@ const data = [
   { month: "Month11", revenue: 900000, branding: 110000, fee: 46000 },
   { month: "Month12", revenue: 1000000, branding: 120000, fee: 50000 },
 ];
-const services = [
+const FEATURES = [
   {
-    icon: <Package className="w-8 h-8 text-primary" />,
     title: "Branded App & Website",
-    description:
-      "Custom-designed mobile apps and responsive websites to elevate your brand presence.",
+    content:
+      "Custom iOS/Android apps and responsive websites built to showcase your brand and drive engagement across devices.",
+    image:
+      "https://www.24pagesafrica.com/wp-content/uploads/2023/05/website-design.png", // replace with your actual paths
   },
   {
-    icon: <FileText className="w-8 h-8 text-primary" />,
     title: "Test Series",
-    description:
+    content:
       "Comprehensive practice tests and mock exams to help learners assess and improve.",
+    image: "https://studyknight.in/wp-content/uploads/2023/12/Test-Series.png",
   },
   {
-    icon: <ShoppingCart className="w-8 h-8 text-primary" />,
     title: "Course Selling",
-    description:
+    content:
       "End-to-end platform setup for packaging, pricing, and selling your courses online.",
+    image:
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSD_NKrkXhSUZgiznkPMSCT_b0taOy9-P3p8A&s",
   },
   {
-    icon: <Megaphone className="w-8 h-8 text-primary" />,
-    title: "Marketing & Ads",
-    description:
+    title: "Marketing & Advertising",
+    content:
       "Data-driven campaigns across channels to grow your audience and boost enrollments.",
+    image:
+      "https://www.myhoardings.com/ads/wp-content/uploads/2021/02/marketing-ad-icon.jpg",
   },
 ];
 
@@ -71,6 +76,7 @@ const LandingPage2 = () => {
   const [errors, setErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
   const [status, setStatus] = useState(null);
+  const [active, setActive] = useState(0);
 
   const validate = () => {
     const errs = {};
@@ -115,7 +121,7 @@ const LandingPage2 = () => {
       <div className="bg-[url(/Subtract.png)] lg:bg-cover bg-no-repeat bg-center h-screen">
         <div className="flex flex-col justify-center items-center h-full pt-14 md:pt-[24dvh]">
           <h3 className=" bg-white font-bold p-2 px-4 rounded-full text-sm  mb-4">
-            Experience a broad learning platform
+            Experience a best learning management system
           </h3>
           <h1 className="text-3xl text-center lg:text-5xl font-bold mb-6 ">
             Teach Anyone, Anytime, Anywhere
@@ -125,19 +131,21 @@ const LandingPage2 = () => {
             Empowering educators with smart tools to manage classroom track
             progress and engage student all in one place
           </p>
-          <button className=" p-2 px-4 bg-black text-white font-bold rounded-xl hover:bg-primary-purple transition-colors">
+          {/* <button className=" p-2 px-4 bg-black text-white font-bold rounded-xl hover:bg-primary-purple transition-colors">
             Start Demo
-          </button>
+          </button> */}
           <img src="/hero1.png" alt="" className="w-[90%] lg:w-[70%]" />
         </div>
         <section className="lg:py-32 bg-white">
           {/* Header */}
           <div className="max-w-6xl mt-10 mx-auto px-4 mb-8 flex flex-col md:flex-row md:items-center">
-            <h2 className="text-4xl font-bold text-gray-900">Stats</h2>
-            <p className="mt-2 md:mt-0 md:ml-6 text-gray-600 max-w-sm ">
+            <h2 className="text-4xl w-full text-center font-bold text-gray-900">
+              Increase your Revenue 10× Faster
+            </h2>
+            {/* <p className="mt-2 md:mt-0 md:ml-6 text-gray-600 max-w-sm ">
               Comparison of your standing with other learners and the topper of
               the live test
-            </p>
+            </p> */}
           </div>
 
           {/* Content */}
@@ -246,12 +254,10 @@ const LandingPage2 = () => {
               {/* Text */}
               <div className="w-full md:w-1/3 p-6 flex items-center">
                 <div className="space-y-4">
-                  <h3 className="text-xl font-semibold text-gray-900">Hey.</h3>
-                  <p className="text-gray-700">
-                    You were ranked <span className="font-bold">24/234</span> in
-                    this test. You are doing better than{" "}
-                    <span className="font-bold">80%</span> of learners who
-                    appeared in the test.
+                  <p className="text-gray-700 text-xl font-semibold">
+                    Online system are the demand of modern business, our proven
+                    tech and marketing strategies will be the best investment
+                    for your brand
                   </p>
                 </div>
               </div>
@@ -263,25 +269,56 @@ const LandingPage2 = () => {
             <h2 className="text-4xl font-bold text-gray-800 mb-4">
               Discover Our Services
             </h2>
-            <p className="text-gray-600 mb-12">
+            <p className="text-gray-600 mb-12 text-lg">
               Everything you need to build, launch, and grow your online
               learning business.
             </p>
-            <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-              {services.map((svc) => (
-                <div
-                  key={svc.title}
-                  className="bg-white p-6 flex flex-col justify-center items-center rounded-xl shadow-md hover:shadow-lg transition-shadow"
-                >
-                  <div className="flex items-center justify-center w-16 h-16 mb-4 bg-primary-purple/60 rounded-full">
-                    {svc.icon}
-                  </div>
-                  <h3 className="text-xl font-semibold text-gray-800 mb-2">
-                    {svc.title}
-                  </h3>
-                  <p className="text-gray-600 text-sm">{svc.description}</p>
+            <div className="max-w-7xl mx-auto  grid md:grid-cols-2 gap-12 items-start">
+              {/* LEFT: tabs */}
+              <div className="space-y-6">
+                {FEATURES.map((f, i) => {
+                  const isOpen = i === active;
+                  return (
+                    <div key={i}>
+                      <button
+                        onClick={() => setActive(isOpen ? -1 : i)}
+                        className={`
+                    w-full flex justify-between items-center
+                    text-left text-gray-800 font-semibold text-lg
+                    pl-4 py-3
+                    border-l-4
+                    ${isOpen ? "border-primary-purple" : "border-transparent"}
+                    hover:border-primary-purple
+                    transition
+                  `}
+                      >
+                        {f.title}
+                        {isOpen ? (
+                          <ChevronUp className="w-5 h-5" />
+                        ) : (
+                          <ChevronDown className="w-5 h-5" />
+                        )}
+                      </button>
+                      {isOpen && (
+                        <p className="mt-2 ml-8 text-gray-600 text-left text-base">
+                          {f.content}
+                        </p>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* RIGHT: image */}
+              <div className="flex justify-center">
+                <div className="bg-purple-100 rounded-2xl p-4">
+                  <img
+                    src={FEATURES[active]?.image}
+                    alt={FEATURES[active]?.title}
+                    className="rounded-xl shadow-lg max-h-80 object-cover"
+                  />
                 </div>
-              ))}
+              </div>
             </div>
           </div>
         </section>
@@ -292,8 +329,9 @@ const LandingPage2 = () => {
               Who It's For
             </h2>
             <p className="mt-3 md:mt-0 md:ml-6 text-gray-700 max-w-xl">
-              Our platform is designed to serve the entire educational ecosystem
-              with specialized tools for every stakeholder.
+              Our LMS platform is designed to serve the entire educational
+              ecosystem with specialized tools for every Teacher or Course
+              creating.
             </p>
           </div>
 
@@ -303,20 +341,12 @@ const LandingPage2 = () => {
             <div className="flex flex-col md:flex-row items-center bg-gray-100 border border-gray-300 rounded-3xl p-8">
               <div className="flex-1">
                 <span className="inline-block bg-primary-purple/70 text-white font-semibold px-4 py-1 rounded-md mb-4">
-                  Student
+                  Rising Teacher/Course creator
                 </span>
                 <p className="text-gray-700 mb-6">
-                  Learn smarter with personalized tools designed to enhance your
-                  understanding and retention while making education more
-                  engaging.
+                  All in one platform: secure, automated tools for creating,
+                  managing, and selling your courses with ease .
                 </p>
-                <a
-                  href="#"
-                  className="inline-flex items-center text-gray-900 font-medium hover:underline"
-                >
-                  <ArrowRight className="w-5 h-5 mr-2" />
-                  Learn more
-                </a>
               </div>
               <img
                 src="/student1.png"
@@ -329,19 +359,12 @@ const LandingPage2 = () => {
             <div className="flex flex-col md:flex-row items-center bg-primary-purple/70 rounded-3xl p-8">
               <div className="flex-1">
                 <span className="inline-block bg-white text-black font-semibold px-4 py-1 rounded-md mb-4">
-                  Teacher
+                  Coaching Institutes
                 </span>
                 <p className="text-white mb-6">
                   Manage classes efficiently, reach more students, and create
                   engaging learning experiences with our intuitive tools.
                 </p>
-                <a
-                  href="#"
-                  className="inline-flex items-center text-white font-medium hover:underline"
-                >
-                  <ArrowRight className="w-5 h-5 mr-2" />
-                  Learn more
-                </a>
               </div>
               <img
                 src="/teacher2.png"
@@ -368,24 +391,20 @@ const LandingPage2 = () => {
                   <div className="flex items-center">
                     <Mail className="w-6 h-6 mr-3 opacity-90" />
                     <a
-                      href="mailto:team@neeev.ai"
-                      className="hover:underline text-white"
+                      href="mailto:contact@teachertech.in"
+                      className="hover:underline text-white font-semibold"
                     >
-                      team@teachertech
+                      contact@teachertech.in
                     </a>
                   </div>
                   <div className="flex items-center">
                     <Phone className="w-6 h-6 mr-3 opacity-90" />
                     <a
-                      href="tel:+918472868805"
-                      className="hover:underline text-white"
+                      href="tel:+919105030503"
+                      className="hover:underline text-white font-semibold"
                     >
-                      +91-84719-68909
+                      91-0503-0503
                     </a>
-                  </div>
-                  <div className="flex items-center">
-                    <MapPin className="w-6 h-6 mr-3 opacity-90" />
-                    <span>Jaipur, Rajasthan</span>
                   </div>
                 </div>
               </div>
@@ -417,9 +436,20 @@ const LandingPage2 = () => {
                         errors.name ? "border-red-500" : "border-gray-300"
                       }`}
                     />
-                    {errors.name && (
-                      <p className="mt-1 text-sm text-red-600">{errors.name}</p>
-                    )}
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Phone no
+                    </label>
+                    <input
+                      type="text"
+                      name="phone"
+                      value={form.phone}
+                      onChange={handleChange}
+                      className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
+                        errors.phone ? "border-red-500" : "border-gray-300"
+                      }`}
+                    />
                   </div>
 
                   <div>
@@ -435,11 +465,6 @@ const LandingPage2 = () => {
                         errors.email ? "border-red-500" : "border-gray-300"
                       }`}
                     />
-                    {errors.email && (
-                      <p className="mt-1 text-sm text-red-600">
-                        {errors.email}
-                      </p>
-                    )}
                   </div>
 
                   <div>
@@ -448,7 +473,7 @@ const LandingPage2 = () => {
                     </label>
                     <textarea
                       name="message"
-                      rows="5"
+                      rows="3"
                       value={form.message}
                       onChange={handleChange}
                       className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
@@ -484,167 +509,37 @@ const LandingPage2 = () => {
           {/* CTA */}
           <div className="pt-16 pb-14 text-center px-4">
             <h2 className="text-3xl md:text-5xl font-bold mb-4">
-              Learn how to unlock everyday wins for your team
+              Start your journey with us - we'll forge your path to market
+              leadership!
             </h2>
-            <p className="text-lg mb-8">
-              Grow, empower, and retain top performers across all your frontline
-              roles
-            </p>
-            <button
-              onClick={() => {
-                document
-                  .getElementById("contact-us")
-                  ?.scrollIntoView({ behavior: "smooth" });
-              }}
-              className="bg-white text-gray-900 px-8 py-4 rounded-full font-medium hover:bg-gray-100 transition"
-            >
-              Get In Touch
-            </button>
           </div>
 
           {/* Footer grid */}
           <div
             id="contact-us"
-            className="max-w-7xl mx-auto px-4 py-4 grid grid-cols-1 md:grid-cols-4 gap-8"
+            className="max-w-7xl mx-auto px-4 py-4 flex flex-col items-center justify-center"
           >
-            {/* Brand & social */}
-            <div className="space-y-4">
-              <h3 className="text-xl font-semibold">
-                Tomorrows Architect of AI
-              </h3>
-              <p className="text-gray-800">
-                Expertise in Machine Learning, Deep Learning, Linear Algebra and
-                Probability and Statistics
-              </p>
-              <div className="flex space-x-3  ">
-                <a
-                  href="#"
-                  aria-label="Facebook"
-                  className="text-primary-purple"
-                >
-                  <Facebook size={20} />
-                </a>
-                <a
-                  href="#"
-                  aria-label="Twitter"
-                  className="text-primary-purple "
-                >
-                  <Twitter size={20} />
-                </a>
-                <a
-                  href="#"
-                  aria-label="Instagram"
-                  className="text-primary-purple "
-                >
-                  <Instagram size={20} />
-                </a>
-                <a
-                  href="#"
-                  aria-label="LinkedIn"
-                  className="text-primary-purple "
-                >
-                  <Linkedin size={20} />
-                </a>
-                <a
-                  href="#"
-                  aria-label="YouTube"
-                  className="text-primary-purple "
-                >
-                  <Youtube size={20} />
-                </a>
+            <a
+              href="#contact"
+              className=" font-bold text-primary-purple px-4 py-2 bg-gray-300 rounded-full border-2 border-primary-purple text-2xl mb-4"
+            >
+              Contact us
+            </a>
+            <div className="  flex items-center gap-4 justify-between text-white text-lg font-semibold ">
+              <div className="flex items-center">
+                <Mail className="mr-2" /> contact@teachertech.in
               </div>
-            </div>
-
-            {/* Company links */}
-            <div>
-              <h4 className="text-lg font-semibold text-purple-700 mb-4">
-                Company
-              </h4>
-              <ul className="space-y-2 text-gray-800">
-                <li>
-                  <a href="#" className="hover:underline text-black">
-                    About
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:underline text-black">
-                    Contact us
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:underline text-black">
-                    Careers
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:underline text-black">
-                    Culture
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:underline text-black">
-                    Blog
-                  </a>
-                </li>
-              </ul>
-            </div>
-
-            {/* Support links */}
-            <div>
-              <h4 className="text-lg font-semibold text-purple-700 mb-4">
-                Support
-              </h4>
-              <ul className="space-y-2 text-gray-800">
-                <li>
-                  <a href="#" className="hover:underline text-black">
-                    Getting started
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:underline text-black">
-                    Help center
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:underline text-black">
-                    Server status
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:underline text-black">
-                    Report a bug
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:underline text-black">
-                    Chat support
-                  </a>
-                </li>
-              </ul>
-            </div>
-
-            {/* Contact info */}
-            <div>
-              <h4 className="text-lg font-semibold text-purple-700 mb-4">
-                Contact us
-              </h4>
-              <ul className="space-y-3 text-gray-800">
-                <li className="flex items-center">
-                  <Mail className="mr-2" /> team@teachertech
-                </li>
-                <li className="flex items-center">
-                  <Phone className="mr-2" /> +91 8724966907
-                </li>
-                <li className="flex items-center">
-                  <MapPin className="mr-2" /> Jaipur, Rajasthan
-                </li>
-              </ul>
+              <div className="flex items-center">
+                <Phone className="mr-2" /> 91-0503-0503
+              </div>
             </div>
           </div>
 
           {/* Large brand stamp */}
           <div className="pb-8 text-center">
-            <span className="lg:text-[10rem] text-[3rem] font-extrabold">TeacherTech</span>
+            <span className="lg:text-[10rem] text-[3rem] font-extrabold">
+              TeacherTech
+            </span>
           </div>
         </section>
       </div>
