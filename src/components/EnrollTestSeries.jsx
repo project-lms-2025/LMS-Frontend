@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Loading from './Loading';
 import { getAllTestSeries, getEnrolledTestSeries } from '../api/test';
+import toast from 'react-hot-toast';
 
 // Card Component for a Test Series
 const Testcard = ({ series, onEnroll, isEnrolled }) => {
@@ -91,12 +92,18 @@ const EnrollTestSeries = () => {
 
   // Handle enrollment redirect
   const handleEnroll = (seriesId) => {
-    // const authToken = localStorage.getItem("authToken");
-    // if (!authToken) {
-    //   navigate("/signin");
-    //   return;
-    // }
-    navigate(`/payment_ts/${seriesId}`);
+    const authToken = localStorage.getItem("authToken");
+    if (!authToken) {
+      toast.error("Please sign in to enroll", { duration: 2000 });
+      setTimeout(() => {
+        navigate("/signin");
+      }, 1000);
+      return;
+    }
+    toast.success("Redirecting to payment page...", { duration: 2000 });
+    setTimeout(() => {
+      navigate(`/payment_ts/${seriesId}`);
+    }, 1000);
   };
 
   if (loading) {

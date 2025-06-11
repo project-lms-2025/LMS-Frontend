@@ -1,39 +1,37 @@
+// src/api/auth.jsx - Modified fetchAPI function
+import axios from "axios";
+import { showUnauthorizedDialog } from "../utils/unauthorizedHandler";
+
+
 // Helper function to handle API requests
-const fetchAPI = async (endpoint, method = "GET", body = null, isFormData = false) => {
+// Helper function to handle API requests
+const fetchAPI = async (endpoint, method = "GET", body = null, isFormData = false, additionalHeaders = {}) => {
+    const baseURL = import.meta.env.VITE_API_BASE_URL || "https://testapi.teachertech.in/api/v2";
     const authToken = localStorage.getItem("authToken"); // Retrieve token from localStorage
 
-    const options = {
-        method,
-        headers: {
-            "Content-Type": "application/json",
-            ...(authToken && { Authorization: `Bearer ${authToken}` }), // Add Authorization header if token exists
-        },
-        credentials: "include",
+    const headers = {
+        "Content-Type": isFormData ? "multipart/form-data" : "application/json",
+        ...(authToken && { Authorization: `Bearer ${authToken}` }), // Add Authorization header if token exists
+        ...additionalHeaders // Add any additional headers passed to the function
     };
 
-    if (body) {
-        options.body = isFormData ? body : JSON.stringify(body);
-    }
-
     try {
-        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}${endpoint}`, options);
-        const contentType = response.headers.get("Content-Type");
-        let data = {};
-
-        if (contentType && contentType.includes("application/json")) {
-            data = await response.json();
-        } else {
-            data = await response.text();
-        }
-
-        if (!response.ok) {
-            throw new Error(data.message || "Something went wrong");
-        }
-
-        return data;
+        const response = await axios({
+            method,
+            url: `${baseURL}${endpoint}`,
+            data: body,
+            headers,
+            withCredentials: true
+        });
+        
+        return response.data;
     } catch (error) {
+        if (error.response && error.response.status === 401 && !endpoint.includes("/batch/my-batches")) {
+            showUnauthorizedDialog();
+            throw new Error("Unauthorized access");
+        }
         console.error("API Error:", error);
-        throw error;
+        throw error.response?.data?.message || error.message || "Something went wrong";
     }
 };
 
@@ -96,7 +94,11 @@ export const createBatch = async (batchData) => {
 
 /** Retrieves all available batches */
 export const getAllBatches = async () => {
-    return fetchAPI("/batch", "GET");
+    const institutionToken = localStorage.getItem("institutionToken") || import.meta.env.VITE_INSTITUTION_TOKEN;
+    console.log("institutionToken", institutionToken);
+    return fetchAPI("/batch", "GET", null, false, {
+        "x-Institution-Auth": institutionToken
+    });
 };
 
 /** Retrieves details of a specific batch by its ID */

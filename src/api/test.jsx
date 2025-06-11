@@ -1,39 +1,32 @@
+import axios from "axios";
 // Helper function to handle API requests
-const fetchAPI = async (endpoint, method = "GET", body = null, isFormData = false) => {
+const fetchAPI = async (endpoint, method = "GET", body = null, isFormData = false, additionalHeaders = {}) => {
+    const baseURL = import.meta.env.VITE_API_BASE_URL || "https://testapi.teachertech.in/api/v2";
     const authToken = localStorage.getItem("authToken"); // Retrieve token from localStorage
 
-    const options = {
-        method,
-        headers: {
-            "Content-Type": "application/json",
-            ...(authToken && { Authorization: `Bearer ${authToken}` }), // Add Authorization header if token exists
-        },
-        credentials: "include",
+    const headers = {
+        "Content-Type": isFormData ? "multipart/form-data" : "application/json",
+        ...(authToken && { Authorization: `Bearer ${authToken}` }), // Add Authorization header if token exists
+        ...additionalHeaders // Add any additional headers passed to the function
     };
 
-    if (body) {
-        options.body = isFormData ? body : JSON.stringify(body);
-    }
-
     try {
-        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}${endpoint}`, options);
-        const contentType = response.headers.get("Content-Type");
-        let data = {};
-
-        if (contentType && contentType.includes("application/json")) {
-            data = await response.json();
-        } else {
-            data = await response.text();
-        }
-
-        if (!response.ok) {
-            throw new Error(data.message || "Something went wrong");
-        }
-
-        return data;
+        const response = await axios({
+            method,
+            url: `${baseURL}${endpoint}`,
+            data: body,
+            headers,
+            withCredentials: true
+        });
+        
+        return response.data;
     } catch (error) {
+        if (error.response && error.response.status === 401) {
+            showUnauthorizedDialog();
+            throw new Error("Unauthorized access");
+        }
         console.error("API Error:", error);
-        throw error;
+        throw error.response?.data?.message || error.message || "Something went wrong";
     }
 };
 
@@ -65,12 +58,14 @@ export const createTestSeries = async (testSeriesData) => {
 };
 
 export const getAllTestSeries = async () => {
-    return fetchAPI("/test-series", "GET");
+    return fetchAPI("/test-series", "GET", null, false, {
+        "x-Institution-Auth": localStorage.getItem("institutionToken") || import.meta.env.VITE_INSTITUTION_TOKEN,
+    });
 };
 
 // Get all tests in a specific test series
 export const getAllTestInSeries = async (seriesId) => {
-    return fetchAPI(`/test/tests/${seriesId}?test_type=SERIES_TEST`, "GET");
+    return fetchAPI(`/test/tests/entity?series_id=${seriesId}`, "GET");
 };
 
 // Get specific test series by ID

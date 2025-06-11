@@ -84,7 +84,7 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-[92.2vh] w-full flex items-center justify-center bg-secondary-gray dark:bg-gray-900">
+    <div className="min-h-screen w-full flex items-center justify-center bg-secondary-gray dark:bg-gray-900">
       <Toaster/>
       <div className="max-w-md w-full space-y-8 bg-white dark:bg-gray-800 p-8 py-14 rounded-2xl shadow-lg">
         <div>
