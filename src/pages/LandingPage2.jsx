@@ -65,6 +65,13 @@ const FEATURES = [
     image:
       "https://www.myhoardings.com/ads/wp-content/uploads/2021/02/marketing-ad-icon.jpg",
   },
+  {
+    title: "Video Editing and Professional Docs",
+    content:
+      "We provide stunning professional Document, Video editing  with advanced  animation and graphics.",
+    image:
+      "https://www.vocso.com/blog/wp-content/uploads/2022/08/free-video-editing-software.jpg",
+  },
 ];
 
 const LandingPage2 = () => {

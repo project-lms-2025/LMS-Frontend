@@ -65,7 +65,7 @@ export const Navbar = () => {
           </div>
           <div className="flex gap-8  ">
             <a
-              href="#product"
+              href="https://www.teachertech.in/#product"
               className="hidden md:block  text-primary-purple  hover:text-primary-purple/50  dark:hover:text-accent-yellow transition-colors"
             >
               Product & Services
@@ -77,7 +77,7 @@ export const Navbar = () => {
               Pricing
             </a>
             <a
-              href="#contact"
+              href="https://www.teachertech.in/#contact"
               className="hidden md:block  text-primary-purple  hover:text-primary-purple/50  dark:hover:text-accent-yellow transition-colors"
             >
               Contact Us
