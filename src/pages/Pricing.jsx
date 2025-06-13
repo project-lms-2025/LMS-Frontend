@@ -10,7 +10,7 @@ const plans = [
     name: "Starter Plan",
     yearlyPrice: 8999,
     monthlyPrice: 9999,
-    perstudent: 500,
+    perstudent: 599,
     original: 12000,
     headerClass: "bg-purple-200",
     features: [
@@ -28,7 +28,7 @@ const plans = [
     name: "Professional Plan",
     yearlyPrice: 14400,
     monthlyPrice: 15999,
-    perstudent: 750,
+    perstudent: 899,
     original: 18000,
     headerClass: "bg-gradient-to-r from-purple-700 to-pink-500 text-white",
     features: [
@@ -46,7 +46,7 @@ const plans = [
     name: "Premium Plan",
     yearlyPrice: 17999,
     monthlyPrice: 19999,
-    perstudent: 1000,
+    perstudent: 1099,
     original: 25000,
     headerClass: "bg-purple-200",
     features: [
@@ -141,6 +141,18 @@ export default function Pricing() {
                 <form onSubmit={handleDiscountSubmit} className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Name
+                    </label>
+                    <input
+                      type="name"
+                      value={name}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                      className="mt-1 w-full border rounded px-3 py-2 bg-white dark:bg-white text-gray-900 dark:text-gray-100"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                       Email
                     </label>
                     <input
@@ -202,7 +214,7 @@ export default function Pricing() {
               <span className="text-gray-800 capitalize">{mode}</span>
               {mode === "yearly" && billing === "yearly" && (
                 <span className="ml-2 bg-purple-500 text-white text-xs px-2 py-1 rounded">
-                  Save up to 16%
+                  Save up to 10%
                 </span>
               )}
             </button>
@@ -221,7 +233,7 @@ export default function Pricing() {
                 priceLabel = "Per month";
               } else {
                 displayPrice = plan.perstudent.toFixed(2);
-                priceLabel = "Per Student";
+                priceLabel = "Per Student(Minimum 5 students)";
               }
 
               return (
