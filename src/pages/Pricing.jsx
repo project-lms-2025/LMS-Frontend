@@ -3,13 +3,15 @@ import React, { useState, useEffect, Fragment } from "react";
 import { Check, Info, Mail, Phone, X } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 import { motion, useInView } from "framer-motion";
+import { contactUs } from "../api/auth";
+import toast from "react-hot-toast";
 const plans = [
   {
     name: "Starter Plan",
-    yearlyPrice: 864,
-    monthlyPrice: 99,
+    yearlyPrice: 8999,
+    monthlyPrice: 9999,
     perstudent: 500,
-    original: 1080,
+    original: 12000,
     headerClass: "bg-purple-200",
     features: [
       "Custom Domain",
@@ -24,16 +26,16 @@ const plans = [
   },
   {
     name: "Professional Plan",
-    yearlyPrice: 1299,
-    monthlyPrice: 149,
+    yearlyPrice: 14400,
+    monthlyPrice: 15999,
     perstudent: 750,
-    original: 1548,
+    original: 18000,
     headerClass: "bg-gradient-to-r from-purple-700 to-pink-500 text-white",
     features: [
       "All in Starter plus advanced payment options (EMI)",
       "Launch your Test series",
       "One device login",
-      "Same day Email & phone support",
+      "Same day Email & phone_number support",
       "Student Management dashboard",
       "Free Email marketing",
       "Alerts & notifications",
@@ -42,10 +44,10 @@ const plans = [
   },
   {
     name: "Premium Plan",
-    yearlyPrice: 1999,
-    monthlyPrice: 249,
+    yearlyPrice: 17999,
+    monthlyPrice: 19999,
     perstudent: 1000,
-    original: 2376,
+    original: 25000,
     headerClass: "bg-purple-200",
     features: [
       "All in Professional plus Branded App",
@@ -64,8 +66,9 @@ export default function Pricing() {
   const [billing, setBilling] = useState("yearly");
   const [isOpen, setIsOpen] = useState(false);
   const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-
+  const [phone_number, setPhone] = useState("");
+  const subject = "Pricing Page Contact Form";
+  const message = "I'm interested in your pricing plans and would like to know more.";
   // Open modal on load
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -74,10 +77,19 @@ export default function Pricing() {
     return () => clearTimeout(timer);
   }, []);
 
-  const handleDiscountSubmit = (e) => {
+
+
+  const handleDiscountSubmit = async (e) => {
     e.preventDefault();
-    // TODO: send email & phone to your backend here
-    setIsOpen(false);
+    try {
+      await contactUs({ email, phone_number, subject, message });
+      setIsOpen(false);
+      // Optionally show success message to user
+      toast.success("Thank you for your interest! We'll get back to you soon.");
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      toast.error("Failed to submit the form. Please try again later.");
+    }
   };
 
   return (
@@ -145,10 +157,10 @@ export default function Pricing() {
                     </label>
                     <input
                       type="tel"
-                      value={phone}
+                      value={phone_number}
                       onChange={(e) => setPhone(e.target.value)}
                       required
-                      className="mt-1 w-full border rounded px-3 py-2 bg-white dark:bg-white text-gray-900 dark:text-gray-100"
+                      className="mt-1 w-full border rounded px-3 py-2 bg-white dark:bg-white text-gray-900 dark:text-gray-900"
                     />
                   </div>
                   <div className="flex justify-end">
@@ -203,13 +215,13 @@ export default function Pricing() {
               let displayPrice, priceLabel;
               if (billing === "yearly") {
                 displayPrice = plan.yearlyPrice.toFixed(2);
-                priceLabel = "per User/month, 1 Year commitment";
+                priceLabel = "Per month, 1 Year commitment";
               } else if (billing === "monthly") {
                 displayPrice = plan.monthlyPrice.toFixed(2);
-                priceLabel = "per User/month";
+                priceLabel = "Per month";
               } else {
                 displayPrice = plan.perstudent.toFixed(2);
-                priceLabel = "per Student";
+                priceLabel = "Per Student";
               }
 
               return (
