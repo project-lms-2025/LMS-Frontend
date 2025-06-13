@@ -200,6 +200,10 @@ export const uploadFiles = async (formData) => {
     return fetchAPI("/user/upload", "POST", formData, true);
 };
 
+export const contactUs = async (contactData) => {
+    return fetchAPI("/contact", "POST", contactData);
+};
+
 // Enrollment API functions
 
 /** Enrolls a user in a course or batch */

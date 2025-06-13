@@ -16,6 +16,7 @@
     "@zoom/videosdk-ui-toolkit": "^2.1.10-2",
     "@zoomus/websdk": "^2.18.3",
     "chart.js": "^4.4.7",
+    "framer-motion": "^12.17.3",
     "lucide-react": "^0.473.0",
     "mathjs": "^14.2.1",
     "next": "^15.2.0",

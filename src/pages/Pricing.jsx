@@ -1,8 +1,8 @@
 // src/components/Pricing.jsx
 import React, { useState, useEffect, Fragment } from "react";
-import { Check, Info, X } from "lucide-react";
+import { Check, Info, Mail, Phone, X } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
-
+import { motion, useInView } from "framer-motion";
 const plans = [
   {
     name: "Starter Plan",
@@ -68,7 +68,10 @@ export default function Pricing() {
 
   // Open modal on load
   useEffect(() => {
-    setIsOpen(true);
+    const timer = setTimeout(() => {
+      setIsOpen(true);
+    }, 3000);
+    return () => clearTimeout(timer);
   }, []);
 
   const handleDiscountSubmit = (e) => {
@@ -110,12 +113,12 @@ export default function Pricing() {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-md w-full p-6 relative">
+              <Dialog.Panel className="bg-white dark:bg-primary-purple rounded-xl shadow-xl max-w-md w-full p-6 relative">
                 <button
                   onClick={() => setIsOpen(false)}
                   className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
                 >
-                  <X size={20} />
+                  <X size={20} className="text-white" />
                 </button>
                 <Dialog.Title className="text-xl font-bold mb-2 text-gray-900 dark:text-gray-100">
                   🎁 Claim Your Extra Discount
@@ -133,7 +136,7 @@ export default function Pricing() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       required
-                      className="mt-1 w-full border rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                      className="mt-1 w-full border rounded px-3 py-2 bg-white dark:bg-white text-gray-900 dark:text-gray-100"
                     />
                   </div>
                   <div>
@@ -145,13 +148,13 @@ export default function Pricing() {
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
                       required
-                      className="mt-1 w-full border rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                      className="mt-1 w-full border rounded px-3 py-2 bg-white dark:bg-white text-gray-900 dark:text-gray-100"
                     />
                   </div>
                   <div className="flex justify-end">
                     <button
                       type="submit"
-                      className="px-4 py-2 bg-purple-700 text-white rounded hover:bg-purple-800 transition"
+                      className="px-4 py-2 bg-purple-500  text-white rounded hover:bg-purple-800 transition"
                     >
                       Submit
                     </button>
@@ -260,6 +263,55 @@ export default function Pricing() {
                 </div>
               );
             })}
+          </div>
+        </section>
+        <section className="bg-primary-purple/60 text-gray-900">
+          {/* CTA */}
+          <div className="pt-16 pb-14 text-center px-4">
+            <motion.h2
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+              className="text-3xl md:text-5xl font-bold mb-4"
+            >
+              Start your journey with us - we'll forge your path to market
+              leadership!
+            </motion.h2>
+          </div>
+
+          {/* Footer grid */}
+          <div
+            id="contact-us"
+            className="max-w-7xl mx-auto px-4 py-4 flex flex-col items-center justify-center"
+          >
+            <a
+              href="#contact"
+              className=" font-bold text-primary-purple px-4 py-2 bg-gray-300 rounded-full border-2 border-primary-purple text-2xl mb-4"
+            >
+              Contact us
+            </a>
+            <div className="  flex items-center gap-4 justify-between text-white text-lg font-semibold ">
+              <div className="flex items-center">
+                <Mail className="mr-2" /> contact@teachertech.in
+              </div>
+              <div className="flex items-center">
+                <Phone className="mr-2" /> 91-0503-0503
+              </div>
+            </div>
+          </div>
+
+          {/* Large brand stamp */}
+          <div className="pb-8 text-center">
+            <motion.h2
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+              className="lg:text-[10rem] text-[3rem] font-extrabold py-10"
+            >
+              TeacherTech
+            </motion.h2>
           </div>
         </section>
       </div>

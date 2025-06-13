@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
+import { motion, useInView } from "framer-motion";
+import { contactUs } from "../api/auth";
 import {
   AreaChart,
   Area,
@@ -23,6 +25,7 @@ import {
   Youtube,
 } from "lucide-react";
 import { Package, FileText, ShoppingCart, Megaphone } from "lucide-react";
+import toast from "react-hot-toast";
 const data = [
   { month: "Month1", revenue: 20000, branding: 5000, fee: 2000 },
   { month: "Month2", revenue: 50000, branding: 8000, fee: 3000 },
@@ -78,7 +81,9 @@ const LandingPage2 = () => {
   const [form, setForm] = useState({
     name: "",
     email: "",
+    subject: "Inquiry about pricing",
     message: "",
+    phone_number: "",
   });
   const [errors, setErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
@@ -91,6 +96,7 @@ const LandingPage2 = () => {
     if (!form.email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/))
       errs.email = "Valid email is required";
     if (!form.message.trim()) errs.message = "Message cannot be empty";
+    if (!form.phone_number.trim()) errs.phone_number = "Phone number is required";
     return errs;
   };
 
@@ -101,6 +107,7 @@ const LandingPage2 = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("form", form);
     const errs = validate();
     if (Object.keys(errs).length) {
       setErrors(errs);
@@ -109,35 +116,79 @@ const LandingPage2 = () => {
     setSubmitting(true);
     setStatus(null);
     try {
-      const res = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+      await contactUs({
+        ...form,
+        subject: "Contact Form Submission" // Adding a default subject as it's required by the API
       });
-      if (!res.ok) throw new Error(await res.text());
-      setStatus({ type: "success", msg: "Thanks! We’ll be in touch shortly." });
-      setForm({ name: "", email: "", message: "" });
+      setStatus({ type: "success", msg: "Thanks! We'll be in touch shortly." });
+      setForm({ name: "", email: "", message: "", phone_number: "" });
+      toast.success("Thanks! We'll be in touch shortly.");
     } catch (err) {
       setStatus({ type: "error", msg: err.message || "Something went wrong" });
     } finally {
       setSubmitting(false);
     }
   };
+  // Animation variants
+  const fadeInUp = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
+  };
+
+  // Create refs for each heading
+  const headingRef = useRef(null);
+  const isHeadingInView = useInView(headingRef, { once: true, amount: 0.5 });
+
   return (
-    <div>
+    <div className="overflow-x-hidden">
       <div className="bg-[url(/Subtract.png)] lg:bg-cover bg-no-repeat bg-center h-screen">
         <div className="flex flex-col justify-center items-center h-full pt-14 md:pt-[24dvh]">
-          <h3 className=" bg-white font-bold p-2 px-4 rounded-full text-sm  mb-4">
+          <motion.div
+            ref={headingRef}
+            initial="hidden"
+            animate={isHeadingInView ? "visible" : "hidden"}
+            variants={fadeInUp}
+            className="bg-white font-bold p-2 px-4 rounded-full text-sm mb-4"
+          >
             Experience a best learning management system
-          </h3>
-          <h1 className="text-3xl text-center lg:text-5xl font-bold mb-6 ">
+          </motion.div>
+          <motion.h1
+            className="text-3xl text-center lg:text-5xl font-bold mb-6"
+            initial="hidden"
+            animate={isHeadingInView ? "visible" : "hidden"}
+            variants={{
+              hidden: { opacity: 0, y: 30 },
+              visible: {
+                opacity: 1,
+                y: 0,
+                transition: {
+                  duration: 0.8,
+                  delay: 0.2,
+                },
+              },
+            }}
+          >
             Teach Anyone, Anytime, Anywhere
-          </h1>
-          <p className="text-md lg:text-lg  max-w-2xl text-center font-light mb-4">
-            {" "}
+          </motion.h1>
+          <motion.p
+            className="text-md lg:text-lg max-w-2xl text-center font-light mb-4"
+            initial="hidden"
+            animate={isHeadingInView ? "visible" : "hidden"}
+            variants={{
+              hidden: { opacity: 0, y: 20 },
+              visible: {
+                opacity: 1,
+                y: 0,
+                transition: {
+                  duration: 0.8,
+                  delay: 0.4,
+                },
+              },
+            }}
+          >
             Empowering educators with smart tools to manage classroom track
             progress and engage student all in one place
-          </p>
+          </motion.p>
           {/* <button className=" p-2 px-4 bg-black text-white font-bold rounded-xl hover:bg-primary-purple transition-colors">
             Start Demo
           </button> */}
@@ -146,9 +197,15 @@ const LandingPage2 = () => {
         <section className="lg:py-32 bg-white">
           {/* Header */}
           <div className="max-w-6xl mt-10 mx-auto px-4 mb-8 flex flex-col md:flex-row md:items-center">
-            <h2 className="text-4xl w-full text-center font-bold text-gray-900">
+            <motion.h2
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+              className="text-4xl w-full text-center font-bold text-gray-900"
+            >
               Increase your Revenue 10× Faster
-            </h2>
+            </motion.h2>
             {/* <p className="mt-2 md:mt-0 md:ml-6 text-gray-600 max-w-sm ">
               Comparison of your standing with other learners and the topper of
               the live test
@@ -273,9 +330,15 @@ const LandingPage2 = () => {
         </section>
         <section id="product" className="py-20 pb-32">
           <div className="max-w-6xl mx-auto px-4 lg:px-8 text-center">
-            <h2 className="text-4xl font-bold text-gray-800 mb-4">
+            <motion.h2
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+              className="text-4xl font-bold text-gray-800 mb-4"
+            >
               Discover Our Services
-            </h2>
+            </motion.h2>
             <p className="text-gray-600 mb-12 text-lg">
               Everything you need to build, launch, and grow your online
               learning business.
@@ -332,9 +395,15 @@ const LandingPage2 = () => {
         <section id="who-its-for" className="py-12 bg-white">
           {/* Header */}
           <div className="max-w-6xl mx-auto px-4 flex flex-col md:flex-row md:items-center mb-10">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
+            <motion.h2
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+              className="text-3xl md:text-4xl font-bold text-gray-900"
+            >
               Who It's For
-            </h2>
+            </motion.h2>
             <p className="mt-3 md:mt-0 md:ml-6 text-gray-700 max-w-xl">
               Our LMS platform is designed to serve the entire educational
               ecosystem with specialized tools for every Teacher or Course
@@ -383,9 +452,15 @@ const LandingPage2 = () => {
         </section>
         <section id="contact" className=" py-32">
           <div className="max-w-6xl mx-auto px-4 lg:px-8">
-            <h2 className="text-6xl font-bold text-gray-800 text-center mb-12">
+            <motion.h2
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+              className="text-6xl font-bold text-gray-800 text-center mb-12"
+            >
               Get in Touch
-            </h2>
+            </motion.h2>
             <div className="bg-white rounded-xl shadow-lg overflow-hidden grid grid-cols-1 md:grid-cols-2">
               {/* Left info panel */}
               <div className="p-8 bg-primary-purple/60 text-white space-y-8">
@@ -450,11 +525,11 @@ const LandingPage2 = () => {
                     </label>
                     <input
                       type="text"
-                      name="phone"
-                      value={form.phone}
+                      name="phone_number"
+                      value={form.phone_number}
                       onChange={handleChange}
                       className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
-                        errors.phone ? "border-red-500" : "border-gray-300"
+                        errors.phone_number ? "border-red-500" : "border-gray-300"
                       }`}
                     />
                   </div>
@@ -497,7 +572,7 @@ const LandingPage2 = () => {
                   <div className="text-center">
                     <button
                       type="submit"
-                      disabled={submitting}
+                      // onClick={handleSubmit}
                       className="bg-primary-purple/60 hover:bg-primary-purple text-white font-semibold px-6 py-3 rounded-lg shadow-sm transition disabled:opacity-50"
                     >
                       {submitting ? "Sending..." : "Send Message"}
@@ -515,10 +590,16 @@ const LandingPage2 = () => {
         <section className="bg-primary-purple/60 text-gray-900">
           {/* CTA */}
           <div className="pt-16 pb-14 text-center px-4">
-            <h2 className="text-3xl md:text-5xl font-bold mb-4">
+          <motion.h2
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+              className="text-3xl md:text-5xl font-bold mb-4"
+            >
               Start your journey with us - we'll forge your path to market
               leadership!
-            </h2>
+            </motion.h2>
           </div>
 
           {/* Footer grid */}
@@ -544,9 +625,15 @@ const LandingPage2 = () => {
 
           {/* Large brand stamp */}
           <div className="pb-8 text-center">
-            <span className="lg:text-[10rem] text-[3rem] font-extrabold">
+          <motion.h2
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.8, ease: "easeOut" }} 
+              className="lg:text-[10rem] text-[3rem] font-extrabold py-10">
               TeacherTech
-            </span>
+            </motion.h2>
+            
           </div>
         </section>
       </div>
