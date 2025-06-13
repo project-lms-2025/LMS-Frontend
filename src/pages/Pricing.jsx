@@ -130,7 +130,7 @@ export default function Pricing() {
                   onClick={() => setIsOpen(false)}
                   className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
                 >
-                  <X size={20} className="text-white" />
+                  <X size={20} className="text-black" />
                 </button>
                 <Dialog.Title className="text-xl font-bold mb-2 text-gray-900 dark:text-gray-100">
                   🎁 Claim Your Extra Discount
@@ -243,12 +243,20 @@ export default function Pricing() {
 
                   <div className="p-6 text-center flex flex-col items-center">
                     <div className="text-4xl font-bold text-purple-700">
-                      ₹{displayPrice}
+                      ₹{Number(displayPrice).toLocaleString('en-IN')}
                     </div>
                     {billing === "yearly" && (
                       <div className="flex items-center text-gray-400 mt-1">
                         <span className="line-through mr-2">
-                          ₹{plan.original}
+                          ₹{Number(plan.original).toLocaleString('en-IN')}
+                        </span>
+                        <span>INR</span>
+                      </div>
+                    )}
+                    {billing === "monthly" && (
+                      <div className="flex items-center text-gray-400 mt-1">
+                        <span className="line-through mr-2">
+                          ₹{Number(plan.original).toLocaleString('en-IN')}
                         </span>
                         <span>INR</span>
                       </div>
