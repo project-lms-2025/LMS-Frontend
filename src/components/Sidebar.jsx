@@ -74,7 +74,7 @@ const Sidebar = ({ open, setOpen }) => {
   }, [open]);
 
   return (
-    <div className={`${open ? "md:w-72" : "w-20"} border-r-[1px] h-screen bg-white dark:bg-primary-purple p-5 pt-2 fixed duration-300 bg-dark-purple/90 backdrop-blur-sm`}>
+    <div className={`${open ? "md:w-64" : "w-20"} border-r-[1px] mt-10 h-screen bg-white dark:bg-primary-purple p-5 pt-2 fixed duration-300 bg-dark-purple/90 backdrop-blur-sm`}>
       {/* Toggle Sidebar Button */}
       <button
         onClick={() => setOpen(!open)}

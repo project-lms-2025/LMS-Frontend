@@ -89,10 +89,10 @@ const TeacherTestList = () => {
         <div className="m-0">
             <Sidebar open={open} setOpen={setOpen} />
             <div
-                className={`transition-all duration-300 ${open ? "md:ml-[20rem] ml-56 mr-4 w-[40%] md:w-[75%]" : "ml-24 mr-2"
-                    } md:w-[90%] w-[95%]`}
+                className={`transition-all mt-14 duration-300 ${open ? "md:ml-[20rem] ml-56 mr-4 w-[40%] md:w-[75%]" : "ml-24 mr-2"
+                    } md:w-[70%] w-[95%]`}
             >
-                <div className="p-6 flex justify-center min-h-[90vh]">
+                <div className="p-6  flex justify-center min-h-[90vh]">
                     <Toaster />
                     <div className="w-full max-w-5xl">
                         <Dialog
@@ -176,7 +176,7 @@ const TeacherTestList = () => {
                                 </div>
                             </div>
                         </Dialog>
-                        <div className="flex justify-between">
+                        <div className="flex justify-between mt-4">
                             <div className="flex justify-between items-center mb-4">
                                 <h1 className="text-3xl font-bold">All tests</h1>
                             </div>
