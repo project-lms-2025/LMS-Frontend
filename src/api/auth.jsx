@@ -225,3 +225,23 @@ export const getEnrolledCourses = async () => {
 export const createPaymentOrder = async (paymentData) => {
     return fetchAPI("/payment/create-order", "POST", paymentData, false);
 };
+
+export const getFileStream = async (fileId) => {
+    const baseURL = import.meta.env.VITE_API_BASE_URL || "https://testapi.teachertech.in/api/v2";
+    const authToken = localStorage.getItem("authToken");
+    try {
+      const response = await axios.get(`${baseURL}/teams/stream/${fileId}`, {
+        headers: {
+          ...(authToken && { Authorization: `Bearer ${authToken}` }),
+          Accept: "application/octet-stream",
+        },
+        responseType: "blob",
+        withCredentials: true,
+      });
+      return response.data; // this is a Blob you can e.g. createObjectURL from
+    } catch (err) {
+      console.error("getFileStream error:", err.response?.data || err.message);
+      throw new Error(err.response?.data?.message || err.message || "Failed to fetch file stream");
+    }
+  };
+
