@@ -7,32 +7,6 @@ import StudentTestList from "./StudentTestList";
 import EnrolledBatches from "./EnrolledBatches";
 import Rank from "./Rank";
 import { getClasses } from "../../api/auth";
-// Dummy data for tests (replace with API data as needed)
-const upcomingTestsData = [
-  { id: 1, title: "Module 1: Programming in Python", questionsCount: 40, date: "Mar 5, 2025, 5:00 PM", duration: "2 hours" },
-  { id: 2, title: "Module 2: Advanced Python", questionsCount: 30, date: "Mar 8, 2025, 3:00 PM", duration: "2 hours" },
-  { id: 3, title: "Module 3: Data Structures", questionsCount: 25, date: "Mar 9, 2025, 4:00 PM", duration: "2 hours" },
-  { id: 4, title: "Module 4: OOP Concepts", questionsCount: 35, date: "Mar 12, 2025, 1:00 PM", duration: "2 hours" },
-];
-
-const ongoingTestsData = [
-  { id: 5, title: "Module 5: Algorithms", questionsCount: 20, date: "Mar 2, 2025, 2:00 PM", status: "Active" },
-  { id: 6, title: "Module 6: Data Science", questionsCount: 28, date: "Mar 3, 2025, 1:00 PM", status: "Active" },
-  { id: 7, title: "Module 7: SQL Basics", questionsCount: 15, date: "Mar 4, 2025, 3:00 PM", status: "Active" },
-  { id: 8, title: "Module 8: SQL Advanced", questionsCount: 15, date: "Mar 4, 2025, 3:00 PM", status: "Active" },
-];
-
-const attemptedTestsData = [
-  { id: 9, title: "Module 9: Web Development", questionsCount: 30, date: "Feb 25, 2025, 2:00 PM" },
-  { id: 10, title: "Module 10: HTML & CSS", questionsCount: 20, date: "Feb 28, 2025, 4:00 PM" },
-  { id: 11, title: "Module 11: JavaScript", questionsCount: 25, date: "Mar 1, 2025, 6:00 PM" },
-  { id: 12, title: "Module 12: React Basics", questionsCount: 30, date: "Mar 2, 2025, 6:00 PM" },
-];
-
-const missedTestsData = [
-  { id: 13, title: "Module 13: Node.js", questionsCount: 25, date: "Feb 20, 2025, 1:00 PM" },
-  { id: 14, title: "Module 14: Express.js", questionsCount: 20, date: "Feb 22, 2025, 3:00 PM" },
-];
 
 // Function to get classes for a specific date
 function getClassesForDate(date, classes) {
@@ -55,31 +29,22 @@ function hasClasses(date, classes) {
 
 // Helper for pagination
 const itemsPerPage = 3;
-const paginateData = (data, page) => {
-  const start = page * itemsPerPage;
-  return data.slice(start, start + itemsPerPage);
-};
 
 export default function StudentDashboard() {
   const [activeTab, setActiveTab] = useState("class");
   const [selectedDate, setSelectedDate] = useState(new Date());
 
-  // Pagination states
-  const [upcomingPage, setUpcomingPage] = useState(0);
-  const [ongoingPage, setOngoingPage] = useState(0);
-  const [attemptedPage, setAttemptedPage] = useState(0);
-  const [missedPage, setMissedPage] = useState(0);
-
-  // Calculate paginated data for each category
-  const upcomingTests = paginateData(upcomingTestsData, upcomingPage);
-  const ongoingTests = paginateData(ongoingTestsData, ongoingPage);
-  const attemptedTests = paginateData(attemptedTestsData, attemptedPage);
-  const missedTests = paginateData(missedTestsData, missedPage);
-
-  const maxUpcomingPage = Math.ceil(upcomingTestsData.length / itemsPerPage) - 1;
-  const maxOngoingPage = Math.ceil(ongoingTestsData.length / itemsPerPage) - 1;
-  const maxAttemptedPage = Math.ceil(attemptedTestsData.length / itemsPerPage) - 1;
-  const maxMissedPage = Math.ceil(missedTestsData.length / itemsPerPage) - 1;
+  
+  // Initialize empty arrays for test data that will come from API
+  const upcomingTests = [];
+  const ongoingTests = [];
+  const attemptedTests = [];
+  const missedTests = [];
+  
+  const maxUpcomingPage = 0;
+  const maxOngoingPage = 0;
+  const maxAttemptedPage = 0;
+  const maxMissedPage = 0;
   const [classes, setClasses] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -90,7 +55,7 @@ export default function StudentDashboard() {
     return (
       <div className="relative w-full h-full">
         {hasClass && (
-          <div className="absolute bottom-4 right-1 h-2 w-2 rounded-full bg-primary-purple"></div>
+          <div className="absolute bottom-4 right-0 h-2 w-2 rounded-full bg-primary-purple"></div>
         )}
       </div>
     );
@@ -336,278 +301,6 @@ export default function StudentDashboard() {
         {activeTab === "test" && (
           <>
             <StudentTestList />
-            {/* UPCOMING TEST SECTION */}
-            <h2 className="text-xl font-bold mb-4 text-gray-800 dark:text-primary-white">
-              Upcoming Test
-            </h2>
-            <div className="space-y-4 mb-6">
-              {upcomingTests.length === 0 ? (
-                <div className="text-gray-500">No upcoming tests.</div>
-              ) : (
-                upcomingTests.map((test) => (
-                  <div
-                    key={test.id}
-                    className="flex justify-between bg-primary-purple/70 items-center p-4  dark:bg-gray-800 rounded-lg shadow"
-                  >
-                    {/* Left side - test info */}
-                    <div className="flex flex-col">
-                      <h3 className="text-lg font-semibold mb-2 text-white dark:text-primary-white">
-                        {test.title}
-                      </h3>
-                      <div className="flex items-center gap-4">
-                        <p className="text-base items-center text-black dark:text-gray-300">
-                          <File size={25} className="inline bg-white p-1 text-primary-purple rounded-lg" /> {test.questionsCount} Questions
-                        </p>
-                        <p className="text-sm m-0 text-black dark:text-gray-300">
-                          <Clock size={25} className="inline bg-white p-1 text-primary-purple rounded-lg" /> Duration {test.duration}
-                        </p>
-                        <p className="text-sm m-0 text-black dark:text-gray-300">
-                          <CalendarClock size={25} className="inline bg-white p-1 text-primary-purple rounded-lg" /> Held on {test.date}
-                        </p>
-                      </div>
-                    </div>
-                    {/* Right side - status label */}
-                    <span className="text-sm font-semibold text-accent-yellow bg-white px-4 py-1 rounded-full">
-                      Upcoming
-                    </span>
-                  </div>
-                ))
-              )}
-              {/* Pagination for upcoming */}
-              {upcomingTestsData.length > itemsPerPage && (
-                <div className="flex justify-end items-center space-x-4 mt-2">
-                  <button
-                    onClick={() =>
-                      setUpcomingPage((prev) => Math.max(prev - 1, 0))
-                    }
-                    disabled={upcomingPage === 0}
-                    className="px-3 py-1 bg-gray-300 rounded disabled:opacity-50"
-                  >
-                    Prev
-                  </button>
-                  <span className="text-sm text-gray-600">
-                    Page {upcomingPage + 1} of {maxUpcomingPage + 1}
-                  </span>
-                  <button
-                    onClick={() =>
-                      setUpcomingPage((prev) =>
-                        Math.min(prev + 1, maxUpcomingPage)
-                      )
-                    }
-                    disabled={upcomingPage === maxUpcomingPage}
-                    className="px-3 py-1 bg-gray-300 rounded disabled:opacity-50"
-                  >
-                    Next
-                  </button>
-                </div>
-              )}
-            </div>
-
-            {/* ONGOING TEST SECTION */}
-            <h2 className="text-xl font-bold mb-4 text-gray-800 dark:text-primary-white">
-              Ongoing Test
-            </h2>
-            <div className="space-y-4 mb-6">
-              {ongoingTests.length === 0 ? (
-                <div className="text-gray-500">No ongoing tests.</div>
-              ) : (
-                ongoingTests.map((test) => (
-                  <div
-                    key={test.id}
-                    className="flex justify-between items-center bg-primary-purple/70 p-4  dark:bg-gray-800 rounded-lg shadow"
-                  >
-                    {/* Left side - test info */}
-                    <div className="flex flex-col">
-                      <h3 className="text-lg font-semibold mb-2 text-white dark:text-primary-white">
-                        {test.title}
-                      </h3>
-                      <div className="flex items-center gap-4">
-                        <p className="text-base items-center text-black dark:text-gray-300">
-                          <File size={25} className="inline bg-white p-1 text-primary-purple rounded-lg" /> {test.questionsCount} Questions
-                        </p>
-                        <p className="text-sm m-0 text-black dark:text-gray-300">
-                          <Clock size={25} className="inline bg-white p-1 text-primary-purple rounded-lg" /> Duration {test.duration}
-                        </p>
-                        <p className="text-sm m-0 text-black dark:text-gray-300">
-                          <CalendarClock size={25} className="inline bg-white p-1 text-primary-purple rounded-lg" /> Held on {test.date}
-                        </p>
-                      </div>
-                    </div>
-                    {/* Right side - status and start button */}
-                    <div className="flex items-center space-x-4">
-                      <span className="px-3 py-1 text-sm font-semibold text-green-700 bg-green-100 rounded-full">
-                        {test.status}
-                      </span>
-                      <button className="px-4 py-2 text-primary-purple bg-white rounded-lg hover:bg-primary-purple/30 transition-colors">
-                        Start Test
-                      </button>
-                    </div>
-                  </div>
-                ))
-              )}
-              {/* Pagination for ongoing */}
-              {ongoingTestsData.length > itemsPerPage && (
-                <div className="flex justify-end items-center space-x-4 mt-2">
-                  <button
-                    onClick={() =>
-                      setOngoingPage((prev) => Math.max(prev - 1, 0))
-                    }
-                    disabled={ongoingPage === 0}
-                    className="px-3 py-1 bg-gray-300 rounded disabled:opacity-50"
-                  >
-                    Prev
-                  </button>
-                  <span className="text-sm text-gray-600">
-                    Page {ongoingPage + 1} of {maxOngoingPage + 1}
-                  </span>
-                  <button
-                    onClick={() =>
-                      setOngoingPage((prev) =>
-                        Math.min(prev + 1, maxOngoingPage)
-                      )
-                    }
-                    disabled={ongoingPage === maxOngoingPage}
-                    className="px-3 py-1 bg-gray-300 rounded disabled:opacity-50"
-                  >
-                    Next
-                  </button>
-                </div>
-              )}
-            </div>
-
-            {/* ATTEMPTED TEST SECTION */}
-            <h2 className="text-xl font-bold mb-4 text-gray-800 dark:text-primary-white">
-              Attempted Test
-            </h2>
-            <div className="space-y-4 mb-6">
-              {attemptedTests.length === 0 ? (
-                <div className="text-gray-500">No attempted tests.</div>
-              ) : (
-                attemptedTests.map((test) => (
-                  <div
-                    key={test.id}
-                    className="flex justify-between items-center bg-primary-purple/70 p-4  dark:bg-gray-800 rounded-lg shadow"
-                  >
-                    {/* Left side - test info */}
-                    <div className="flex flex-col">
-                      <h3 className="text-lg font-semibold mb-2 text-white dark:text-primary-white">
-                        {test.title}
-                      </h3>
-                      <div className="flex items-center gap-4">
-                        <p className="text-base items-center text-black dark:text-gray-300">
-                          <File size={25} className="inline bg-white p-1 text-primary-purple rounded-lg" /> {test.questionsCount} Questions
-                        </p>
-                        <p className="text-sm m-0 text-black dark:text-gray-300">
-                          <Clock size={25} className="inline bg-white p-1 text-primary-purple rounded-lg" /> Duration {test.duration}
-                        </p>
-                        <p className="text-sm m-0 text-black dark:text-gray-300">
-                          <CalendarClock size={25} className="inline bg-white p-1 text-primary-purple rounded-lg" /> Held on {test.date}
-                        </p>
-                      </div>
-                    </div>
-                    {/* Right side - label or result button */}
-                    <div className="flex items-center space-x-4">
-                      <span className="px-3 py-1 text-sm font-semibold text-blue-700 bg-blue-100 rounded-full">
-                        Completed
-                      </span>
-                      <button className="px-4 py-2 bg-primary-purple text-white rounded-lg hover:bg-primary-purple/80 transition-colors">
-                        View Result
-                      </button>
-                    </div>
-                  </div>
-                ))
-              )}
-              {/* Pagination for attempted */}
-              {attemptedTestsData.length > itemsPerPage && (
-                <div className="flex justify-end items-center space-x-4 mt-2">
-                  <button
-                    onClick={() =>
-                      setAttemptedPage((prev) => Math.max(prev - 1, 0))
-                    }
-                    disabled={attemptedPage === 0}
-                    className="px-3 py-1 bg-gray-300 rounded disabled:opacity-50"
-                  >
-                    Prev
-                  </button>
-                  <span className="text-sm text-gray-600">
-                    Page {attemptedPage + 1} of {maxAttemptedPage + 1}
-                  </span>
-                  <button
-                    onClick={() =>
-                      setAttemptedPage((prev) =>
-                        Math.min(prev + 1, maxAttemptedPage)
-                      )
-                    }
-                    disabled={attemptedPage === maxAttemptedPage}
-                    className="px-3 py-1 bg-gray-300 rounded disabled:opacity-50"
-                  >
-                    Next
-                  </button>
-                </div>
-              )}
-            </div>
-
-            {/* MISSED TEST SECTION */}
-            <h2 className="text-xl font-bold mb-4 text-gray-800 dark:text-primary-white">
-              Missed Test
-            </h2>
-            <div className="space-y-4 mb-6">
-              {missedTests.length === 0 ? (
-                <div className="text-gray-500">No missed tests.</div>
-              ) : (
-                missedTests.map((test) => (
-                  <div
-                    key={test.id}
-                    className="flex justify-between items-center bg-primary-purple/70 p-4  dark:bg-gray-800 rounded-lg shadow"
-                  >
-                    {/* Left side - test info */}
-                    <div className="flex flex-col">
-                      <h3 className="text-lg font-semibold mb-2 text-white dark:text-primary-white">
-                        {test.title}
-                      </h3>
-                      <div className="flex items-center gap-4">
-                        <p className="text-base items-center text-black dark:text-gray-300">
-                          <File size={25} className="inline bg-white p-1 text-primary-purple rounded-lg" /> {test.questionsCount} Questions
-                        </p>
-                        <p className="text-sm m-0 text-black dark:text-gray-300">
-                          <CalendarClock size={25} className="inline bg-white p-1 text-primary-purple rounded-lg" /> Held on {test.date}
-                        </p>
-                      </div>
-                    </div>
-                    {/* Right side - label */}
-                    <span className="px-3 py-1 text-sm font-semibold text-red-700 bg-red-100 rounded-full">
-                      Missed
-                    </span>
-                  </div>
-                ))
-              )}
-              {/* Pagination for missed */}
-              {missedTestsData.length > itemsPerPage && (
-                <div className="flex justify-end items-center space-x-4 mt-2">
-                  <button
-                    onClick={() =>
-                      setMissedPage((prev) => Math.max(prev - 1, 0))
-                    }
-                    disabled={missedPage === 0}
-                    className="px-3 py-1 bg-gray-300 rounded disabled:opacity-50"
-                  >
-                    Prev
-                  </button>
-                  <span className="text-sm text-gray-600">
-                    Page {missedPage + 1} of {maxMissedPage + 1}
-                  </span>
-                  <button
-                    onClick={() =>
-                      setMissedPage((prev) => Math.min(prev + 1, maxMissedPage))
-                    }
-                    disabled={missedPage === maxMissedPage}
-                    className="px-3 py-1 bg-gray-300 rounded disabled:opacity-50"
-                  >
-                    Next
-                  </button>
-                </div>
-              )}
-            </div>
           </>
         )}
 

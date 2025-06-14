@@ -52,9 +52,9 @@ const StudentTestList = () => {
 
   return (
     <div className='m-0'>
-      <div className=" dark:bg-gray-900 py-12 px-">
+      <div className=" dark:bg-gray-900 py-0 px-">
         <Toaster />
-        <div className="w-full mx-aut">
+        <div className="w-full ">
           <div className="flex justify-between items-center mb-3">
             <h1 className="text-3xl font-bold text-gray-900 dark:text-primary-white">
               My Tests

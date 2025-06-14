@@ -90,12 +90,12 @@ const Rank = () => {
 
   return (
     <div className='m-0' >
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-7xl mx-auto">
           <Toaster />
           {!selectedTestId ? (
             // Test List View
             <>
-              <h1 className="text-3xl font-bold pt-6 text-gray-900 dark:text-primary-white">All Tests Leaderboard</h1>
+              <h1 className="text-3xl font-bold  text-gray-900 dark:text-primary-white">All Tests Leaderboard</h1>
               {loadingTests ? (
                 <Loading/>
               ) : tests.length > 0 ? (
@@ -104,7 +104,7 @@ const Rank = () => {
                     <div key={test.test_id} className="bg-primary-white dark:bg-gray-800 rounded-xl border mt-4 shadow-lg p-6">
                       <div className="flex justify-between items-center"> 
                         <div>
-                          <h2 className="text-2xl font-bold text-gray-900 dark:text-primary-white">{test.title}</h2>
+                          <h2 className="text-2xl font-semibold text-gray-900 dark:text-primary-white">{test.title}</h2>
                           <p className="text-gray-600 dark:text-gray-300">{test.description}</p>
                           {/* Date & Time: <span className="font-semibold">{formatDateTime(test.schedule_date, test.schedule_time)}</span> */}
                         </div>
