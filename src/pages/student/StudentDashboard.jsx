@@ -1,4 +1,4 @@
-import { CalendarClock, Clock, File } from "lucide-react";
+import { CalendarClock, Clock, File, Video, Pencil, Trash2, ExternalLink } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { Badge, Calendar } from "rsuite";
 import AttempedTestList from "./AttempedTestList";
@@ -34,32 +34,23 @@ const missedTestsData = [
   { id: 14, title: "Module 14: Express.js", questionsCount: 20, date: "Feb 22, 2025, 3:00 PM" },
 ];
 
-// Dummy events for the calendar (you can replace with dynamic events)
-function getTodoList(date) {
-  if (!date) return [];
-  const day = date.getDate();
-  switch (day) {
-    case 10:
-      return [
-        { time: "10:30 am", title: "Meeting" },
-        { time: "12:00 pm", title: "Lunch" },
-      ];
-    case 15:
-      return [
-        { time: "09:30 am", title: "Intro Meeting" },
-        { time: "12:30 pm", title: "Client Call" },
-        { time: "02:00 pm", title: "Design Discussion" },
-        { time: "05:00 pm", title: "Test & Review" },
-        { time: "06:30 pm", title: "Reporting" },
-      ];
-    default:
-      return [];
-  }
+// Function to get classes for a specific date
+function getClassesForDate(date, classes) {
+  if (!date || !classes || !classes.length) return [];
+  
+  const selectedDate = new Date(date);
+  selectedDate.setHours(0, 0, 0, 0);
+  
+  return classes.filter(cls => {
+    const classDate = new Date(cls.class_date_time);
+    classDate.setHours(0, 0, 0, 0);
+    return classDate.getTime() === selectedDate.getTime();
+  });
 }
 
-function renderCell(date) {
-  const events = getTodoList(date);
-  return events.length ? <Badge className="calendar-todo-item-badge" /> : null;
+// Function to check if a date has classes
+function hasClasses(date, classes) {
+  return getClassesForDate(date, classes).length > 0;
 }
 
 // Helper for pagination
@@ -70,8 +61,8 @@ const paginateData = (data, page) => {
 };
 
 export default function StudentDashboard() {
-  const [activeTab, setActiveTab] = useState("test");
-  const [selectedDate, setSelectedDate] = useState(null);
+  const [activeTab, setActiveTab] = useState("class");
+  const [selectedDate, setSelectedDate] = useState(new Date());
 
   // Pagination states
   const [upcomingPage, setUpcomingPage] = useState(0);
@@ -91,6 +82,19 @@ export default function StudentDashboard() {
   const maxMissedPage = Math.ceil(missedTestsData.length / itemsPerPage) - 1;
   const [classes, setClasses] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  // Custom cell renderer to show dots for dates with classes
+  const renderCell = (date) => {
+    const hasClass = hasClasses(date, classes);
+    
+    return (
+      <div className="relative w-full h-full">
+        {hasClass && (
+          <div className="absolute bottom-4 right-1 h-2 w-2 rounded-full bg-primary-purple"></div>
+        )}
+      </div>
+    );
+  };
 
   const leaderboardData = [
     { ranking: 1, name: 'John Smith', marks: 1195 },
@@ -118,7 +122,7 @@ export default function StudentDashboard() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-secondar dark:bg-gray-900 p-6">
+    <div className="min-h-screen bg-secondar dark:bg-gray-900 p-6 mt-24">
       <div className="max-w-7xl mx-auto">
         {/* Top Bar: Greeting & Date */}
         <div className="flex items-center justify-between ">
@@ -149,24 +153,124 @@ export default function StudentDashboard() {
 
           {/* Right: RSuite Calendar */}
           <div className="w-[80%] flex bg-primary-white dark:bg-gray-800 rounded-lg shadow p-4">
-            <Calendar compact renderCell={renderCell} onSelect={setSelectedDate} style={{ width: 320 }} />
-            {selectedDate && getTodoList(selectedDate).length > 0 ? (
-              <div className="mt-4 w-3/4">
-                <h3 className="text-lg font-semibold text-center text-gray-800 dark:text-white">Classes</h3>
-                <ul className="mt-2 space-y-1 w-full">
-                  {getTodoList(selectedDate).map((item) => (
-                    <li key={item.time} className="text-sm text-gray-600 border-2 rounded-full px-2 py-1 w-full dark:text-gray-300">
-                      <span className="font-bold" >{item.time}</span>  - <a href="#" className="text-primary-purple">{item.title}</a>
-                    </li>
-                  ))}
-                </ul>
+            <div className="relative">
+              <div className="rs-theme-dark">
+                <style jsx global>{`
+                  /* Hover styles */
+                  .rs-calendar-table-cell:hover .rs-calendar-table-cell-content {
+                    background-color: #f3f4f6 !important; /* light gray for light mode */
+                  }
+                  .rs-calendar-table-cell:hover .rs-calendar-table-cell-day {
+                    color: #1f2937 !important; /* dark text for better contrast */
+                  }
+                  .dark .rs-calendar-table-cell:hover .rs-calendar-table-cell-content {
+                    background-color: #374151 !important; /* darker gray for dark mode */
+                  }
+                  .dark .rs-calendar-table-cell:hover .rs-calendar-table-cell-day {
+                    color: #f9fafb !important; /* light text for dark mode */
+                  }
+                  
+                  /* Calendar header and navigation */
+                  .rs-calendar-header-title {
+                    color: #000000 !important; /* Black text for month/year */
+                  }
+                  .rs-calendar-header-backward,
+                  .rs-calendar-header-forward {
+                    color: #000000 !important; /* Black arrows */
+                  }
+                  .rs-calendar-header-backward:hover,
+                  .rs-calendar-header-forward:hover {
+                    color: #4b5563 !important; /* Slightly lighter on hover */
+                  }
+                  
+                  /* Week day names */
+                  .rs-calendar-table-header-row .rs-calendar-table-cell {
+                    color: #000000 !important; /* Black text for week days */
+                  }
+                  
+                  /* Ensure text remains black in dark mode */
+                  .dark .rs-calendar-header-title,
+                  .dark .rs-calendar-header-backward,
+                  .dark .rs-calendar-header-forward,
+                  .dark .rs-calendar-table-header-row .rs-calendar-table-cell {
+                    color: #000000 !important;
+                  }
+                `}</style>
+                <Calendar 
+                  compact 
+                  renderCell={renderCell}
+                  onSelect={setSelectedDate} 
+                  value={selectedDate}
+                  style={{ width: 320 }}
+                  className="pr-4"
+                  cellClass={(date) => 'relative hover:bg-gray-100 dark:hover:bg-gray-700'}
+                />
               </div>
-            ) : (
-              <div className="mt-4 w-3/4 text-center">
-                <h3 className="text-lg font-semibold text-gray-800 dark:text-white">No classes</h3>
-                <p className="text-sm text-gray-600 dark:text-gray-300">There is no class on the selected date.</p>
-              </div>
-            )}
+              {/* <div className="absolute bottom-0 left-6">
+                <div className="flex items-center">
+                  <div className="h-2 w-2 rounded-full bg-primary-purple mr-1"></div>
+                  <span className="text-xs text-gray-500">Class</span>
+                </div>
+              </div> */}
+            </div>
+            <div className="flex-1 pl-4 overflow-y-auto max-h-80 rounded-lg border border-gray-200 dark:border-gray-700">
+              <h3 className="text-lg font-semibold text-gray-800 dark:text-white my-2">
+                {selectedDate.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+              </h3>
+              
+              {loading ? (
+                <div className="flex justify-center items-center h-32">
+                  <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary-purple"></div>
+                </div>
+              ) : (
+                <div className="space-y-3 mb-2 pr-2">
+                  {getClassesForDate(selectedDate, classes).length > 0 ? (
+                    getClassesForDate(selectedDate, classes).map((cls) => {
+                      const classTime = new Date(cls.class_date_time);
+                      const timeString = classTime.toLocaleTimeString('en-US', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: true
+                      });
+                      
+                      return (
+                        <div key={cls.class_id} className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 py-2 border border-gray-200 dark:border-gray-600">
+                          <div className="flex justify-between items-center">
+                            <div>
+                              <h4 className="font-medium text-gray-900 text-sm dark:text-white">{cls.class_title}</h4>
+                              <p className="text-sm text-gray-500 dark:text-gray-300 mt-1">
+                                🕒 {timeString}
+                              </p>
+                            </div>
+                            {cls.class_url && (
+                              <a
+                                href={cls.class_url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-md text-white bg-primary-purple hover:bg-primary-purple/90"
+                              >
+                                <ExternalLink className="h-3.5 w-3.5 mr-1.5" />
+                                Join Class
+                              </a>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })
+                  ) : (
+                    <div className="text-center py-8">
+                      <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-gray-100 dark:bg-gray-700">
+                        <CalendarClock className="h-6 w-6 text-gray-400" />
+                      </div>
+                      <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-white">No classes scheduled</h3>
+                      <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                        There are no classes scheduled for this date.
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         </div>
         {/* Tabs */}
@@ -507,49 +611,83 @@ export default function StudentDashboard() {
           </>
         )}
 
-        {activeTab === "classes" && (
+        {activeTab === "class" && (
           <div className="mt-6 space-y-4">
-            {loading ? (
-              <p>Loading...</p>
-            ) : classes.length > 0 ? (
-              classes.map((cls) => (
-                <div key={cls.class_id} className="flex justify-between items-center border rounded-lg p-5 shadow-sm bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
-                  <div className="w-full pr-4">
-                    <div className="flex justify-between items-center w-full">
-                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{cls.class_title}</h3>
-                      <p className="text-gray-600 dark:text-gray-400 text-sm">
-                        📅 {new Date(cls.class_date_time).toLocaleString()}
-                      </p>
-                    </div>
-                    <div className="flex justify-between items-center w-full">
-                      {cls.recording_url && (
-                        <a href={cls.recording_url} className="text-blue-500 flex items-center mt-2 hover:underline" target="_blank" rel="noopener noreferrer">
-                          <Video size={18} className="mr-2" />
-                          View Recording
-                        </a>
-                      )}
-                      {cls.zoom_meeting_url && (
-                        <a href={cls.zoom_meeting_url} className="text-blue-500 flex items-center mt-2 hover:underline" target="_blank" rel="noopener noreferrer">
-                          <Video size={18} className="mr-2" />
-                          Join Zoom
-                        </a>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="flex justify-center space-x-3 mt-4">
-                    <button onClick={() => handleUpdateClass(cls.class_id)} className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg">
-                      <Pencil size={16} />
-                    </button>
-                    <button onClick={() => handleDeleteClass(cls.class_id)} className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg">
-                      <Trash2 size={16} />
-                    </button>
-                  </div>
+            <div className="space-y-4">
+              {loading ? (
+                <div className="text-center py-8">
+                  <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary-purple"></div>
+                  <p className="mt-2 text-gray-600 dark:text-gray-400">Loading classes...</p>
                 </div>
-              ))
-            ) : (
-              <p className="text-center text-gray-500">No classes available</p>
-            )}
+              ) : classes.length > 0 ? (
+                classes.map((cls) => (
+                  <div key={cls.class_id} className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden border border-gray-100 dark:border-gray-700">
+                    <div className="p-5">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{cls.class_title}</h3>
+                          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                            🗓️ {new Date(cls.class_date_time).toLocaleString('en-US', {
+                              weekday: 'long',
+                              year: 'numeric',
+                              month: 'long',
+                              day: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })}
+                          </p>
+                        </div>
+                        {new Date(cls.class_date_time) > new Date() ? (
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                            Upcoming
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                            Completed
+                          </span>
+                        )}
+                      </div>
+                      
+                      <div className="mt-4 flex flex-wrap gap-3">
+                        {cls.class_url && (
+                          <a 
+                            href={cls.class_url} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md shadow-sm text-white bg-primary-purple hover:bg-primary-purple/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-purple"
+                          >
+                            <ExternalLink className="h-3.5 w-3.5 mr-1.5" />
+                            Join Class
+                          </a>
+                        )}
+                        
+                        {cls.recording_url && cls.recording_url !== 'string' && (
+                          <a 
+                            href={cls.recording_url} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center px-3 py-1.5 border border-gray-300 text-xs font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-600"
+                          >
+                            <Video className="h-3.5 w-3.5 mr-1.5" />
+                            View Recording
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="text-center py-12 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700">
+                  <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-gray-100 dark:bg-gray-700">
+                    <CalendarClock className="h-6 w-6 text-gray-400" />
+                  </div>
+                  <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-white">No classes scheduled</h3>
+                  <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                    You don't have any classes scheduled yet.
+                  </p>
+                </div>
+              )}
+            </div>
           </div>
         )}
 
