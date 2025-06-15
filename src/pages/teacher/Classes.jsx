@@ -248,7 +248,7 @@ const Classes = () => {
                 />
                 <input
                   type="text"
-                  placeholder="Recording URL"
+                  placeholder="Description"
                   value={newClass.recording_url}
                   onChange={(e) =>
                     setNewClass((prev) => ({
@@ -321,7 +321,7 @@ const Classes = () => {
                       Date: {new Date(cls.class_date_time).toLocaleString()}
                     </p>
                     <div className="flex gap-2 mt-2">
-                      {cls.recording_url && (
+                      {/* {cls.recording_url && (
                         <a
                           href={cls.recording_url}
                           target="_blank"
@@ -331,7 +331,7 @@ const Classes = () => {
                           <Paperclip className="h-3.5 w-3.5 mr-1.5" />
                           Recording
                         </a>
-                      )}
+                      )} */}
                       {cls.class_url && (
                         <a
                           href={cls.class_url}

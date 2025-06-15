@@ -217,7 +217,7 @@ export const uploadBatchImageToS3 = async (imageFile, batch_id) => {
         console.log("Upload metadata:", requestBody);
 
         // Call API to get presigned URL
-        const response = await fetch("https://dbf2-2409-40d5-1004-2520-811e-f2f6-5ffc-38d8.ngrok-free.app/api/v2/s3/generate-upload-url", {
+        const response = await fetch("https://testapi.teachertech.in/api/v2/s3/generate-upload-url", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

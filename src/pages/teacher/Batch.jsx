@@ -88,25 +88,22 @@ const Batch = () => {
     try {
       setLoading(true);
       
-      // First create the batch
-      const response = await createBatch(batchData);
-      const newBatchId = response.data?.batch_id;
-      
-      if (!newBatchId) {
-        throw new Error("Failed to create batch: No batch ID returned");
-      }
-      
-      // If there's an image selected, upload it
+      let imageUrl = "";
+      // If there's an image selected, upload it first
       if (selectedImage) {
-        const imageUrl = await handleImageUpload(selectedImage, newBatchId);
-        if (imageUrl) {
-          // Update the batch with the image URL
-          await updateBatchById(newBatchId, { ...batchData, image_url: imageUrl });
-        }
+        imageUrl = await handleImageUpload(selectedImage, batchData.batch_id);
       }
+      
+      // Create the batch with all data including image URL if available
+      const batchPayload = {
+        ...batchData,
+        ...(imageUrl && { image_url: imageUrl }) // Only include image_url if available
+      };
+      
+      await createBatch(batchPayload);
       
       // Reset form and fetch updated batch list
-      setBatchData({ batch_name: "", description: "", start_date: "", end_date: "", cost: "" });
+      setBatchData({ batch_id: uuidv4(), batch_name: "", description: "", start_date: "", end_date: "", cost: "" });
       setSelectedImage(null);
       setImageUrl("");
       toast.success("Batch created successfully!");
@@ -307,41 +304,70 @@ const Batch = () => {
           >
             {selectedBatchId ? "Update Batch" : "Create Batch"}
           </button>
-          <ul className="mt-4">
-            {batches.map((batch) => (
-              <li key={batch.batch_id} className="flex justify-between items-center border p-3 my-2 bg-primary-white rounded-lg shadow-sm">
-                <div>
-                  <p className="font-medium text-gray-700 text-lg">{batch.batch_name}</p>
-                  <p className="text-gray-500 text-sm">{batch.description}</p>
-                  {/* <p className="text-gray-400 text-xs">Teacher: {batch.teacher_email}</p> */}
+          <div className="mt-8">
+            <h2 className="text-2xl font-bold text-gray-800 mb-6">Your Batches</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {batches.map((batch) => (
+                <div key={batch.batch_id} className="group relative aspect-square bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
+                  {/* Batch Image */}
+                  <div className="h-[60%] bg-gray-100 overflow-hidden">
+                    {batch.banner ? (
+                      <img 
+                        src={batch.banner} 
+                        alt={batch.batch_name}
+                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary-purple to-accent-blue">
+                        <span className="text-white text-2xl font-bold">{batch.batch_name.charAt(0).toUpperCase()}</span>
+                      </div>
+                    )}
+                  </div>
+                  
+                  {/* Batch Info */}
+                  <div className="p-4 h-[40%] flex flex-col justify-between">
+                    <div>
+                      <h3 className="font-bold text-gray-800 text-lg truncate">{batch.batch_name}</h3>
+                      <p className="text-gray-500 text-sm line-clamp-2">{batch.description}</p>
+                    </div>
+                    <div className=" flex justify-between items-center">
+                      <span className="text-sm font-medium text-primary-purple">₹{batch.cost}</span>
+                      <div className="flex space-x-2">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedBatchId(batch.batch_id);
+                            setBatchData({
+                              batch_name: batch.batch_name,
+                              description: batch.description,
+                              start_date: batch.start_date,
+                              end_date: batch.end_date,
+                              cost: batch.cost
+                            });
+                          }}
+                          className="p-1.5 rounded-lg bg-yellow-100 text-yellow-600 hover:bg-yellow-200 transition-colors"
+                          title="Edit"
+                        >
+                          <Edit size={16} />
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteBatch(batch.batch_id);
+                          }}
+                          className="p-1.5 rounded-lg bg-red-100 text-red-600 hover:bg-red-200 transition-colors"
+                          disabled={loading}
+                          title="Delete"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div className="flex space-x-2 text-black">
-                  <button
-                    onClick={() => {
-                      setSelectedBatchId(batch.batch_id);
-                      setBatchData({
-                        batch_name: batch.batch_name,
-                        description: batch.description,
-                        start_date: batch.start_date,
-                        end_date: batch.end_date,
-                        cost: batch.cost
-                      });
-                    }}
-                    className="bg-accent-yellow text-white p-2 rounded-lg hover:bg-opacity-90"
-                  >
-                    <Edit size={18} />
-                  </button>
-                  <button
-                    onClick={() => handleDeleteBatch(batch.batch_id)}
-                    className="bg-secondary-coral text-white p-2 rounded-lg hover:bg-opacity-90"
-                    disabled={loading}
-                  >
-                    <Trash2 size={18} />
-                  </button>
-                </div>
-              </li>
-            ))}
-          </ul>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </div>
