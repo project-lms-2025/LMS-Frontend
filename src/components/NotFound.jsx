@@ -9,7 +9,7 @@ const NotFound = () => {
             <Sidebar open={open} setOpen={setOpen} />
             {/* Main content */}
             <div
-                className={`transition-all duration-300 ${open ? "md:ml-[20rem] ml-56 mr-4  w-[40%] md:w-[75%]" : "ml-24 mr-2"} md:w-[90%]  w-[95%] md:mt `}
+                className={`transition-all mt-12 duration-300 ${open ? "md:ml-[20rem] ml-56 mr-4  w-[40%] md:w-[70%]" : "ml-24 mr-2"} md:w-[90%]  w-[95%] md:mt `}
             >
                 <div className="min-h-[90vh]  py-12 px-4 sm:px-6 lg:px-8 flex items-center justify-center">
                     <div className="max-w-4xl text-center">

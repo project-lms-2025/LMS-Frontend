@@ -117,6 +117,7 @@ function App() {
 
         <Route path="/jupyter" element={<Jupyter />} />
         <Route path="/tl" element={<TeacherLanding />} />
+        <Route path="/*" element={<div>This route accepts null requests</div>} />
       </Routes>
     </Router>
   )

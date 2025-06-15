@@ -346,24 +346,33 @@ const CreateTest = () => {
     setMessage('');
     try {
       if (!validateFields()) return;
-      const testPayload = { ...questionPaper };
-      console.log(testPayload);
+      
+      // Prepare the payload with questions_count and ensure selected_exam is included
+      const testPayload = {
+        ...questionPaper,
+        questions_count: questionPaper.questions.length,
+        selected_exam: questionPaper.selected_exam || "GATE"
+      };
+      
+      console.log('Submitting test with payload:', testPayload);
       const result = await createTestWithQuestions(testPayload);
       toast.success('Test created successfully!');
       sessionStorage.removeItem("draftTestPaper");
-      console.log(result);
+      console.log('Test creation response:', result);
+      
       setTimeout(() => {
         navigate('/testList');
       }, 2000);
     } catch (error) {
-      toast.error('Error creating test.');
-      console.error(error);
+      const errorMessage = error.response?.data?.message || 'Error creating test';
+      toast.error(errorMessage);
+      console.error('Test creation error:', error);
     } finally {
       setLoading(false);
     }
   };
   return (
-    <div className=" px-4 ">
+    <div className=" px-4 mt-24">
       <Toaster />
       {/* Top Paper Details */}
       <div className='  w-full bg-white z-20' >

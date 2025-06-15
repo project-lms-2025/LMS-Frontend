@@ -133,33 +133,11 @@ export const uploadImageToS3 = async (
         }
 
         const fileType = imageFile.type.split("/")[1];
-        const filename = `${type}_${id}.${fileType}`; // e.g., question_88.png
-        let category, metadata = {};
-
-        if (type === "option") {
-            category = "option_image";
-            metadata = {
-                institution_id,
-                batch_id,
-                course_id,
-                test_id: testId,
-                question_id: id.split("_")[0],
-                option_id: id,
-                testType,
-            };
-        } else if (type === "question") {
-            category = "question_image";
-            metadata = {
-                institution_id,
-                batch_id,
-                course_id,
-                test_id: testId,
-                question_id: id,
-                testType,
-            };
-        } else {
-            throw new Error("Invalid image type");
-        }
+        const filename = `batch_${batch_id}.${fileType}`;
+        const category = "batch_image";
+        const metadata = {
+            batch_id
+        };
 
         const requestBody = {
             category,
@@ -196,7 +174,6 @@ export const uploadImageToS3 = async (
             method: "PUT",
             headers: {
                 "Content-Type": imageFile.type,
-
             },
             body: imageFile,
         });
@@ -209,10 +186,78 @@ export const uploadImageToS3 = async (
 
         // Return the public URL (without query params)
         const publicUrl = presignedUrl.split("?")[0];
-        console.log("Uploaded Image URL:", publicUrl);
+        console.log("Uploaded Batch Image URL:", publicUrl);
         return publicUrl;
     } catch (error) {
-        console.error("Error during image upload:", error);
+        console.error("Error during batch image upload:", error);
+        throw error;
+    }
+};
+
+export const uploadBatchImageToS3 = async (imageFile, batch_id) => {
+    try {
+        if (!imageFile.type || !imageFile.type.includes("/")) {
+            throw new Error("Invalid file type");
+        }
+
+        const fileType = imageFile.type.split("/")[1];
+        const filename = `batch_${batch_id}.${fileType}`;
+        const category = "banner_image";
+        const metadata = {
+            batch_id
+        };
+
+        const requestBody = {
+            category,
+            filename,
+            fileType: imageFile.type,
+            metadata,
+        };
+
+        console.log("Upload metadata:", requestBody);
+
+        // Call API to get presigned URL
+        const response = await fetch("https://dbf2-2409-40d5-1004-2520-811e-f2f6-5ffc-38d8.ngrok-free.app/api/v2/s3/generate-upload-url", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Accept: "application/json",
+                Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+            },
+            body: JSON.stringify(requestBody),
+        });
+
+        const result = await response.json();
+        console.log("Result:", result);
+        const presignedUrl = result?.data?.uploadURL;
+console.log("Presigned URL:", presignedUrl);
+        if (!presignedUrl) {
+            throw new Error("No presigned URL returned");
+        }
+
+        console.log("Presigned URL:", presignedUrl);
+
+        // Upload the image file directly to S3
+        const uploadResponse = await fetch(presignedUrl, {
+            method: "PUT",
+            headers: {
+                "Content-Type": imageFile.type,
+            },
+            body: imageFile,
+        });
+
+        if (!uploadResponse.ok) {
+            const errorText = await uploadResponse.text();
+            console.error("Upload failed:", errorText);
+            throw new Error("Error uploading image to S3");
+        }
+
+        // Return the public URL (without query params)
+        const publicUrl = presignedUrl.split("?")[0];
+        console.log("Uploaded Batch Image URL:", publicUrl);
+        return publicUrl;
+    } catch (error) {
+        console.error("Error during batch image upload:", error);
         throw error;
     }
 };

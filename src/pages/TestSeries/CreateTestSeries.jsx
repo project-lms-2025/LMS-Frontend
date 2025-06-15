@@ -52,10 +52,10 @@ const CreateTestSeries = () => {
       <Sidebar open={open} setOpen={setOpen} />
       {/* Main content */}
       <div
-        className={`transition-all duration-300 ${open ? "md:ml-[20rem] ml-56 mr-4  w-[40%] md:w-[75%]" : "ml-24 mr-2"} md:w-[90%]  w-[95%] md:mt `}
+        className={`transition-all mt-14 pt-12 duration-300 ${open ? "md:ml-[20rem] ml-56 mr-4  w-[40%] md:w-[70%]" : "ml-24 mr-2"} md:w-[90%]  w-[95%] md:mt `}
       >
         <Toaster autoClose={3000} />
-        <div className="min-h-screen bg-secondary-gray dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
+        <div className="min-h-screen  py-12 px-4 sm:px-6 lg:px-8">
           <div className="max-w-xl mx-auto bg-primary-white dark:bg-gray-800 p-8 rounded-xl shadow-lg">
             <h1 className="text-3xl font-bold text-primary-purple dark:text-primary-white mb-6">
               Create Test Series

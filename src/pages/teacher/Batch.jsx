@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Edit, Trash2 } from "lucide-react";
+import { Edit, Paperclip, Trash2 } from "lucide-react";
 import {
   getAllBatches,
   createBatch,
@@ -7,17 +7,21 @@ import {
   updateBatchById,
   deleteBatchById,
 } from "../../api/auth";
+import { uploadBatchImageToS3 } from "../../api/test";
 import toast from "react-hot-toast";
 import Sidebar from "../../components/Sidebar";
+import { v4 as uuidv4 } from "uuid";
 
 const Batch = () => {
   const [open, setOpen] = useState(false);
   const [batches, setBatches] = useState([]);
-  const [batchData, setBatchData] = useState({ batch_name: "", description: "", start_date: "", end_date: "", cost: "" });
+  const [batchData, setBatchData] = useState({ batch_id: uuidv4(), batch_name: "", description: "", start_date: "", end_date: "", cost: "" });
   const [selectedBatchId, setSelectedBatchId] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
+  const [imageUrl, setImageUrl] = useState("");
+  const [isUploading, setIsUploading] = useState(false);
   useEffect(() => {
     fetchBatches();
   }, []);
@@ -36,6 +40,21 @@ const Batch = () => {
       setError(err.message);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleImageUpload = async (file, batchId) => {
+    if (!file) return "";
+    try {
+      setIsUploading(true);
+      const url = await uploadBatchImageToS3(file, batchId);
+      return url;
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      toast.error("Failed to upload image");
+      return "";
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -68,13 +87,33 @@ const Batch = () => {
 
     try {
       setLoading(true);
-      console.log("Creating Batch with data:", batchData);
-      await createBatch(batchData);
+      
+      // First create the batch
+      const response = await createBatch(batchData);
+      const newBatchId = response.data?.batch_id;
+      
+      if (!newBatchId) {
+        throw new Error("Failed to create batch: No batch ID returned");
+      }
+      
+      // If there's an image selected, upload it
+      if (selectedImage) {
+        const imageUrl = await handleImageUpload(selectedImage, newBatchId);
+        if (imageUrl) {
+          // Update the batch with the image URL
+          await updateBatchById(newBatchId, { ...batchData, image_url: imageUrl });
+        }
+      }
+      
+      // Reset form and fetch updated batch list
       setBatchData({ batch_name: "", description: "", start_date: "", end_date: "", cost: "" });
+      setSelectedImage(null);
+      setImageUrl("");
       toast.success("Batch created successfully!");
       fetchBatches();
     } catch (err) {
-      toast.error("Failed to create batch.");
+      console.error("Error creating batch:", err);
+      toast.error(err.message || "Failed to create batch");
       setError(err.message);
     } finally {
       setLoading(false);
@@ -112,13 +151,31 @@ const Batch = () => {
 
     try {
       setLoading(true);
-      await updateBatchById(selectedBatchId, batchData);
+      
+      // First update the batch data
+      const updateData = { ...batchData };
+      
+      // If there's a new image selected, upload it
+      if (selectedImage) {
+        const imageUrl = await handleImageUpload(selectedImage, selectedBatchId);
+        if (imageUrl) {
+          updateData.image_url = imageUrl;
+        }
+      }
+      
+      // Update the batch with the new data
+      await updateBatchById(selectedBatchId, updateData);
+      
+      // Reset form and fetch updated batch list
       setSelectedBatchId(null);
       setBatchData({ batch_name: "", description: "", start_date: "", end_date: "", cost: "" });
+      setSelectedImage(null);
+      setImageUrl("");
       toast.success("Batch updated successfully!");
       fetchBatches();
     } catch (err) {
-      toast.error("Failed to update batch.");
+      console.error("Error updating batch:", err);
+      toast.error(err.message || "Failed to update batch");
       setError(err.message);
     } finally {
       setLoading(false);
@@ -141,8 +198,8 @@ const Batch = () => {
   return (
     <div className="m-0">
       <Sidebar open={open} setOpen={setOpen} />
-      <div className={`transition-all duration-300 ${open ? 'md:ml-[20rem] ml-56 mr-4 w-[40%] md:w-[75%]' : 'ml-24 mr-2'} md:w-[90%]  w-[95%]`}>
-        <div className="p-6 max-w-4xl mx-auto bg-secondary-gray rounded-lg shadow-lg">
+      <div className={`transition-all mt-14 pt-12 duration-300 ${open ? 'md:ml-[20rem] ml-56 mr-4 w-[40%] md:w-[70%]' : 'ml-24 mr-2'} md:w-[90%]  w-[95%]`}>
+        <div className="p-6  max-w-4xl mx-auto bg-secondary-gray rounded-lg shadow-lg">
           <h2 className="text-2xl font-bold text-primary-purple mb-4">Batch Management</h2>
           {error && <p className="text-red-500">{error}</p>}
           <input
@@ -154,7 +211,7 @@ const Batch = () => {
           />
           <div className="flex justify-between gap-2">
             <div className="w-1/2">
-              <h1 className="text-xl">Start date</h1>
+              <h1 className="text-xl text-primary-purple  ">Start date</h1>
               <input
                 type="date"
                 placeholder="Start Date"
@@ -164,7 +221,7 @@ const Batch = () => {
               />
             </div>
             <div className="w-1/2">
-              <h1 className="text-xl">End date</h1>
+              <h1 className="text-xl text-primary-purple">End date</h1>
               <input
                 type="date"
                 placeholder="End Date"
@@ -174,7 +231,7 @@ const Batch = () => {
               />
             </div>
             <div className="w-1/2">
-              <h1 className="text-xl">Cost</h1>
+              <h1 className="text-xl text-primary-purple">Cost</h1>
               <input
                 type="text"
                 placeholder="Cost"
@@ -186,18 +243,55 @@ const Batch = () => {
           </div>
 
           <div className="flex justify-center mb-4">
-            <label htmlFor="image" className="flex items-center justify-center w-48 h-48 border-2 border-dashed border-primary-purple rounded-lg cursor-pointer">
-              {
-                selectedImage ? (
-                  <img src={URL.createObjectURL(selectedImage)} className="h-full w-full object-cover" />
-                ) : (
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-primary-purple" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14V6h-4v2m0 10h3a1 1 0 001-1V7a1 1 0 00-1-1H3a1 1 0 00-1 1v3H1v2h2v3z" />
-                  </svg>
-                )
-              }
+            <label htmlFor="image" className="flex items-center justify-center w-48 h-48 border-2 border-dashed border-primary-purple rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+              {isUploading ? (
+                <div className="text-primary-purple">Uploading...</div>
+              ) : selectedImage ? (
+                <img 
+                  src={URL.createObjectURL(selectedImage)} 
+                  className="h-full w-full object-cover rounded-lg"
+                  alt="Selected batch"
+                />
+              ) : imageUrl ? (
+                <img 
+                  src={imageUrl} 
+                  className="h-full w-full object-cover rounded-lg"
+                  alt="Current batch"
+                />
+              ) : (
+                <div className="text-center p-4">
+                  <Paperclip
+                    className="h-12 w-12 text-primary-purple mx-auto mb-2" 
+                    strokeWidth={2}
+                  />
+                  <span className="text-sm text-gray-500">Click to upload an image</span>
+                </div>
+              )}
             </label>
-            <input type="file" id="image" className="hidden" onChange={(e) => setSelectedImage(e.target.files[0])} />
+            <input 
+              type="file" 
+              id="image" 
+              className="hidden" 
+              accept="image/*"
+              onChange={(e) => {
+                const file = e.target.files[0];
+                if (file) {
+                  setSelectedImage(file);
+                }
+              }} 
+            />
+            {selectedImage && (
+              <button
+                type="button"
+                onClick={() => {
+                  setSelectedImage(null);
+                  setImageUrl("");
+                }}
+                className="ml-2 text-red-500 hover:text-red-700"
+              >
+                Remove
+              </button>
+            )}
           </div>
 
           <textarea

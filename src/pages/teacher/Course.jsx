@@ -123,8 +123,8 @@ const Course = () => {
         <div className="m-0">
             <Sidebar open={open} setOpen={setOpen} />
             <div
-                className={`transition-all duration-300 ${open ? 'md:ml-[20rem] ml-56 mr-4 w-[40%] md:w-[75%]' : 'ml-24 mr-2'
-                    } md:w-[90%]  w-[95%] md:mt`}
+                className={`transition-all mt-14 pt-12 duration-300 ${open ? 'md:ml-[20rem] ml-56 mr-4 w-[40%] md:w-[70%]' : 'ml-24 mr-2'
+                    } md:w-[90%]  w-[95%]`}
             >
                 <div className="p-6  dark:bg-gray-900 flex justify-center min-h-screen ">
                     <div className="w-[40rem]">
@@ -152,30 +152,6 @@ const Course = () => {
                                     </option>
                                 ))}
                             </select>
-                            <div className="flex items-center space-x-2">
-                                <input
-                                    type="file"
-                                    name="course_image"
-                                    onChange={(e) => {
-                                        const file = e.target.files[0];
-                                        if (file) {
-                                            const reader = new FileReader();
-                                            reader.onload = () => {
-                                                setCourseImage(reader.result);
-                                            };
-                                            reader.readAsDataURL(file);
-                                        }
-                                    }}
-                                    className="bg-white dark:bg-gray-700 rounded px-2 py-1 text-gray-900 dark:text-white"
-                                />
-                                {courseImage && (
-                                    <img
-                                        src={courseImage}
-                                        alt="Course Image"
-                                        className="w-20 h-20 rounded"
-                                    />
-                                )}
-                            </div>
                             <button
                                 onClick={handleCreateCourse}
                                 className="flex items-center justify-center bg-primary-purple text-white px-4 py-2 rounded transition-all hover:bg-purple-700"
@@ -197,7 +173,7 @@ const Course = () => {
                                         {batch.teacher_email && (
                                             <p className="text-sm text-gray-500 dark:text-gray-300">Teacher: {batch.teacher_email}</p>
                                         )}
-                                        <h4 className="mt-3 text-md font-semibold text-gray-800 dark:text-white">Courses:</h4>
+                                        <h4 className="mt-1 text-md font-semibold text-gray-800 dark:text-white">Courses:</h4>
                                         <ul>
                                             {courses[batch.batch_id] && courses[batch.batch_id].length > 0 ? (
                                                 courses[batch.batch_id].map((course) => (
