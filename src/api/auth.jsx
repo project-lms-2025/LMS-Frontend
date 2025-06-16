@@ -86,7 +86,6 @@ export const resetPassword = async (resetToken, newPassword) => {
 };
 
 // Batch API functions
-
 /** Creates a new batch with the provided data */
 export const createBatch = async (batchData) => {
     return fetchAPI("/batch", "POST", batchData);
@@ -99,6 +98,11 @@ export const getAllBatches = async () => {
     return fetchAPI("/batch", "GET", null, false, {
         "x-Institution-Auth": institutionToken
     });
+};
+
+/** Retrieves all students enrolled in a specific batch by batch ID */
+export const getBatchStudents = async (batchId) => {
+    return fetchAPI(`/batch/students/${batchId}`, "GET");
 };
 
 /** Retrieves details of a specific batch by its ID */

@@ -63,7 +63,7 @@ const BatchPayment = () => {
                         };
                         toast.success(`Payment Successful! Enrollment will be updated`);
                         // await enrollUser(enrollmentPayload);
-                        navigate("/batches");
+                        navigate("/studentClass");
                     } catch (enrollErr) {
                         console.error("Enrollment failed after payment:", enrollErr);
                         toast.error("Payment succeeded but enrollment failed.");
