@@ -41,7 +41,7 @@ const AllTestSeries = () => {
       <Sidebar open={open} setOpen={setOpen} />
       {/* Main content */}
       <div
-        className={`transition-all mt-14 pt-12 duration-300 ${open ? "md:ml-[20rem] ml-56 mr-4  w-[40%] md:w-[70%]" : "ml-24 mr-2"} md:w-[90%]  w-[95%] md:mt `}
+        className={`transition-all mt-14 pt-12 duration-300 ${open ? 'md:ml-[20rem] ml-56 mr-4 w-[40%] md:w-[70%]' : 'ml-24 mr-2 md:w-[90%]  w-[95%]'}`}
       >
         <div className="min-h-screen  p-6">
           <Toaster  autoClose={3000} />
@@ -60,9 +60,10 @@ const AllTestSeries = () => {
             ) : error ? (
               <div className="text-center text-red-500">{error}</div>
             ) : testSeries.length === 0 ? (
-              <div className="text-center text-primary-purple dark:text-accent-skyblue">
-                No test series found.
-              </div>
+              <div className="text-center pt-10 text-lg flex flex-col items-center text-primary-purple dark:text-accent-skyblue">
+                  <img src="/Empty.png" className="w-1/3" alt="" />
+                  No test series available.
+                </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                 {testSeries.map((series) => (

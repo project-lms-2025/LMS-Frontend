@@ -195,7 +195,7 @@ const Batch = () => {
   return (
     <div className="m-0">
       <Sidebar open={open} setOpen={setOpen} />
-      <div className={`transition-all mt-14 pt-12 duration-300 ${open ? 'md:ml-[20rem] ml-56 mr-4 w-[40%] md:w-[70%]' : 'ml-24 mr-2'} md:w-[90%]  w-[95%]`}>
+      <div className={`transition-all mt-14 pt-12 duration-300 ${open ? 'md:ml-[20rem] ml-56 mr-4 w-[40%] md:w-[70%]' : 'ml-24 mr-2 md:w-[90%]  w-[95%]'}`}>
         <div className="p-6  max-w-4xl mx-auto bg-secondary-gray rounded-lg shadow-lg">
           <h2 className="text-2xl font-bold text-primary-purple mb-4">Batch Management</h2>
           {error && <p className="text-red-500">{error}</p>}
@@ -348,9 +348,9 @@ const Batch = () => {
                           className="p-1.5 rounded-lg bg-yellow-100 text-yellow-600 hover:bg-yellow-200 transition-colors"
                           title="Edit"
                         >
-                          <Edit size={16} />
+                          <Edit size={18} />
                         </button>
-                        <button
+                        {/* <button
                           onClick={(e) => {
                             e.stopPropagation();
                             handleDeleteBatch(batch.batch_id);
@@ -360,7 +360,7 @@ const Batch = () => {
                           title="Delete"
                         >
                           <Trash2 size={16} />
-                        </button>
+                        </button> */}
                       </div>
                     </div>
                   </div>

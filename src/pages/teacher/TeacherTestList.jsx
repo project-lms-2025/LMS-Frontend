@@ -91,9 +91,11 @@ const TeacherTestList = () => {
     <div className="m-0">
       <Sidebar open={open} setOpen={setOpen} />
       <div
-        className={`transition-all mt-14 duration-300 ${
-          open ? "md:ml-[20rem] ml-56 mr-4 w-[40%] md:w-[75%]" : "ml-24 mr-2"
-        } md:w-[70%] w-[95%]`}
+        className={`transition-all mt-14 pt-6 duration-300 ${
+          open
+            ? "md:ml-[20rem] ml-56 mr-4 w-[40%] md:w-[70%]"
+            : "ml-24 mr-2 md:w-[90%]  w-[95%]"
+        }`}
       >
         <div className="p-6  flex justify-center min-h-[90vh]">
           <Toaster />
@@ -252,7 +254,10 @@ const TeacherTestList = () => {
                   </div>
                 ))
               ) : (
-                <div>No tests available for this course.</div>
+                <div className="text-center pt-10 text-lg flex flex-col items-center text-primary-purple dark:text-accent-skyblue">
+                  <img src="/Empty.png" className="w-1/3" alt="" />
+                  No tests available for this course.
+                </div>
               )}
             </div>
           </div>

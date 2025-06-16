@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { loginUser, sendLoginOtp } from "../../api/auth";
 import { AuthContext } from "../../context/AuthContext";
@@ -14,6 +14,8 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [otpSent, setOtpSent] = useState(false);
   const [isOtpSending, setIsOtpSending] = useState(false);
+  const [resendTimer, setResendTimer] = useState(30);
+  const [canResend, setCanResend] = useState(true);
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -21,6 +23,22 @@ const Login = () => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
+
+  const startResendTimer = useCallback(() => {
+    setCanResend(false);
+    setResendTimer(30);
+    const timer = setInterval(() => {
+      setResendTimer((prevTimer) => {
+        if (prevTimer <= 1) {
+          clearInterval(timer);
+          setCanResend(true);
+          return 0;
+        }
+        return prevTimer - 1;
+      });
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
 
   const sendOtpToPhone = async () => {
     if (!formData.email_or_phone.trim()) {
@@ -32,8 +50,9 @@ const Login = () => {
       const response = await sendLoginOtp(formData.email_or_phone);
       const data = response.data;
       if (response.success && data.email) {
-        setFormData((prev) => ({ ...prev, email: data.email })); // Update email in formData
-        setOtpSent(true); // OTP has been sent, show login button
+        setFormData((prev) => ({ ...prev, email: data.email }));
+        setOtpSent(true);
+        startResendTimer();
         toast.success(`OTP sent successfully to ${data.email}!`);
       } else {
         toast.error(response.message || "Failed to send OTP.");
@@ -41,6 +60,26 @@ const Login = () => {
     } catch (error) {
       toast.error(error.message || "Error sending OTP");
       console.error("OTP Error:", error);
+    } finally {
+      setIsOtpSending(false);
+    }
+  };
+
+  const handleResendOtp = async () => {
+    if (!canResend) return;
+    
+    try {
+      setIsOtpSending(true);
+      const response = await sendLoginOtp(formData.email_or_phone);
+      if (response.success) {
+        startResendTimer();
+        toast.success(`OTP resent successfully to ${formData.email}!`);
+      } else {
+        toast.error(response.message || "Failed to resend OTP.");
+      }
+    } catch (error) {
+      toast.error(error.message || "Error resending OTP");
+      console.error("Resend OTP Error:", error);
     } finally {
       setIsOtpSending(false);
     }
@@ -133,13 +172,31 @@ const Login = () => {
                     placeholder="Enter OTP"
                     required
                   />
-                  <button
-                    type="submit"
-                    className="w-full py-2 px-4 text-white bg-primary-purple hover:bg-purple-700 rounded-lg font-semibold transition flex justify-center items-center mt-4"
-                    disabled={loading}
-                  >
-                    {loading ? "Logging in..." : "Log In"}
-                  </button>
+                  <div className="mt-4 flex flex-col gap-2">
+                    <button
+                      type="submit"
+                      className="w-full py-2 px-4 text-white bg-primary-purple hover:bg-purple-700 rounded-lg font-semibold transition flex justify-center items-center"
+                      disabled={loading}
+                    >
+                      {loading ? "Logging in..." : "Log In"}
+                    </button>
+                    <div className="text-center mt-2">
+                      {!canResend ? (
+                        <p className="text-sm text-gray-500">
+                          Resend OTP in {resendTimer}s
+                        </p>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={handleResendOtp}
+                          className="text-sm text-primary-purple hover:underline focus:outline-none"
+                          disabled={isOtpSending}
+                        >
+                          {isOtpSending ? 'Sending...' : 'Resend OTP'}
+                        </button>
+                      )}
+                    </div>
+                  </div>
                 </div>
               )}
             </div>

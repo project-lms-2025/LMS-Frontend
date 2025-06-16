@@ -173,9 +173,7 @@ const Classes = () => {
       <Sidebar open={open} setOpen={setOpen} />
       <Toaster />
       <div
-        className={`transition-all mt-14 pt-12  duration-300 ${
-          open ? "md:ml-[20rem] ml-56 mr-4 w-[40%] md:w-[70%]" : "ml-24 mr-2"
-        } md:w-[90%] w-[95%]`}
+        className={`transition-all mt-14 pt-12 duration-300 ${open ? 'md:ml-[20rem] ml-56 mr-4 w-[40%] md:w-[70%]' : 'ml-24 mr-2 md:w-[90%]  w-[95%]'}`}
       >
         <div className="p-4">
           <h2 className="text-2xl font-bold text-primary-purple ">

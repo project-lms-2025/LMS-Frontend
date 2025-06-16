@@ -51,7 +51,7 @@ export const Navbar = () => {
   };
   if (!initialized) return null;
   return (
-    <header className="flex justify-center z-50  px-4  ">
+    <header className="sticky top-0 flex justify-center z-50  px-4  ">
       <div className="container absolute top-4  lg:mx-auto  px-1 bg-white rounded-full  shadow-lg">
         <div className="flex mx-4 items-center justify-between h-16">
           {/* Logo Section */}

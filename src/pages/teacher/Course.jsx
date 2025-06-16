@@ -123,8 +123,7 @@ const Course = () => {
         <div className="m-0">
             <Sidebar open={open} setOpen={setOpen} />
             <div
-                className={`transition-all mt-14 pt-12 duration-300 ${open ? 'md:ml-[20rem] ml-56 mr-4 w-[40%] md:w-[70%]' : 'ml-24 mr-2'
-                    } md:w-[90%]  w-[95%]`}
+                className={`transition-all mt-14 pt-12 duration-300 ${open ? 'md:ml-[20rem] ml-56 mr-4 w-[40%] md:w-[70%]' : 'ml-24 mr-2 md:w-[90%]  w-[95%]'}`}
             >
                 <div className="p-6  dark:bg-gray-900 flex justify-center min-h-screen ">
                     <div className="w-[40rem]">
@@ -182,7 +181,7 @@ const Course = () => {
                                                             <h1 className="text-gray-900 text-xl dark:text-white">
                                                                 {course.course_name}
                                                             </h1>
-                                                            <h1 className="text-sm text-gray-500 dark:text-gray-300">(ID: {course.course_id})</h1>
+                                                            {/* <h1 className="text-sm text-gray-500 dark:text-gray-300">(ID: {course.course_id})</h1> */}
                                                         </div>
                                                         <div className="flex space-x-2">
                                                             <button
@@ -191,12 +190,12 @@ const Course = () => {
                                                             >
                                                                 <Edit size={16} className="mr-1" /> Update
                                                             </button>
-                                                            <button
+                                                            {/* <button
                                                                 onClick={() => handleDeleteCourse(course.course_id)}
                                                                 className="bg-red-500 text-white px-3 py-1 rounded transition-all hover:bg-red-600 flex items-center"
                                                             >
                                                                 <Trash2 size={16} className="mr-1" /> Delete
-                                                            </button>
+                                                            </button> */}
                                                         </div>
                                                     </li>
                                                 ))
