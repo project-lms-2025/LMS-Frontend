@@ -4,13 +4,16 @@ import {
   LayoutDashboard, Hospital, ClipboardList, BarChart3, FilePlus, FileText,
   Users, Repeat, UserRoundPlus, User, ChevronLeft
 } from 'lucide-react';
+import { logoutUser } from '../api/auth';
+import { useAuth } from '../context/AuthContext';
 
 const Sidebar = ({ open, setOpen }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [activeIndex, setActiveIndex] = useState(0);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [role] = useState(() => localStorage.getItem("role") || "teacher");
-
+  const { logout } = useAuth();
   const sidebarMenus = {
     admin: [
       { title: "Dashboard", icon: <LayoutDashboard size={24} />, url: "govt/dashboard" },
@@ -33,10 +36,10 @@ const Sidebar = ({ open, setOpen }) => {
       { title: "Classes", icon: <UserRoundPlus size={24} />, url: "classes" },
       { title: "Test", icon: <UserRoundPlus size={24} />, url: "testList" },
       { title: "Test Series", icon: <Users size={24} />, url: "testSeries" },
+      { title: "Enrolled Students", icon: <UserRoundPlus size={24} />, url: "enrolledStudent" },
       // { title: "Student Performance", icon: <LayoutDashboard size={24} />, url: "not" },
       // { title: "My Schedule", icon: <FileText size={24} />, url: "not" },
       // { title: "Notes", icon: <UserRoundPlus size={24} />, url: "not" },
-      { title: "Enrolled Students", icon: <UserRoundPlus size={24} />, url: "not" },
       // { title: "Batch Status", icon: <UserRoundPlus size={24} />, url: "not" },
       // { title: "Groups and Communities", icon: <FilePlus size={24} />, url: "not" },
       // { title: "Posts and Announcements", icon: <FilePlus size={24} />, url: "not" },
@@ -73,6 +76,24 @@ const Sidebar = ({ open, setOpen }) => {
     localStorage.setItem("sidebar", JSON.stringify(open));
   }, [open]);
 
+  const handleLogout = async () => {
+    try {
+      setIsLoggingOut(true);
+      const email = localStorage.getItem("email");
+      if (!email) throw new Error("No user email found");
+      await logoutUser(email);
+      logout();
+      // Add a small delay to show the loading animation
+      setTimeout(() => {
+        navigate("/signin");
+      }, 500);
+    } catch (error) {
+      console.error("Logout failed:", error);
+      setIsLoggingOut(false);
+      toast.error("Logout failed. Please try again.");
+    }
+  };
+
   return (
     <div className={`${open ? "md:w-64" : "w-20"} border-r-[1px] mt-10 h-screen bg-white dark:bg-primary-purple p-5 pt-2 fixed duration-300 bg-dark-purple/90 backdrop-blur-sm`}>
       {/* Toggle Sidebar Button */}
@@ -105,6 +126,31 @@ const Sidebar = ({ open, setOpen }) => {
           );
         })}
       </ul>
+      <div className="absolute bottom-28 left-0 w-full px-5">
+        <button
+          onClick={handleLogout}
+          disabled={isLoggingOut}
+          className={`flex items-center justify-center gap-2 w-full py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors ${!open && "p-2"} ${isLoggingOut ? 'opacity-75' : ''}`}
+        >
+          {isLoggingOut ? (
+            <>
+              <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              {open && 'Logging out...'}
+            </>
+          ) : open ? (
+            'Logout'
+          ) : (
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+              <polyline points="16 17 21 12 16 7"></polyline>
+              <line x1="21" y1="12" x2="9" y2="12"></line>
+            </svg>
+          )}
+        </button>
+      </div>
     </div>
   );
 };

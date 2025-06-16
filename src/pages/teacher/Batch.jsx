@@ -31,8 +31,12 @@ const Batch = () => {
       setLoading(true);
       const response = await getAllBatches();
       if (response && response.success && Array.isArray(response.data)) {
-        console.log("Fetched Batches:", response.data);
-        setBatches(response.data);
+        // Sort batches by start_date in descending order (newest first)
+        const sortedBatches = [...response.data].sort(
+          (a, b) => new Date(b.start_date) - new Date(a.start_date)
+        );
+        console.log("Fetched and sorted Batches:", sortedBatches);
+        setBatches(sortedBatches);
       } else {
         setBatches([]);
       }
@@ -299,16 +303,33 @@ const Batch = () => {
           ></textarea>
           <button
             onClick={selectedBatchId ? handleUpdateBatch : handleCreateBatch}
-            className="bg-primary-purple text-primary-white p-3 w-full rounded-lg font-semibold hover:bg-opacity-90"
-            disabled={loading}
+            className="bg-primary-purple text-primary-white p-3 w-full rounded-lg font-semibold hover:bg-opacity-90 flex items-center justify-center gap-2 disabled:opacity-75 disabled:cursor-not-allowed"
+            disabled={loading || isUploading}
           >
-            {selectedBatchId ? "Update Batch" : "Create Batch"}
+            {loading || isUploading ? (
+              <>
+                <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                {isUploading ? 'Uploading...' : (selectedBatchId ? 'Updating...' : 'Creating...')}
+              </>
+            ) : (
+              selectedBatchId ? "Update Batch" : "Create Batch"
+            )}
           </button>
           <div className="mt-8">
             <h2 className="text-2xl font-bold text-gray-800 mb-6">Your Batches</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {batches.map((batch) => (
+              {[...batches]
+                .sort((a, b) => new Date(b.start_date) - new Date(a.start_date))
+                .map((batch) => (
                 <div key={batch.batch_id} className="group relative aspect-square bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
+                  {/* Start Date Tag */}
+                  <div className="absolute top-0 right-0 bg-primary-purple text-white px-2 py-1 text-xs font-medium rounded-bl-lg z-10">
+                    {new Date(batch.start_date).toLocaleDateString()}
+                  </div>
+                  
                   {/* Batch Image */}
                   <div className="h-[60%] bg-gray-100 overflow-hidden">
                     {batch.banner ? (

@@ -53,6 +53,7 @@ import TeacherLanding from './pages/TeacherLanding';
 import Instructions from './components/Instruction';
 import LandingPage2 from './pages/LandingPage2';
 import Pricing from './pages/Pricing';
+import EnrolledStudent from './pages/student/EnrolledStudent';
 
 function App() {
   const { role, isLoggedIn } = useAuth();
@@ -94,6 +95,7 @@ function App() {
         <Route path="/createtest" element={isLoggedIn && role === 'teacher' ? <CreateTest/> : <Navigate to="/" />} /> {/* Test created by teacher merge */}
         <Route path="/testList" element={isLoggedIn && role === 'teacher' ? <TeacherTestList /> : <Navigate to="/" />} />
         <Route path="/testpreview" element={isLoggedIn && role === 'teacher' ? <TestPreview /> : <Navigate to="/" />} />  {/* test given by students */}
+        <Route path="/enrolledStudent" element={isLoggedIn && role === 'teacher' ? <EnrolledStudent /> : <Navigate to="/" />} />
 
         {/* Test Series */}
         <Route path="/testSeries" element={isLoggedIn && role === 'teacher' ? <AllTestSeries /> : <Navigate to="/" />} />  {/* test given by students DONE */} 

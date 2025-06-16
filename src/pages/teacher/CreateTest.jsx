@@ -12,6 +12,7 @@ const CreateTest = () => {
   const [showOptions, setShowOptions] = useState({});
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
   const queryParams = new URLSearchParams(location.search);
@@ -342,10 +343,14 @@ const CreateTest = () => {
 
   // Test Creation Function
   const savePaper = async () => {
+    setIsSaving(true);
     setLoading(true);
     setMessage('');
     try {
-      if (!validateFields()) return;
+      if (!validateFields()) {
+        setIsSaving(false);
+        return;
+      }
       
       // Prepare the payload with questions_count and ensure selected_exam is included
       const testPayload = {
@@ -369,10 +374,21 @@ const CreateTest = () => {
       console.error('Test creation error:', error);
     } finally {
       setLoading(false);
+      setIsSaving(false);
     }
   };
   return (
-    <div className=" px-4 mt-24">
+    <div className="relative px-4 mt-24">
+      {/* Full-screen loader */}
+      {isSaving && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-xl flex flex-col items-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mb-4"></div>
+            <p className="text-lg font-medium text-gray-800">Saving Test Paper...</p>
+            <p className="text-sm text-gray-600 mt-2">Please wait while we save your test</p>
+          </div>
+        </div>
+      )}
       <Toaster />
       {/* Top Paper Details */}
       <div className='  w-full bg-white z-20' >
@@ -763,9 +779,9 @@ const CreateTest = () => {
         </div>
 
         {/* Right: Question Navigation and Actions */}
-        <div className="w-[32%]  right-4 bottom-5 bg-white border rounded-lg shadow px-4 py-2 z-50">
+        <div className="w-[32%]  right-4 bottom-5 bg-white border rounded-lg shadow px-4 py-2 ">
           <h2 className="text-lg font-semibold mb-4">Questions</h2>
-          <div className="flex flex-wrap gap-2 min-h-[15rem]">
+          <div className="flex flex-wrap gap-2 min-h-[14rem]">
             {filteredQuestions.map((q, index) => {
               let btnColor = "bg-gray-200 text-gray-800";
               if (q.question_type === "MSQ") btnColor = "bg-blue-200 text-blue-800";
@@ -816,15 +832,7 @@ const CreateTest = () => {
             </div>
           </div>
           <div className="flex justify-between gap-4 mt-2">
-            <button
-              onClick={() =>
-                window.open(`/testpreview?test_id=${questionPaper.test_id}`, '_blank')
-              }
-              className="flex w-full justify-center items-center gap-2 px-4 py-2 rounded-lg bg-white border border-gray-300 hover:bg-gray-50"
-            >
-              <Eye className="w-4 h-4" />
-              Watch Preview
-            </button>
+            
             <button
               onClick={savePaper}
               className="flex w-full justify-center items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700"
