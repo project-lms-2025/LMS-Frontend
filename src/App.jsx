@@ -89,7 +89,8 @@ function App() {
         {/* Teacher Routes */}
         <Route path="/teacherDashboard" element={isLoggedIn && role === 'teacher' ? <Teacher /> : <Navigate to="/" />} />
         <Route path="/TBatches" element={isLoggedIn && role === 'teacher' ? <Batch /> : <Navigate to="/" />} />
-        <Route path="/TCourses" element={isLoggedIn && role === 'teacher' ? <Course /> : <Navigate to="/" />} />
+        {/* <Route path="/TCourses" element={isLoggedIn && role === 'teacher' ? <Course /> : <Navigate to="/" />} /> */}
+        <Route path="/courses/:batchId" element={isLoggedIn && role === 'teacher' ? <Course /> : <Navigate to="/" />} />
         <Route path="/teacherProfile" element={isLoggedIn && role === 'teacher' ? <TeacherProfile /> : <Navigate to="/" />} />
         <Route path="/classes" element={isLoggedIn && role === 'teacher' ? <Classes /> : <Navigate to="/" />} />
         <Route path="/createtest" element={isLoggedIn && role === 'teacher' ? <CreateTest/> : <Navigate to="/" />} /> {/* Test created by teacher merge */}

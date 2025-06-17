@@ -1,5 +1,8 @@
-import { useEffect, useState } from "react";
-import { Edit, Paperclip, Trash2 } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Edit, Paperclip, Trash2, Plus } from "lucide-react";
+import { Dialog, Transition } from "@headlessui/react";
+import { X } from "lucide-react";
 import {
   getAllBatches,
   createBatch,
@@ -13,6 +16,7 @@ import Sidebar from "../../components/Sidebar";
 import { v4 as uuidv4 } from "uuid";
 
 const Batch = () => {
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [batches, setBatches] = useState([]);
   const [batchData, setBatchData] = useState({ batch_id: uuidv4(), batch_name: "", description: "", start_date: "", end_date: "", cost: "" });
@@ -22,6 +26,7 @@ const Batch = () => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [imageUrl, setImageUrl] = useState("");
   const [isUploading, setIsUploading] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   useEffect(() => {
     fetchBatches();
   }, []);
@@ -110,6 +115,7 @@ const Batch = () => {
       setBatchData({ batch_id: uuidv4(), batch_name: "", description: "", start_date: "", end_date: "", cost: "" });
       setSelectedImage(null);
       setImageUrl("");
+      setIsDialogOpen(false);
       toast.success("Batch created successfully!");
       fetchBatches();
     } catch (err) {
@@ -196,135 +202,211 @@ const Batch = () => {
     }
   };
 
+  const resetForm = () => {
+    setBatchData({ batch_id: uuidv4(), batch_name: "", description: "", start_date: "", end_date: "", cost: "" });
+    setSelectedImage(null);
+    setImageUrl("");
+    setSelectedBatchId(null);
+  };
+
+  const handleDialogOpenChange = (open) => {
+    if (!open) {
+      resetForm();
+    }
+    setIsDialogOpen(open);
+  };
+
   return (
     <div className="m-0">
       <Sidebar open={open} setOpen={setOpen} />
-      <div className={`transition-all mt-14 pt-12 duration-300 ${open ? 'md:ml-[20rem] ml-56 mr-4 w-[40%] md:w-[70%]' : 'ml-24 mr-2 md:w-[90%]  w-[95%]'}`}>
-        <div className="p-6  max-w-4xl mx-auto bg-secondary-gray rounded-lg shadow-lg">
-          <h2 className="text-2xl font-bold text-primary-purple mb-4">Batch Management</h2>
-          {error && <p className="text-red-500">{error}</p>}
-          <input
-            type="text"
-            placeholder="Batch Name"
-            value={batchData.batch_name}
-            onChange={(e) => setBatchData({ ...batchData, batch_name: e.target.value })}
-            className="border p-3 w-full mb-3 rounded-lg bg-primary-white shadow-sm"
-          />
-          <div className="flex justify-between gap-2">
-            <div className="w-1/2">
-              <h1 className="text-xl text-primary-purple  ">Start date</h1>
-              <input
-                type="date"
-                placeholder="Start Date"
-                value={batchData.start_date || ""}
-                onChange={(e) => setBatchData({ ...batchData, start_date: e.target.value })}
-                className="border p-3 w-full mb-3 rounded-lg bg-primary-white shadow-sm"
-              />
-            </div>
-            <div className="w-1/2">
-              <h1 className="text-xl text-primary-purple">End date</h1>
-              <input
-                type="date"
-                placeholder="End Date"
-                value={batchData.end_date || ""}
-                onChange={(e) => setBatchData({ ...batchData, end_date: e.target.value })}
-                className="border p-3 w-full mb-3 rounded-lg bg-primary-white shadow-sm"
-              />
-            </div>
-            <div className="w-1/2">
-              <h1 className="text-xl text-primary-purple">Cost</h1>
-              <input
-                type="text"
-                placeholder="Cost"
-                value={batchData.cost}
-                onChange={(e) => setBatchData({ ...batchData, cost: e.target.value })}
-                className="border p-3 w-full mb-3 rounded-lg bg-primary-white shadow-sm"
-              />
-            </div>
+      <div className={`transition-all mt-14 pt-12 px-4  duration-300 ${open ? 'md:ml-[20rem] ml-56 mr-4 w-[40%] md:w-[70%]' : 'ml-24 mr-2 md:w-[90%] w-[95%]'}`}>
+        <div className="p- max-wxl mx-auto  rounded-lg ">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-2xl font-bold text-primary-purple">Batch Management</h2>
+            <button
+              onClick={() => setIsDialogOpen(true)}
+              className="flex items-center gap-2 bg-primary-purple text-white px-4 py-2 rounded-lg hover:bg-opacity-90 transition-colors"
+            >
+              <Plus size={20} />
+              Create New Batch
+            </button>
           </div>
-
-          <div className="flex justify-center mb-4">
-            <label htmlFor="image" className="flex items-center justify-center w-48 h-48 border-2 border-dashed border-primary-purple rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
-              {isUploading ? (
-                <div className="text-primary-purple">Uploading...</div>
-              ) : selectedImage ? (
-                <img 
-                  src={URL.createObjectURL(selectedImage)} 
-                  className="h-full w-full object-cover rounded-lg"
-                  alt="Selected batch"
-                />
-              ) : imageUrl ? (
-                <img 
-                  src={imageUrl} 
-                  className="h-full w-full object-cover rounded-lg"
-                  alt="Current batch"
-                />
-              ) : (
-                <div className="text-center p-4">
-                  <Paperclip
-                    className="h-12 w-12 text-primary-purple mx-auto mb-2" 
-                    strokeWidth={2}
-                  />
-                  <span className="text-sm text-gray-500">Click to upload an image</span>
-                </div>
-              )}
-            </label>
-            <input 
-              type="file" 
-              id="image" 
-              className="hidden" 
-              accept="image/*"
-              onChange={(e) => {
-                const file = e.target.files[0];
-                if (file) {
-                  setSelectedImage(file);
-                }
-              }} 
-            />
-            {selectedImage && (
-              <button
-                type="button"
-                onClick={() => {
-                  setSelectedImage(null);
-                  setImageUrl("");
-                }}
-                className="ml-2 text-red-500 hover:text-red-700"
+          {error && <p className="text-red-500 mb-4">{error}</p>}
+          
+          {/* Batch Creation/Edit Dialog */}
+          <Transition show={isDialogOpen} as={React.Fragment}>
+            <Dialog as="div" className="relative z-50" onClose={handleDialogOpenChange}>
+              <Transition.Child
+                as={React.Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0"
+                enterTo="opacity-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100"
+                leaveTo="opacity-0"
               >
-                Remove
-              </button>
-            )}
-          </div>
+                <div className="fixed inset-0 bg-black/30" />
+              </Transition.Child>
 
-          <textarea
-            placeholder="Batch Description"
-            value={batchData.description}
-            onChange={(e) => setBatchData({ ...batchData, description: e.target.value })}
-            className="border p-3 w-full mb-3 rounded-lg bg-primary-white shadow-sm"
-          ></textarea>
-          <button
-            onClick={selectedBatchId ? handleUpdateBatch : handleCreateBatch}
-            className="bg-primary-purple text-primary-white p-3 w-full rounded-lg font-semibold hover:bg-opacity-90 flex items-center justify-center gap-2 disabled:opacity-75 disabled:cursor-not-allowed"
-            disabled={loading || isUploading}
-          >
-            {loading || isUploading ? (
-              <>
-                <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                {isUploading ? 'Uploading...' : (selectedBatchId ? 'Updating...' : 'Creating...')}
-              </>
-            ) : (
-              selectedBatchId ? "Update Batch" : "Create Batch"
-            )}
-          </button>
+              <div className="fixed inset-0 overflow-y-auto">
+                <div className="flex min-h-full items-center justify-center p-4">
+                  <Transition.Child
+                    as={React.Fragment}
+                    enter="ease-out duration-300"
+                    enterFrom="opacity-0 scale-95"
+                    enterTo="opacity-100 scale-100"
+                    leave="ease-in duration-200"
+                    leaveFrom="opacity-100 scale-100"
+                    leaveTo="opacity-0 scale-95"
+                  >
+                    <Dialog.Panel className="w-full max-w-2xl transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                      <div className="flex justify-between items-center mb-4">
+                        <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900">
+                          {selectedBatchId ? 'Edit Batch' : 'Create New Batch'}
+                        </Dialog.Title>
+                        <button
+                          type="button"
+                          className="text-gray-400 hover:text-gray-500"
+                          onClick={() => handleDialogOpenChange(false)}
+                        >
+                          <X className="h-6 w-6" aria-hidden="true" />
+                        </button>
+                      </div>
+                      
+                      <div className="space-y-4">
+                        <input
+                          type="text"
+                          placeholder="Batch Name"
+                          value={batchData.batch_name}
+                          onChange={(e) => setBatchData({ ...batchData, batch_name: e.target.value })}
+                          className="border p-3 w-full rounded-lg bg-primary-white shadow-sm"
+                        />
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                          <div>
+                            <h1 className="text-sm text-gray-600 mb-1">Start date</h1>
+                            <input
+                              type="date"
+                              value={batchData.start_date || ""}
+                              onChange={(e) => setBatchData({ ...batchData, start_date: e.target.value })}
+                              className="border p-3 w-full rounded-lg bg-primary-white shadow-sm"
+                            />
+                          </div>
+                          <div>
+                            <h1 className="text-sm text-gray-600 mb-1">End date</h1>
+                            <input
+                              type="date"
+                              value={batchData.end_date || ""}
+                              onChange={(e) => setBatchData({ ...batchData, end_date: e.target.value })}
+                              className="border p-3 w-full rounded-lg bg-primary-white shadow-sm"
+                            />
+                          </div>
+                          <div>
+                            <h1 className="text-sm text-gray-600 mb-1">Cost (₹)</h1>
+                            <input
+                              type="text"
+                              placeholder="Enter amount"
+                              value={batchData.cost}
+                              onChange={(e) => setBatchData({ ...batchData, cost: e.target.value })}
+                              className="border p-3 w-full rounded-lg bg-primary-white shadow-sm"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="flex flex-col items-center">
+                          <label htmlFor="image" className="flex items-center justify-center w-full h-48 border-2 border-dashed border-primary-purple rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+                            {isUploading ? (
+                              <div className="text-primary-purple">Uploading...</div>
+                            ) : selectedImage ? (
+                              <img 
+                                src={URL.createObjectURL(selectedImage)} 
+                                className="h-full w-full object-cover rounded-lg"
+                                alt="Selected batch"
+                              />
+                            ) : imageUrl ? (
+                              <img 
+                                src={imageUrl} 
+                                className="h-full w-full object-cover rounded-lg"
+                                alt="Current batch"
+                              />
+                            ) : (
+                              <div className="text-center p-4">
+                                <Paperclip
+                                  className="h-12 w-12 text-primary-purple mx-auto mb-2" 
+                                  strokeWidth={2}
+                                />
+                                <span className="text-sm text-gray-500">Click to upload an image</span>
+                              </div>
+                            )}
+                          </label>
+                          <input 
+                            type="file" 
+                            id="image" 
+                            className="hidden" 
+                            accept="image/*"
+                            onChange={(e) => {
+                              const file = e.target.files[0];
+                              if (file) {
+                                setSelectedImage(file);
+                              }
+                            }} 
+                          />
+                          {selectedImage && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setSelectedImage(null);
+                                setImageUrl("");
+                              }}
+                              className="mt-2 text-sm text-red-500 hover:text-red-700"
+                            >
+                              Remove image
+                            </button>
+                          )}
+                        </div>
+
+                        <textarea
+                          placeholder="Batch Description"
+                          value={batchData.description}
+                          onChange={(e) => setBatchData({ ...batchData, description: e.target.value })}
+                          rows={4}
+                          className="border p-3 w-full rounded-lg bg-primary-white shadow-sm"
+                        />
+
+                        <button
+                          onClick={selectedBatchId ? handleUpdateBatch : handleCreateBatch}
+                          className="bg-primary-purple text-white p-3 w-full rounded-lg font-semibold hover:bg-opacity-90 flex items-center justify-center gap-2 disabled:opacity-75 disabled:cursor-not-allowed"
+                          disabled={loading || isUploading}
+                        >
+                          {loading || isUploading ? (
+                            <>
+                              <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                              </svg>
+                              {isUploading ? 'Uploading...' : (selectedBatchId ? 'Updating...' : 'Creating...')}
+                            </>
+                          ) : (
+                            selectedBatchId ? "Update Batch" : "Create Batch"
+                          )}
+                        </button>
+                      </div>
+                    </Dialog.Panel>
+                  </Transition.Child>
+                </div>
+              </div>
+            </Dialog>
+          </Transition>
           <div className="mt-8">
-            <h2 className="text-2xl font-bold text-gray-800 mb-6">Your Batches</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
               {[...batches]
                 .sort((a, b) => new Date(b.start_date) - new Date(a.start_date))
                 .map((batch) => (
-                <div key={batch.batch_id} className="group relative aspect-square bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
+                <div 
+                  key={batch.batch_id} 
+                  className="group relative aspect-square bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 cursor-pointer"
+                  onClick={() => navigate(`/courses/${batch.batch_id}`)}
+                >
                   {/* Start Date Tag */}
                   <div className="absolute top-0 right-0 bg-primary-purple text-white px-2 py-1 text-xs font-medium rounded-bl-lg z-10">
                     {new Date(batch.start_date).toLocaleDateString()}
@@ -359,12 +441,17 @@ const Batch = () => {
                             e.stopPropagation();
                             setSelectedBatchId(batch.batch_id);
                             setBatchData({
+                              batch_id: batch.batch_id,
                               batch_name: batch.batch_name,
                               description: batch.description,
                               start_date: batch.start_date,
                               end_date: batch.end_date,
                               cost: batch.cost
                             });
+                            if (batch.banner) {
+                              setImageUrl(batch.banner);
+                            }
+                            setIsDialogOpen(true);
                           }}
                           className="p-1.5 rounded-lg bg-yellow-100 text-yellow-600 hover:bg-yellow-200 transition-colors"
                           title="Edit"

@@ -32,7 +32,7 @@ const Sidebar = ({ open, setOpen }) => {
     teacher: [
       { title: "Dashboard", icon: <LayoutDashboard size={24} />, url: "teacherDashboard" },
       { title: "Batches", icon: <Users size={24} />, url: "TBatches" },
-      { title: "Courses", icon: <Repeat size={24} />, url: "TCourses" },
+      { title: "Courses", icon: <Repeat size={24} />, url: "courses/:batchId" },
       { title: "Classes", icon: <UserRoundPlus size={24} />, url: "classes" },
       { title: "Test", icon: <UserRoundPlus size={24} />, url: "testList" },
       { title: "Test Series", icon: <Users size={24} />, url: "testSeries" },
@@ -105,7 +105,10 @@ const Sidebar = ({ open, setOpen }) => {
       </button>
       <ul className="pt-2">
         {menus.map((Menu, index) => {
-          const isActive = location.pathname.startsWith(`/${Menu.url}`);
+          // Special handling for Courses menu item to match both /courses and /courses/:batchId
+          const isActive = Menu.url === 'courses/:batchId' 
+            ? location.pathname.startsWith('/courses')
+            : location.pathname.startsWith(`/${Menu.url}`);
           return (
             <li
               key={index}

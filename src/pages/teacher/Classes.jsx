@@ -1,5 +1,5 @@
 // src/pages/teacher/Classes.jsx
-import React, { useState, useEffect } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import Sidebar from "../../components/Sidebar";
 import { Toaster, toast } from "react-hot-toast";
 import {
@@ -10,7 +10,8 @@ import {
   getCoursesByBatchId,
   updateClass,
 } from "../../api/auth";
-import { Edit, ExternalLink, Paperclip, Trash2 } from "lucide-react";
+import { Edit, ExternalLink, Paperclip, Plus, Trash2, X } from "lucide-react";
+import { Dialog, Transition } from "@headlessui/react";
 
 const Classes = () => {
   const [open, setOpen] = useState(false);
@@ -26,6 +27,7 @@ const Classes = () => {
   });
   const [editingClass, setEditingClass] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -116,6 +118,7 @@ const Classes = () => {
     });
     setIsEditing(true);
     setSelectedCourseId(cls.course_id);
+    setIsDialogOpen(true);
   };
 
   // Update class
@@ -161,8 +164,9 @@ const Classes = () => {
     }
   };
 
-  // Cancel editing
-  const handleCancelEdit = () => {
+  // Reset form when dialog is closed
+  const handleDialogClose = () => {
+    setIsDialogOpen(false);
     setIsEditing(false);
     setEditingClass(null);
     setNewClass({ class_title: "", class_date_time: "", recording_url: "" });
@@ -173,128 +177,175 @@ const Classes = () => {
       <Sidebar open={open} setOpen={setOpen} />
       <Toaster />
       <div
-        className={`transition-all mt-14 pt-12 duration-300 ${open ? 'md:ml-[20rem] ml-56 mr-4 w-[40%] md:w-[70%]' : 'ml-24 mr-2 md:w-[90%]  w-[95%]'}`}
+        className={`transition-all mt-14 pt-12 duration-300 ${
+          open
+            ? "md:ml-[20rem] ml-56 mr-4 w-[40%] md:w-[70%]"
+            : "ml-24 mr-2 md:w-[90%]  w-[95%]"
+        }`}
       >
         <div className="p-4">
-          <h2 className="text-2xl font-bold text-primary-purple ">
-            Class Management
-          </h2>
-          {/* Batch selector */}
-          <div className="border rounded-2xl  gap-4 p-4 my-4">
-            <div className="flex gap-4">
-            <div className="w-full">
-              <h3 className="text-lg font-semibold">Select Batch</h3>
-              <select
-                value={selectedBatchId}
-                onChange={(e) => setSelectedBatchId(e.target.value)}
-                className="border p-2 w-full"
-              >
-                <option value="">Select a batch</option>
-                {batches.map((b) => (
-                  <option key={b.batch_id} value={b.batch_id}>
-                    {b.batch_name}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="w-full">
-              <h3 className="text-lg font-semibold">Select Course</h3>
-              <select
-                value={selectedCourseId}
-                onChange={(e) => setSelectedCourseId(e.target.value)}
-                className="border p-2 w-full"
-                disabled={!selectedBatchId}
-              >
-                <option value="">Select a course</option>
-                {courses[selectedBatchId]?.map((c) => (
-                  <option key={c.course_id} value={c.course_id}>
-                    {c.course_name}
-                  </option>
-                ))}
-              </select>
-            </div>
-            </div>
+          <div className="flex justify-between items-center">
+            <h2 className="text-2xl font-bold text-primary-purple">
+              Class Management
+            </h2>
+            <div className="flex gap-3">
+              <div className="w-1/2">
+                <select
+                  value={selectedBatchId}
+                  onChange={(e) => setSelectedBatchId(e.target.value)}
+                  className="border p-2 w-full"
+                >
+                  <option value="">Select a batch</option>
+                  {batches.map((b) => (
+                    <option key={b.batch_id} value={b.batch_id}>
+                      {b.batch_name}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-            {/* Create/Edit class form */}
-            <div className="  mt-4">
-              <h3 className="text-lg font-semibold">
-                {isEditing ? "Edit Class" : "Create New Class"}
-              </h3>
-              <div className="flex items-center gap-4">
-                <input
-                  type="text"
-                  placeholder="Class Title"
-                  value={newClass.class_title}
-                  onChange={(e) =>
-                    setNewClass((prev) => ({
-                      ...prev,
-                      class_title: e.target.value,
-                    }))
-                  }
-                  className="border p-2 my-3 w-full"
-                />
-                <input
-                  type="datetime-local"
-                  value={newClass.class_date_time}
-                  onChange={(e) =>
-                    setNewClass((prev) => ({
-                      ...prev,
-                      class_date_time: e.target.value,
-                    }))
-                  }
-                  className="border p-2 my-3 w-full"
-                />
-                <input
-                  type="text"
-                  placeholder="Description"
-                  value={newClass.recording_url}
-                  onChange={(e) =>
-                    setNewClass((prev) => ({
-                      ...prev,
-                      recording_url: e.target.value,
-                    }))
-                  }
-                  className="border p-2 my-3 w-full"
-                />
-                <div className="w-full gap-2 ">
-                  {isEditing ? (
-                    <>
-                      <button
-                        onClick={handleUpdateClass}
-                        className="bg-blue-500 text-white px-4 py-2 rounded"
-                        disabled={loading}
-                      >
-                        Update Class
+              <div className="w-1/2">
+                <select
+                  value={selectedCourseId}
+                  onChange={(e) => setSelectedCourseId(e.target.value)}
+                  className="border p-2 w-full"
+                  disabled={!selectedBatchId}
+                >
+                  <option value="">Select a course</option>
+                  {courses[selectedBatchId]?.map((c) => (
+                    <option key={c.course_id} value={c.course_id}>
+                      {c.course_name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <button
+                onClick={() => setIsDialogOpen(true)}
+                className="flex w-[16rem]  items-center gap-2 px-4 py-2 rounded-md bg-primary-purple text-white"
+              >
+                <Plus size={16} /> Create New Class
+              </button>
+            </div>
+          </div>
+          {/* Create/Edit class form */}
+          <Transition.Root show={isDialogOpen} as={Fragment}>
+            <Dialog
+              as="div"
+              className="relative z-50"
+              onClose={handleDialogClose}
+            >
+              <Transition.Child
+                as={Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0"
+                enterTo="opacity-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100"
+                leaveTo="opacity-0"
+              >
+                <div className="fixed inset-0 bg-black/30" />
+              </Transition.Child>
+
+              <div className="fixed inset-0 flex items-center justify-center p-4">
+                <Transition.Child
+                  as={Fragment}
+                  enter="ease-out duration-300"
+                  enterFrom="opacity-0 scale-95"
+                  enterTo="opacity-100 scale-100"
+                  leave="ease-in duration-200"
+                  leaveFrom="opacity-100 scale-100"
+                  leaveTo="opacity-0 scale-95"
+                >
+                  <Dialog.Panel className="w-full max-w-lg rounded-lg bg-white p-6 shadow-xl">
+                    <div className="flex justify-between items-center mb-4">
+                      <Dialog.Title className="text-lg font-semibold">
+                        {isEditing ? "Edit Class" : "Create New Class"}
+                      </Dialog.Title>
+                      <button onClick={() => setIsDialogOpen(false)}>
+                        <X size={20} />
                       </button>
+                    </div>
+
+                    {/* Form body */}
+                    <div className="space-y-4">
+                      <div className="grid grid-cols-1 gap-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700">
+                            Class Title
+                          </label>
+                          <input
+                            type="text"
+                            value={newClass.class_title}
+                            onChange={(e) =>
+                              setNewClass((prev) => ({
+                                ...prev,
+                                class_title: e.target.value,
+                              }))
+                            }
+                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-purple focus:ring-primary-purple sm:text-sm"
+                            placeholder="Enter class title"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700">
+                            Date & Time
+                          </label>
+                          <input
+                            type="datetime-local"
+                            value={newClass.class_date_time}
+                            onChange={(e) =>
+                              setNewClass((prev) => ({
+                                ...prev,
+                                class_date_time: e.target.value,
+                              }))
+                            }
+                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-purple focus:ring-primary-purple sm:text-sm"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700">
+                            Recording URL (Optional)
+                          </label>
+                          <input
+                            type="text"
+                            value={newClass.recording_url || ""}
+                            onChange={(e) =>
+                              setNewClass((prev) => ({
+                                ...prev,
+                                recording_url: e.target.value,
+                              }))
+                            }
+                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-purple focus:ring-primary-purple sm:text-sm"
+                            placeholder="https://example.com/recording"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="mt-6 flex justify-end gap-2">
                       <button
-                        onClick={handleCancelEdit}
-                        className="bg-gray-500 text-white px-4 py-2 rounded"
+                        onClick={handleDialogClose}
+                        className="rounded border px-4 py-2"
                       >
                         Cancel
                       </button>
-                    </>
-                  ) : (
-                    <button
-                      onClick={handleCreateClass}
-                      className="bg-primary-purple w-full text-white px-4 py-2 rounded flex justify-center items-center gap-2"
-                      disabled={loading || !selectedCourseId}
-                    >
-                      {loading ? (
-                        <>
-                          <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                          </svg>
-                          Creating...
-                        </>
-                      ) : 'Create Class'}
-                    </button>
-                  )}
-                </div>
+                      <button
+                        onClick={
+                          isEditing ? handleUpdateClass : handleCreateClass
+                        }
+                        disabled={loading}
+                        className="rounded bg-primary-purple px-4 py-2 text-white"
+                      >
+                        {loading ? "Saving…" : isEditing ? "Update" : "Create"}
+                      </button>
+                    </div>
+                  </Dialog.Panel>
+                </Transition.Child>
               </div>
-            </div>
-          </div>
-
+            </Dialog>
+          </Transition.Root>
           {/* Classes list */}
           <div className="my-4">
             {/* <h3 className="text-lg font-semibold">Classes</h3> */}
@@ -303,31 +354,34 @@ const Classes = () => {
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
                 {classes
-                  .sort((a, b) => new Date(b.class_date_time) - new Date(a.class_date_time))
+                  .sort(
+                    (a, b) =>
+                      new Date(b.class_date_time) - new Date(a.class_date_time)
+                  )
                   .map((cls) => (
-                  <div key={cls.class_id} className="border p-4 rounded-xl ">
-                    <div className="flex justify-between items-center">
-                      <h4 className="font-semibold">{cls.class_title}</h4>
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => handleEditClass(cls)}
-                          className="bg-yellow-500 text-white p-2 rounded text-sm"
-                        >
-                          <Edit size={16} />
-                        </button>
-                        <button
-                          onClick={() => handleDeleteClass(cls.class_id)}
-                          className="bg-red-500 text-white p-2 rounded text-sm"
-                        >
-                          <Trash2 size={16} />
-                        </button>
+                    <div key={cls.class_id} className="border p-4 rounded-xl ">
+                      <div className="flex justify-between items-center">
+                        <h4 className="font-semibold">{cls.class_title}</h4>
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => handleEditClass(cls)}
+                            className="bg-yellow-500 text-white p-2 rounded text-sm"
+                          >
+                            <Edit size={16} />
+                          </button>
+                          <button
+                            onClick={() => handleDeleteClass(cls.class_id)}
+                            className="bg-red-500 text-white p-2 rounded text-sm"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
                       </div>
-                    </div>
-                    <p>
-                      Date: {new Date(cls.class_date_time).toLocaleString()}
-                    </p>
-                    <div className="flex gap-2 mt-2">
-                      {/* {cls.recording_url && (
+                      <p>
+                        Date: {new Date(cls.class_date_time).toLocaleString()}
+                      </p>
+                      <div className="flex gap-2 mt-2">
+                        {/* {cls.recording_url && (
                         <a
                           href={cls.recording_url}
                           target="_blank"
@@ -338,20 +392,20 @@ const Classes = () => {
                           Recording
                         </a>
                       )} */}
-                      {cls.class_url && (
-                        <a
-                          href={cls.class_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-md text-white bg-primary-purple hover:bg-primary-purple/90"
-                        >
-                          <ExternalLink className="h-3.5 w-3.5 mr-1.5" />
-                          Join Class
-                        </a>
-                      )}
+                        {cls.class_url && (
+                          <a
+                            href={cls.class_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-md text-white bg-primary-purple hover:bg-primary-purple/90"
+                          >
+                            <ExternalLink className="h-3.5 w-3.5 mr-1.5" />
+                            Join Class
+                          </a>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
               </div>
             )}
           </div>
