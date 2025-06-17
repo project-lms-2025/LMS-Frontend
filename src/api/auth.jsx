@@ -94,7 +94,7 @@ export const createBatch = async (batchData) => {
 /** Retrieves all available batches */
 export const getAllBatches = async () => {
     const institutionToken = localStorage.getItem("institutionToken") || import.meta.env.VITE_INSTITUTION_TOKEN;
-    console.log("institutionToken", institutionToken);
+    // console.log("institutionToken", institutionToken);
     return fetchAPI("/batch", "GET", null, false, {
         "x-Institution-Auth": institutionToken
     });

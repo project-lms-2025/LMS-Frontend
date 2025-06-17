@@ -1,5 +1,6 @@
 // src/pages/teacher/Classes.jsx
 import React, { Fragment, useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import Sidebar from "../../components/Sidebar";
 import { Toaster, toast } from "react-hot-toast";
 import {
@@ -14,6 +15,9 @@ import { Edit, ExternalLink, Paperclip, Plus, Trash2, X } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 
 const Classes = () => {
+  const [searchParams] = useSearchParams();
+  const urlBatchId = searchParams.get('batchId');
+  const urlCourseId = searchParams.get('courseId');
   const [open, setOpen] = useState(false);
   const [batches, setBatches] = useState([]);
   const [courses, setCourses] = useState({});
@@ -58,28 +62,87 @@ const Classes = () => {
     }
   };
 
-  // Fetch all classes
+  // Fetch all classes with optional filtering by course_id
   const fetchAllClasses = async () => {
     try {
       setLoading(true);
       const res = await getClasses();
-      console.log(res);
-      setClasses(res.data || []);
-    } catch {
+      console.log("Fetched classes:", res);
+      
+      if (res?.data) {
+        let filteredClasses = [...res.data];
+        
+        // Apply course filter if URL parameter is present
+        if (urlCourseId) {
+          filteredClasses = filteredClasses.filter(
+            cls => cls.course_id === urlCourseId
+          );
+          console.log("Filtered classes by course:", filteredClasses);
+        }
+        
+        setClasses(filteredClasses);
+      } else {
+        console.log("No classes data received");
+        setClasses([]);
+      }
+    } catch (err) {
+      console.error('Error fetching classes:', err);
       setError("Failed to load classes");
+      setClasses([]);
     } finally {
       setLoading(false);
     }
   };
 
+  // Set initial batch and course selection from URL if present
   useEffect(() => {
+    const initializeFromUrl = async () => {
+      if (urlBatchId) {
+        setSelectedBatchId(urlBatchId);
+        // Wait for courses to be loaded for the batch
+        await fetchCoursesForBatch(urlBatchId);
+        
+        // If courseId is in URL, set it after courses are loaded
+        if (urlCourseId) {
+          setSelectedCourseId(urlCourseId);
+        }
+      } else if (urlCourseId) {
+        // If only courseId is provided, find and set the batch
+        const course = classes.find(cls => cls.course_id === urlCourseId);
+        if (course) {
+          setSelectedBatchId(course.batch_id);
+          setSelectedCourseId(urlCourseId);
+        }
+      }
+    };
+    
     fetchBatches();
     fetchAllClasses();
-  }, []);
+    initializeFromUrl();
+  }, [urlBatchId, urlCourseId]);
 
+  // Handle batch changes
   useEffect(() => {
-    if (selectedBatchId) fetchCoursesForBatch(selectedBatchId);
+    if (selectedBatchId) {
+      fetchCoursesForBatch(selectedBatchId);
+    }
   }, [selectedBatchId]);
+
+  // Filter classes based on selected batch and course (for UI filtering)
+  const filteredClasses = classes.filter((cls) => {
+    // If URL parameters are present, they've already been filtered in fetchAllClasses
+    if (urlBatchId || urlCourseId) return true;
+    
+    // Otherwise, apply UI filter
+    if (selectedBatchId && selectedCourseId) {
+      return cls.batch_id === selectedBatchId && cls.course_id === selectedCourseId;
+    } else if (selectedBatchId) {
+      return cls.batch_id === selectedBatchId;
+    } else if (selectedCourseId) {
+      return cls.course_id === selectedCourseId;
+    }
+    return true;
+  });
 
   // Create a new class
   const handleCreateClass = async () => {

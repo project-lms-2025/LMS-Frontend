@@ -8,6 +8,7 @@ import {
   deleteCourse,
   getCoursesByBatchId,
   getAllBatches,
+  getClasses,
 } from "../../api/auth";
 import Sidebar from "../../components/Sidebar";
 import toast from "react-hot-toast";
@@ -26,20 +27,27 @@ const Course = () => {
   const [courseImage, setCourseImage] = useState(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedBatchFilter, setSelectedBatchFilter] = useState(batchId || "");
+  const [classCounts, setClassCounts] = useState({});
+  const [allClasses, setAllClasses] = useState([]);
 
   useEffect(() => {
     const loadData = async () => {
       try {
         setLoading(true);
-        // First, fetch all batches to check if the batchId is valid
-        const batchesResponse = await getAllBatches();
+        // First, fetch all classes and batches in parallel
+        const [batchesResponse, allClassesResponse] = await Promise.all([
+          getAllBatches(),
+          fetchAllClasses()
+        ]);
 
         if (batchesResponse?.success && Array.isArray(batchesResponse.data)) {
           setBatches(batchesResponse.data);
 
           // Check if the batchId is valid
           const isValidBatch =
-            batchId && batchesResponse.data.some((b) => b.batch_id === batchId);
+            batchId && batchesResponse.data.some(
+              (b) => b.batch_id === batchId
+            );
 
           if (isValidBatch) {
             // If batch is valid, only fetch courses for that batch
@@ -67,23 +75,84 @@ const Course = () => {
 
   // Removed the old fetchBatches function as its logic is now in the useEffect
 
+  // Fetch all classes once and update class counts
+  const fetchAllClasses = async () => {
+    try {
+      const response = await getClasses();
+      console.log("Fetched classes:", response.data); 
+      
+      if (response?.success && Array.isArray(response.data)) {
+        setAllClasses(response.data);
+        
+        // Update class counts for all courses
+        const courseCounts = {};
+        response.data.forEach(cls => {
+          if (cls.course_id) {
+            courseCounts[cls.course_id] = (courseCounts[cls.course_id] || 0) + 1;
+          }
+        });
+        
+        setClassCounts(prev => ({
+          ...prev,
+          ...courseCounts
+        }));
+        
+        return response.data;
+      }
+      return [];
+    } catch (err) {
+      console.error('Error fetching classes:', err);
+      return [];
+    }
+  };
+
+  // Count classes for a specific course
+  const countClassesForCourse = (courseId) => {
+    if (!courseId) return 0;
+    // Use the cached count if available, otherwise calculate it
+    if (classCounts[courseId] !== undefined) {
+      return classCounts[courseId];
+    }
+    // Fallback to calculating from allClasses
+    return allClasses.filter(cls => cls.course_id === courseId).length;
+  };
+
   const fetchCoursesForBatches = async (batchList) => {
     const courseMap = {};
-    // Ensure batchList is iterable
+    
+    // Process each batch
     for (const batch of batchList) {
       try {
         const courseData = await getCoursesByBatchId(batch.batch_id);
-        console.log(`Courses for batch ${batch.batch_id}:`, courseData);
-        // Ensure we're storing the data.data array, not the entire response
-        courseMap[batch.batch_id] = courseData.success ? courseData.data : [];
+        if (courseData?.success && Array.isArray(courseData.data)) {
+          // Add courses to the map
+          courseMap[batch.batch_id] = courseData.data;
+          
+          // Update class counts for these courses
+          const counts = {};
+          courseData.data.forEach(course => {
+            counts[course.course_id] = countClassesForCourse(course.course_id);
+          });
+          
+          // Ensure we don't overwrite existing counts with 0
+          setClassCounts(prev => {
+            const newCounts = { ...prev };
+            Object.entries(counts).forEach(([courseId, count]) => {
+              if (count > 0 || newCounts[courseId] === undefined) {
+                newCounts[courseId] = count;
+              }
+            });
+            return newCounts;
+          });
+        } else {
+          courseMap[batch.batch_id] = [];
+        }
       } catch (err) {
-        console.error(
-          `Error fetching courses for batch ${batch.batch_id}:`,
-          err
-        );
+        console.error(`Error processing batch ${batch.batch_id}:`, err);
         courseMap[batch.batch_id] = [];
       }
     }
+    
     setCourses(courseMap);
   };
 
@@ -155,6 +224,36 @@ const Course = () => {
     } else {
       navigate("/courses", { replace: true });
     }
+  };
+
+  const handleClassClick = (batchId, courseId) => {
+    navigate(`/classes?batchId=${batchId}&courseId=${courseId}`);
+  };
+
+  // Function to render courses for a specific batch
+  const renderBatchCourses = (batchId, courseList) => {
+    const batch = batches.find(b => b.batch_id === batchId);
+    return (
+      <div key={batchId} className="space-y-2 border border-primary-purple p-4 rounded-lg">
+        <div>
+          <h2 className="text-xl font-semibold text-gray-800 dark:text-white">
+            {batch?.batch_name || 'Unknown Batch'}
+          </h2>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {courseList.map((course) => (
+            <CourseCard
+              key={course.course_id}
+              course={course}
+              onEdit={handleUpdateCourse}
+              onDelete={handleDeleteCourse}
+              classCount={classCounts[course.course_id] || 0}
+              onClassClick={handleClassClick}
+            />
+          ))}
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -350,13 +449,11 @@ const Course = () => {
                   </p>
                 </div>
               ) : Object.entries(courses).length > 0 ? (
-                // If we have a valid batchId in the URL, show courses for that batch only
                 batchId && batches.some((b) => b.batch_id === batchId) ? (
                   <div className="space-y-2 p-4">
                     <div className="flex justify-between items-center mb-4">
                       <h2 className="text-2xl font-bold text-primary-purple">
-                        {batches.find((b) => b.batch_id === batchId)
-                          ?.batch_name || "Courses"}
+                        {batches.find((b) => b.batch_id === batchId)?.batch_name || "Courses"}
                       </h2>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -366,42 +463,18 @@ const Course = () => {
                           course={course}
                           onEdit={handleUpdateCourse}
                           onDelete={handleDeleteCourse}
+                          classCount={classCounts[course.course_id] || 0}
+                          onClassClick={handleClassClick}
                         />
                       ))}
                     </div>
                   </div>
                 ) : (
-                  // Show all courses grouped by batch
                   Object.entries(courses)
                     .filter(([_, courseList]) => courseList.length > 0)
-                    .map(([batchId, courseList]) => {
-                      const batch = batches.find((b) => b.batch_id === batchId);
-                      return (
-                        <div
-                          key={batchId}
-                          className="space-y-2 border border-primary-purple p-4 rounded-lg "
-                        >
-                          <div className=" ">
-                            <h2 className="text-xl font-semibold text-gray-800 dark:text-white">
-                              {batch?.batch_name || "Unknown Batch"}
-                            </h2>
-                            {/* <p className="text-sm text-gray-500 dark:text-gray-400">
-                                                            {batch?.description || ''}
-                                                        </p> */}
-                          </div>
-                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-0">
-                            {courseList.map((course) => (
-                              <CourseCard
-                                key={course.course_id}
-                                course={course}
-                                onEdit={handleUpdateCourse}
-                                onDelete={handleDeleteCourse}
-                              />
-                            ))}
-                          </div>
-                        </div>
-                      );
-                    })
+                    .map(([batchId, courseList]) => (
+                      renderBatchCourses(batchId, courseList)
+                    ))
                 )
               ) : (
                 <div className="text-center py-8">
@@ -419,16 +492,29 @@ const Course = () => {
 };
 
 // Reusable Course Card Component
-const CourseCard = ({ course, onEdit, onDelete }) => (
+const CourseCard = ({ course, onEdit, onDelete, classCount = 0, onClassClick }) => (
   <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow hover:shadow-md transition-shadow">
     <div className="flex justify-between items-start">
-      <div>
+      <div className="space-y-2">
         <h4 className="text-lg font-medium text-gray-900 dark:text-white">
           {course.course_name}
         </h4>
-        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+        <p className="text-sm text-gray-500 dark:text-gray-400">
           {course.description || "No description available"}
         </p>
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onClassClick(course.batch_id, course.course_id);
+          }}
+          className="inline-flex items-center gap-1 bg-primary-purple hover:bg-purple-600 text-white text-sm px-3 py-1 rounded-md transition-colors"
+          title="View classes"
+        >
+          <span>Classes</span>
+          <span className="bg-white/20 rounded-full w-5 h-5 flex items-center justify-center text-xs">
+            {classCount}
+          </span>
+        </button>
       </div>
       <div className="flex gap-2">
         <button
