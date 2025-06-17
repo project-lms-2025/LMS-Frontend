@@ -13,6 +13,7 @@ import {
 import Sidebar from "../../components/Sidebar";
 import toast from "react-hot-toast";
 import { useParams, useNavigate } from "react-router-dom";
+import { getAllTests } from "../../api/test";
 
 const Course = () => {
   const { batchId } = useParams();
@@ -28,6 +29,7 @@ const Course = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedBatchFilter, setSelectedBatchFilter] = useState(batchId || "");
   const [classCounts, setClassCounts] = useState({});
+  const [testCounts, setTestCounts] = useState({});
   const [allClasses, setAllClasses] = useState([]);
 
   useEffect(() => {
@@ -75,18 +77,48 @@ const Course = () => {
 
   // Removed the old fetchBatches function as its logic is now in the useEffect
 
+  // Fetch all tests and update test counts
+  const fetchAllTests = async () => {
+    try {
+      const response = await getAllTests("COURSE_TEST");
+      console.log("Fetched tests:", response.data);
+      
+      if (response?.data && Array.isArray(response.data)) {
+        const counts = {};
+        response.data.forEach(test => {
+          if (test.course_id) {
+            counts[test.course_id] = (counts[test.course_id] || 0) + 1;
+          }
+        });
+        
+        setTestCounts(prev => ({
+          ...prev,
+          ...counts
+        }));
+      }
+      return response?.data || [];
+    } catch (err) {
+      console.error('Error fetching tests:', err);
+      return [];
+    }
+  };
+
   // Fetch all classes once and update class counts
   const fetchAllClasses = async () => {
     try {
-      const response = await getClasses();
-      console.log("Fetched classes:", response.data); 
+      const [classesResponse] = await Promise.all([
+        getClasses(),
+        fetchAllTests() // Fetch tests in parallel
+      ]);
       
-      if (response?.success && Array.isArray(response.data)) {
-        setAllClasses(response.data);
+      console.log("Fetched classes:", classesResponse?.data); 
+      
+      if (classesResponse?.success && Array.isArray(classesResponse.data)) {
+        setAllClasses(classesResponse.data);
         
         // Update class counts for all courses
         const courseCounts = {};
-        response.data.forEach(cls => {
+        classesResponse.data.forEach(cls => {
           if (cls.course_id) {
             courseCounts[cls.course_id] = (courseCounts[cls.course_id] || 0) + 1;
           }
@@ -97,11 +129,11 @@ const Course = () => {
           ...courseCounts
         }));
         
-        return response.data;
+        return classesResponse.data;
       }
       return [];
     } catch (err) {
-      console.error('Error fetching classes:', err);
+      console.error('Error in fetch operations:', err);
       return [];
     }
   };
@@ -230,6 +262,10 @@ const Course = () => {
     navigate(`/classes?batchId=${batchId}&courseId=${courseId}`);
   };
 
+  const handleTestClick = (batchId, courseId) => {
+    navigate(`/testList?batchId=${batchId}&courseId=${courseId}`);
+  };
+
   // Function to render courses for a specific batch
   const renderBatchCourses = (batchId, courseList) => {
     const batch = batches.find(b => b.batch_id === batchId);
@@ -248,7 +284,9 @@ const Course = () => {
               onEdit={handleUpdateCourse}
               onDelete={handleDeleteCourse}
               classCount={classCounts[course.course_id] || 0}
+              testCount={testCounts[course.course_id] || 0}
               onClassClick={handleClassClick}
+              onTestClick={handleTestClick}
             />
           ))}
         </div>
@@ -492,7 +530,7 @@ const Course = () => {
 };
 
 // Reusable Course Card Component
-const CourseCard = ({ course, onEdit, onDelete, classCount = 0, onClassClick }) => (
+const CourseCard = ({ course, onEdit, onDelete, classCount = 0, testCount = 0, onClassClick, onTestClick }) => (
   <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow hover:shadow-md transition-shadow">
     <div className="flex justify-between items-start">
       <div className="space-y-2">
@@ -502,19 +540,34 @@ const CourseCard = ({ course, onEdit, onDelete, classCount = 0, onClassClick }) 
         <p className="text-sm text-gray-500 dark:text-gray-400">
           {course.description || "No description available"}
         </p>
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            onClassClick(course.batch_id, course.course_id);
-          }}
-          className="inline-flex items-center gap-1 bg-primary-purple hover:bg-purple-600 text-white text-sm px-3 py-1 rounded-md transition-colors"
-          title="View classes"
-        >
-          <span>Classes</span>
-          <span className="bg-white/20 rounded-full w-5 h-5 flex items-center justify-center text-xs">
-            {classCount}
-          </span>
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onClassClick(course.batch_id, course.course_id);
+            }}
+            className="inline-flex items-center gap-1 bg-primary-purple hover:bg-purple-600 text-white text-sm px-3 py-1 rounded-md transition-colors"
+            title="View classes"
+          >
+            <span>Classes</span>
+            <span className="bg-white/20 rounded-full w-5 h-5 flex items-center justify-center text-xs">
+              {classCount}
+            </span>
+          </button>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onTestClick(course.batch_id, course.course_id);
+            }}
+            className="inline-flex items-center gap-1 bg-blue-100 hover:bg-blue-200 dark:bg-blue-900 dark:hover:bg-blue-800 text-blue-800 dark:text-blue-200 text-sm px-3 py-1 rounded-md transition-colors"
+            title="View tests"
+          >
+            <span>Tests</span>
+            <span className="bg-blue-200 dark:bg-blue-700 rounded-full w-5 h-5 flex items-center justify-center text-xs">
+              {testCount}
+            </span>
+          </button>
+        </div>
       </div>
       <div className="flex gap-2">
         <button

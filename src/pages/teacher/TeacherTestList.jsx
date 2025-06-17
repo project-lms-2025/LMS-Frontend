@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Toaster, toast } from "react-hot-toast";
 import { Eye, Plus } from "lucide-react";
+import { useSearchParams } from "react-router-dom";
 import Sidebar from "../../components/Sidebar";
 import Loading from "../../components/Loading";
 import { getAllBatches, getCoursesByBatchId } from "../../api/auth";
@@ -8,21 +9,24 @@ import { getAllTests } from "../../api/test";
 import { Dialog, DialogTitle } from "@headlessui/react";
 
 const TeacherTestList = () => {
+  const [searchParams] = useSearchParams();
+  const urlBatchId = searchParams.get('batchId');
+  const urlCourseId = searchParams.get('courseId');
+  
   const [tests, setTests] = useState([]);
   const [courses, setCourses] = useState([]);
   const [batches, setBatches] = useState([]);
-  const [selectedBatchId, setSelectedBatchId] = useState("");
-  const [selectedCourseId, setSelectedCourseId] = useState("");
-  const [filteredTests, setFilteredTests] = useState([]); // State to hold filtered tests
+  const [selectedBatchId, setSelectedBatchId] = useState(urlBatchId || "");
+  const [selectedCourseId, setSelectedCourseId] = useState(urlCourseId || "");
+  const [filteredTests, setFilteredTests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
-  const [showDialog, setShowDialog] = useState(false);
-
   // Fetch tests on mount
   useEffect(() => {
     async function fetchTests() {
       try {
         const response = await getAllTests("COURSE_TEST");
+        console.log("Response:", response)
         console.log("Tests:", response.data);
         setTests(response.data);
         setLoading(false);
@@ -54,14 +58,21 @@ const TeacherTestList = () => {
     fetchBatches();
   }, []);
 
-  // Fetch courses when batch is selected
+  // Fetch courses when batch is selected or when URL has batchId
   useEffect(() => {
-    if (selectedBatchId) {
+    const batchToUse = selectedBatchId || urlBatchId;
+    
+    if (batchToUse) {
       async function fetchCourses() {
         try {
-          const response = await getCoursesByBatchId(selectedBatchId);
+          const response = await getCoursesByBatchId(batchToUse);
           if (Array.isArray(response.data)) {
             setCourses(response.data);
+            
+            // If URL has courseId, select it after courses are loaded
+            if (urlCourseId && !selectedCourseId) {
+              setSelectedCourseId(urlCourseId);
+            }
           } else {
             setCourses([]);
           }
@@ -71,19 +82,26 @@ const TeacherTestList = () => {
       }
       fetchCourses();
     }
-  }, [selectedBatchId]);
+  }, [selectedBatchId, urlBatchId, urlCourseId, selectedCourseId]);
 
-  // Filter tests based on selected course
+  // Filter tests based on selected course and batch
   useEffect(() => {
+    let filtered = [...tests];
+    
+    // Apply course filter if selected
     if (selectedCourseId) {
-      const filtered = tests.filter(
-        (test) => test.course_id === selectedCourseId
-      );
-      setFilteredTests(filtered);
-    } else {
-      setFilteredTests(tests); // If no course selected, show all tests
+      filtered = filtered.filter(test => test.course_id === selectedCourseId);
     }
-  }, [selectedCourseId, tests]);
+    
+    // Apply batch filter if selected (assuming tests might have batch_id in the future)
+    if (selectedBatchId && !selectedCourseId) {
+      // This assumes tests might have batch_id in the future
+      // If not, we can remove this part or adjust based on your data structure
+      filtered = filtered.filter(test => test.batch_id === selectedBatchId);
+    }
+    
+    setFilteredTests(filtered);
+  }, [selectedCourseId, selectedBatchId, tests]);
 
   if (loading) return <Loading />;
 
@@ -97,110 +115,65 @@ const TeacherTestList = () => {
             : "ml-24 mr-2 md:w-[90%]  w-[95%]"
         }`}
       >
-        <div className="p-6  flex justify-center min-h-[90vh]">
+        <div className="p-6 flex justify-center min-h-[90vh]">
           <Toaster />
-          <div className="w-full max-w-5xl">
-            <Dialog
-              as="div"
-              className="fixed z-10 bg-black/80 inset-0 overflow-y-auto"
-              onClose={() => setShowDialog(false)}
-              open={showDialog}
-            >
-              <div className="flex items-center justify-center min-h-screen">
-                <div className="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full">
-                  <DialogTitle
-                    as="h3"
-                    className="text-xl text-center leading-6 font-medium text-gray-900 px-4 py-2"
-                  >
-                    Create Test
-                  </DialogTitle>
+          <div className="w-full max-w-6xl">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+              <h1 className="text-3xl font-bold">All Tests</h1>
+              
+              <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+                {/* Batch Dropdown */}
+                <select
+                  value={selectedBatchId}
+                  onChange={(e) => setSelectedBatchId(e.target.value)}
+                  className="border border-gray-300 rounded px-4 py-2 w-full md:w-48"
+                >
+                  <option value="">Select Batch</option>
+                  {batches.map((batch) => (
+                    <option key={batch.batch_id} value={batch.batch_id}>
+                      {batch.batch_name}
+                    </option>
+                  ))}
+                </select>
 
-                  <div className="bg-gray-50  px-4 py-5 sm:p-6">
-                    <div className="flex  gap-4 mb-4">
-                      {/* Batch Dropdown */}
-                      <select
-                        value={selectedBatchId}
-                        onChange={(e) => setSelectedBatchId(e.target.value)}
-                        className="border w-full border-gray-300 rounded px-4 py-2"
-                      >
-                        <option value="">Select Batch</option>
-                        {batches.map((batch) => (
-                          <option key={batch.batch_id} value={batch.batch_id}>
-                            {batch.batch_name}
-                          </option>
-                        ))}
-                      </select>
+                {/* Course Dropdown */}
+                <select
+                  value={selectedCourseId}
+                  onChange={(e) => setSelectedCourseId(e.target.value)}
+                  className="border border-gray-300 rounded px-4 py-2 w-full md:w-48"
+                  disabled={!selectedBatchId}
+                >
+                  <option value="">Select Course</option>
+                  {courses.map((course) => (
+                    <option key={course.course_id} value={course.course_id}>
+                      {course.course_name}
+                    </option>
+                  ))}
+                </select>
 
-                      {/* Course Dropdown */}
-                      <select
-                        value={selectedCourseId}
-                        onChange={(e) => setSelectedCourseId(e.target.value)}
-                        className="border w-full border-gray-300 rounded px-4 py-2"
-                        disabled={!selectedBatchId}
-                      >
-                        <option value="">Select Course</option>
-                        {courses.map((course) => (
-                          <option
-                            key={course.course_id}
-                            value={course.course_id}
-                          >
-                            {course.course_name}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
+                {/* Create Test Button */}
+                <a
+                  onClick={(e) => {
+                    // Validate if batch is selected
+                    if (!selectedBatchId) {
+                      e.preventDefault();
+                      toast.error("Please select a batch before creating the test.");
+                      return;
+                    }
 
-                    {/* Create Test Link */}
-                    <a
-                      onClick={(e) => {
-                        // Validate if batch is selected
-                        if (!selectedBatchId) {
-                          e.preventDefault(); // Prevent navigation
-                          toast.error(
-                            "Please select a batch before creating the test."
-                          );
-                          return;
-                        }
-
-                        // Validate if course is selected
-                        if (!selectedCourseId) {
-                          e.preventDefault(); // Prevent navigation
-                          toast.error(
-                            "Please select a course before creating the test."
-                          );
-                          return;
-                        }
-                      }}
-                      className="flex justify-center no-underline hover:no-underline items-center gap-2 px-4 py-2 rounded-lg bg-white border border-gray-300 hover:bg-gray-50"
-                      href={`/createtest?type=COURSE_TEST&course_id=${selectedCourseId}&batch_id=${selectedBatchId}`}
-                    >
-                      Create Test <Plus />
-                    </a>
-                  </div>
-
-                  <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                    <button
-                      type="button"
-                      className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:ml-3 sm:w-auto sm:text-sm"
-                      onClick={() => setShowDialog(false)}
-                    >
-                      Close
-                    </button>
-                  </div>
-                </div>
+                    // Validate if course is selected
+                    if (!selectedCourseId) {
+                      e.preventDefault();
+                      toast.error("Please select a course before creating the test.");
+                      return;
+                    }
+                  }}
+                  className="flex justify-center items-center gap-2 px-4 py-2 rounded-lg bg-primary-purple text-white hover:bg-purple-700 transition-colors whitespace-nowrap"
+                  href={`/createtest?type=COURSE_TEST&course_id=${selectedCourseId}&batch_id=${selectedBatchId}`}
+                >
+                  <Plus size={18} /> Create Test
+                </a>
               </div>
-            </Dialog>
-            <div className="flex justify-between mt-4">
-              <div className="flex justify-between items-center mb-4">
-                <h1 className="text-3xl font-bold">All tests</h1>
-              </div>
-              <button
-                type="button"
-                className="flex justify-center no-underline hover:no-underline items-center gap-2 px-4 py-2 rounded-lg bg-white border border-gray-300 hover:bg-gray-50"
-                onClick={() => setShowDialog(true)}
-              >
-                Create Test <Plus />
-              </button>
             </div>
 
             <div className="grid grid-cols-1 gap-4">
@@ -227,29 +200,26 @@ const TeacherTestList = () => {
                         Watch Preview
                       </button>
                     </div>
-                    <div className="grid grid-cols-2 gap-x-10 font-bold">
-                      <p className="text-gray-500 mb-1">
+                    <div className="grid grid-cols-3 gap-x-10 font-bold items-center">
+                      <p className="text-gray-500 m-0">
                         Start Date:{" "}
                         <span className="font-normal">
                           {new Date(test.schedule_start).toLocaleString()}
                         </span>
                       </p>
-                      <p className="text-gray-500 mb-1">
+                      <p className="text-gray-500 m-0">
                         End Date:{" "}
                         <span className="font-normal">
                           {new Date(test.schedule_end).toLocaleString()}
                         </span>
                       </p>
-                      <p className="text-gray-500 mb-1">
+                      <p className="text-gray-500 m-0">
                         Duration:{" "}
                         <span className="font-normal">
                           {test.duration} minutes
                         </span>
                       </p>
-                      <p className="text-gray-600 mb-1">
-                        Course:{" "}
-                        <span className="font-normal">{test.course_name}</span>
-                      </p>
+                      
                     </div>
                   </div>
                 ))
