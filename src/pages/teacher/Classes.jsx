@@ -128,18 +128,12 @@ const Classes = () => {
     }
   }, [selectedBatchId]);
 
-  // Filter classes based on selected batch and course (for UI filtering)
+  // Filter classes based on selected batch and course
   const filteredClasses = classes.filter((cls) => {
-    // If URL parameters are present, they've already been filtered in fetchAllClasses
-    if (urlBatchId || urlCourseId) return true;
-    
-    // Otherwise, apply UI filter
-    if (selectedBatchId && selectedCourseId) {
-      return cls.batch_id === selectedBatchId && cls.course_id === selectedCourseId;
+    if (selectedCourseId) {
+      return cls.course_id === selectedCourseId;
     } else if (selectedBatchId) {
       return cls.batch_id === selectedBatchId;
-    } else if (selectedCourseId) {
-      return cls.course_id === selectedCourseId;
     }
     return true;
   });
@@ -255,7 +249,10 @@ const Classes = () => {
               <div className="w-1/2">
                 <select
                   value={selectedBatchId}
-                  onChange={(e) => setSelectedBatchId(e.target.value)}
+                  onChange={(e) => {
+                    setSelectedBatchId(e.target.value);
+                    setSelectedCourseId(""); // Reset course when batch changes
+                  }}
                   className="border p-2 w-full"
                 >
                   <option value="">Select a batch</option>
@@ -412,11 +409,14 @@ const Classes = () => {
           {/* Classes list */}
           <div className="my-4">
             {/* <h3 className="text-lg font-semibold">Classes</h3> */}
-            {classes.length === 0 ? (
-              <p>No classes available</p>
+            {filteredClasses.length === 0 ? (
+              <div className="text-center pt-10 text-lg flex flex-col items-center text-primary-purple dark:text-accent-skyblue">
+                <img src="/Empty.png" className="w-1/3" alt="" />
+                No classes available.
+              </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
-                {classes
+                {filteredClasses
                   .sort(
                     (a, b) =>
                       new Date(b.class_date_time) - new Date(a.class_date_time)

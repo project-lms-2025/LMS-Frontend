@@ -81,7 +81,7 @@ const TestPreview = () => {
   return (
     <div className=" px-4 ">
       {/* Main Content */}
-      <div className="lg:flex lg:gap-4  p-0">
+      <div className="lg:flex lg:gap-4 pt-[5.5rem] p-0">
         {/* Left: Question Display (70%) */}
         {/* Test Details */}
         <div className="lg:w-[67%]  ">
@@ -125,7 +125,7 @@ const TestPreview = () => {
           </div>
 
           {currentQuestion ? (
-            <div className="bg-white rounded-lg shadow-lg p-4 mb-4 h-[53vh] overflow-y-auto border">
+            <div className="bg-white rounded-lg shadow-lg p-4 mb-4 h-[50vh] overflow-y-auto border">
               <h2 className="text-xl font-semibold mb-4">{currentQuestion.question_text}</h2>
               {currentQuestion.image_url && (
                 <img
@@ -271,7 +271,7 @@ const TestPreview = () => {
 
               {/* Question Buttons */}
               <h2 className="text-lg font-semibold mb-4">Questions</h2>
-              <div className="flex flex-nowrap gap-2 overflow-x-auto h-[14.3rem]">
+              <div className="flex flex-nowrap gap-2 overflow-x-auto h-[11rem]">
                 {filteredQuestions.map((q, index) => {
                   let btnColor = 'bg-gray-200 text-gray-800';
 

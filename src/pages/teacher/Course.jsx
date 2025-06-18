@@ -32,50 +32,48 @@ const Course = () => {
   const [testCounts, setTestCounts] = useState({});
   const [allClasses, setAllClasses] = useState([]);
 
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        setLoading(true);
-        // First, fetch all classes and batches in parallel
-        const [batchesResponse, allClassesResponse] = await Promise.all([
-          getAllBatches(),
-          fetchAllClasses()
-        ]);
+  const loadData = async () => {
+    try {
+      setLoading(true);
+      // First, fetch all classes and batches in parallel
+      const [batchesResponse, allClassesResponse] = await Promise.all([
+        getAllBatches(),
+        fetchAllClasses()
+      ]);
 
-        if (batchesResponse?.success && Array.isArray(batchesResponse.data)) {
-          setBatches(batchesResponse.data);
+      if (batchesResponse?.success && Array.isArray(batchesResponse.data)) {
+        setBatches(batchesResponse.data);
 
-          // Check if the batchId is valid
-          const isValidBatch =
-            batchId && batchesResponse.data.some(
-              (b) => b.batch_id === batchId
-            );
+        // Check if the batchId is valid
+        const isValidBatch =
+          batchId && batchesResponse.data.some(
+            (b) => b.batch_id === batchId
+          );
 
-          if (isValidBatch) {
-            // If batch is valid, only fetch courses for that batch
-            setSelectedBatchFilter(batchId);
-            const batch = batchesResponse.data.find(
-              (b) => b.batch_id === batchId
-            );
-            await fetchCoursesForBatches([batch]);
-          } else {
-            // If batch is invalid or not provided, fetch all courses
-            setSelectedBatchFilter("");
-            await fetchCoursesForBatches(batchesResponse.data);
-          }
+        if (isValidBatch) {
+          // If batch is valid, only fetch courses for that batch
+          setSelectedBatchFilter(batchId);
+          const batch = batchesResponse.data.find(
+            (b) => b.batch_id === batchId
+          );
+          await fetchCoursesForBatches([batch]);
+        } else {
+          // If no batchId or invalid, fetch courses for all batches
+          await fetchCoursesForBatches(batchesResponse.data);
         }
-      } catch (err) {
-        setError(err.message);
-        toast.error("Failed to load course data");
-      } finally {
-        setLoading(false);
       }
-    };
+    } catch (err) {
+      console.error('Error loading data:', err);
+      setError('Failed to load data. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  // Initial data load
+  useEffect(() => {
     loadData();
   }, [batchId]); // Only depend on batchId
-
-  // Removed the old fetchBatches function as its logic is now in the useEffect
 
   // Fetch all tests and update test counts
   const fetchAllTests = async () => {
@@ -206,15 +204,22 @@ const Course = () => {
         course_name: newCourseName,
         allow_notes_download: true, // Ensure this field is always included
       };
-      await createCourse(courseData);
-      setNewCourseName("");
-      setSelectedBatchId("");
-      setIsDialogOpen(false);
-      toast.success("Course created successfully!");
-      fetchBatches();
+      
+      const response = await createCourse(courseData);
+      
+      if (response?.success) {
+        setNewCourseName("");
+        setSelectedBatchId("");
+        setIsDialogOpen(false);
+        toast.success("Course created successfully!");
+        // Reload data to show the new course
+        await loadData();
+      } else {
+        throw new Error(response?.message || 'Failed to create course');
+      }
     } catch (err) {
-      setError(err.message);
-      toast.error("Failed to create course.");
+      console.error('Error creating course:', err);
+      toast.error(err.message || 'Failed to create course');
     } finally {
       setLoading(false);
     }

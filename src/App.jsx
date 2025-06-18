@@ -65,7 +65,7 @@ function App() {
       <Navbar  role={role} />
       <Routes>
         <Route path="/" element={<LandingPage2 />} />
-        <Route path="/a" element={<LandingPage />} />
+        <Route path="/demo" element={<LandingPage />} />
         <Route path="/signin" element={<Login />} />
         <Route path="/forgot" element={<Forgot />} />
         <Route path="/reset-password" element={<ResetPassword />} />

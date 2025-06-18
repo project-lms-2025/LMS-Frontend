@@ -1,6 +1,6 @@
 // src/components/Pricing.jsx
 import React, { useState, useEffect, Fragment } from "react";
-import { Check, Info, Mail, Phone, X } from "lucide-react";
+import { Check, Info, Loader2, Mail, Phone, X } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 import { motion, useInView } from "framer-motion";
 import { contactUs } from "../api/auth";
@@ -65,8 +65,10 @@ const plans = [
 export default function Pricing() {
   const [billing, setBilling] = useState("yearly");
   const [isOpen, setIsOpen] = useState(false);
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone_number, setPhone] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const subject = "Pricing Page Contact Form";
   const message = "I'm interested in your pricing plans and would like to know more.";
   // Open modal on load
@@ -81,14 +83,20 @@ export default function Pricing() {
 
   const handleDiscountSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
     try {
-      await contactUs({ email, phone_number, subject, message });
+      await contactUs({ name, email, phone_number, subject, message });
       setIsOpen(false);
-      // Optionally show success message to user
+      // Reset form
+      setName("");
+      setEmail("");
+      setPhone("");
       toast.success("Thank you for your interest! We'll get back to you soon.");
     } catch (error) {
       console.error("Error submitting form:", error);
       toast.error("Failed to submit the form. Please try again later.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -144,9 +152,9 @@ export default function Pricing() {
                       Name
                     </label>
                     <input
-                      type="name"
+                      type="text"
                       value={name}
-                      onChange={(e) => setEmail(e.target.value)}
+                      onChange={(e) => setName(e.target.value)}
                       required
                       className="mt-1 w-full border rounded px-3 py-2 bg-white dark:bg-white text-gray-900 dark:text-gray-100"
                     />
@@ -178,9 +186,17 @@ export default function Pricing() {
                   <div className="flex justify-end">
                     <button
                       type="submit"
-                      className="px-4 py-2 bg-purple-500  text-white rounded hover:bg-purple-800 transition"
+                      disabled={isSubmitting}
+                      className="px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-800 transition flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed min-w-[100px]"
                     >
-                      Submit
+                      {isSubmitting ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                          Submitting...
+                        </>
+                      ) : (
+                        'Submit'
+                      )}
                     </button>
                   </div>
                 </form>
