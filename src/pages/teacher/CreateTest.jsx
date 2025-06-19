@@ -199,12 +199,12 @@ const CreateTest = () => {
     if (file.type.startsWith("image/")) {
       let url;
       if (optionIndex === "question") {
-        url = await uploadImageToS3(file, questionPaper.test_id, "question", questionId, type, courseId, batchId, seriesId);
+        url = await uploadImageToS3(file, questionPaper.test_id, "question_image", questionId, type, courseId, batchId, seriesId);
         if (url) {
           updateQuestionAttachment(questionId, url);
         }
       } else {
-        url = await uploadImageToS3(file, questionPaper.test_id, "option", `${questionId}_${optionIndex}`, type, courseId, batchId, seriesId);
+        url = await uploadImageToS3(file, questionPaper.test_id, "option_image", `${questionId}_${optionIndex}`, type, courseId, batchId, seriesId);
         if (url) {
           setQuestionPaper((prev) => ({
             ...prev,

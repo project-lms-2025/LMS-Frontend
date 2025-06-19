@@ -133,10 +133,14 @@ export const uploadImageToS3 = async (
         }
 
         const fileType = imageFile.type.split("/")[1];
-        const filename = `batch_${batch_id}.${fileType}`;
-        const category = "batch_image";
+        const filename = `${id}.${fileType}`;
+        const category = type;
         const metadata = {
-            batch_id
+            batch_id,
+            test_id: testId,
+            course_id,
+            institution_id,
+            testType
         };
 
         const requestBody = {
@@ -145,8 +149,6 @@ export const uploadImageToS3 = async (
             fileType: imageFile.type,
             metadata,
         };
-
-        console.log("Upload metadata:", requestBody);
 
         // Call API to get presigned URL
         const response = await fetch("https://testapi.teachertech.in/api/v2/s3/generate-upload-url", {
