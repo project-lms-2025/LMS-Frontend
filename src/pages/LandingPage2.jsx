@@ -46,34 +46,34 @@ const FEATURES = [
     content:
       "Custom iOS/Android apps and responsive websites built to showcase your brand and drive engagement across devices.",
     image:
-      "https://www.24pagesafrica.com/wp-content/uploads/2023/05/website-design.png", // replace with your actual paths
+      "/appWeb.jpeg", // replace with your actual paths
   },
   {
     title: "Test Series",
     content:
       "Comprehensive practice tests and mock exams to help learners assess and improve.",
-    image: "https://studyknight.in/wp-content/uploads/2023/12/Test-Series.png",
+    image: "/testSeries.jpeg",
   },
   {
     title: "Course Selling",
     content:
       "End-to-end platform setup for packaging, pricing, and selling your courses online.",
     image:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSD_NKrkXhSUZgiznkPMSCT_b0taOy9-P3p8A&s",
+      "/courseSell.jpeg",
   },
   {
     title: "Marketing & Advertising",
     content:
       "Data-driven campaigns across channels to grow your audience and boost enrollments.",
     image:
-      "https://www.myhoardings.com/ads/wp-content/uploads/2021/02/marketing-ad-icon.jpg",
+      "/marketing.jpeg",
   },
   {
     title: "Video Editing and Professional Docs",
     content:
       "We provide stunning professional Document, Video editing  with advanced  animation and graphics.",
     image:
-      "https://www.vocso.com/blog/wp-content/uploads/2022/08/free-video-editing-software.jpg",
+      "/editing.jpeg",
   },
 ];
 
@@ -385,7 +385,7 @@ const LandingPage2 = () => {
                   <img
                     src={FEATURES[active]?.image}
                     alt={FEATURES[active]?.title}
-                    className="rounded-xl shadow-lg max-h-80 object-cover"
+                    className="rounded-xl shadow-lg min-h-96 max-h-96 object-cover"
                   />
                 </div>
               </div>
