@@ -87,7 +87,7 @@ function App() {
         <Route path="/instructions" element={isLoggedIn && role === 'student' ? <Instructions /> : <Navigate to="/" />} />
 
         {/* Teacher Routes */}
-        <Route path="/teacherDashboard" element={isLoggedIn && role === 'teacher' ? <Teacher /> : <Navigate to="/" />} />
+        <Route path="/teacherDashboard" element={isLoggedIn && role === 'teacher' ? <EnrolledStudent /> : <Navigate to="/" />} />
         <Route path="/TBatches" element={isLoggedIn && role === 'teacher' ? <Batch /> : <Navigate to="/" />} />
         {/* <Route path="/TCourses" element={isLoggedIn && role === 'teacher' ? <Course /> : <Navigate to="/" />} /> */}
         <Route path="/courses/:batchId" element={isLoggedIn && role === 'teacher' ? <Course /> : <Navigate to="/" />} />
@@ -96,7 +96,7 @@ function App() {
         <Route path="/createtest" element={isLoggedIn && role === 'teacher' ? <CreateTest/> : <Navigate to="/" />} /> {/* Test created by teacher merge */}
         <Route path="/testList" element={isLoggedIn && role === 'teacher' ? <TeacherTestList /> : <Navigate to="/" />} />
         <Route path="/testpreview" element={isLoggedIn && role === 'teacher' ? <TestPreview /> : <Navigate to="/" />} />  {/* test given by students */}
-        <Route path="/enrolledStudent" element={isLoggedIn && role === 'teacher' ? <EnrolledStudent /> : <Navigate to="/" />} />
+        {/* <Route path="/enrolledStudent" element={isLoggedIn && role === 'teacher' ? <EnrolledStudent /> : <Navigate to="/" />} /> */}
 
         {/* Test Series */}
         <Route path="/testSeries" element={isLoggedIn && role === 'teacher' ? <AllTestSeries /> : <Navigate to="/" />} />  {/* test given by students DONE */} 

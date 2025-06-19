@@ -6,7 +6,7 @@ import { registerUser, sendOtp, verifyOtp } from "../../api/auth";
 
 function Register() {
   const navigate = useNavigate();
-  const [currentStep, setCurrentStep] = useState(1);
+  // const [currentStep, setCurrentStep] = useState(1);
   const [otpSent, setOtpSent] = useState(false);
   const [isOtpSending, setIsOtpSending] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -15,22 +15,22 @@ function Register() {
     name: "",
     email: "",
     phoneNumber: "",
-    address: "",
-    state: "",
-    city: "",
-    pincode: "",
-    class: "",
-    dob: "",
-    selected_exam: "",
-    tenth_marksheet_url: "",
-    twelfth_marksheet_url: "",
-    graduation_url: "",
-    prev_year_grade_card_url: "",
-    is_email_verified: false,
-    otp: "",
+    // address: "",
+    // state: "",
+    // city: "",
+    // pincode: "",
+    // class: "",
+    // dob: "",
+    // selected_exam: "",
+    // tenth_marksheet_url: "",
+    // twelfth_marksheet_url: "",
+    // graduation_url: "",
+    // prev_year_grade_card_url: "",
+    // is_email_verified: false,
+    // otp: "",
   });
 
-  const totalSteps = 4;
+  // const totalSteps = 4;
 
   // Handles input field changes
   const handleInputChange = (e) => {
@@ -91,13 +91,15 @@ function Register() {
   // Handles form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // if (!formData.is_email_verified) {
-    //   return toast.error("Please verify your email before submitting!");
-    // }
-
+    // Only submit name, email, phoneNumber
     try {
       setIsSubmitting(true);
-      await registerUser(formData);
+      await registerUser({
+        institution_id: formData.institution_id,
+        name: formData.name,
+        email: formData.email,
+        phoneNumber: formData.phoneNumber,
+      });
       toast.success("Registration successful!");
       navigate("/");
     } catch (error) {
@@ -107,6 +109,7 @@ function Register() {
       setIsSubmitting(false);
     }
   };
+
 
   // Move to next step
   const nextStep = () => {
@@ -132,42 +135,40 @@ function Register() {
     setCurrentStep(prev => Math.max(prev - 1, 1));
   };
 
-  // Render form based on current step
+  // Render form: only Full Name, Email, Phone Number
   const renderForm = () => {
-    switch (currentStep) {
-      case 1:
-        return (
-          <>
-            <h3 className="text-lg font-semibold text-primary-purple mb-4">Personal Information</h3>
-            {/* Full Name */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-primary-purple dark:text-accent-yellow mb-1">
-                Full Name <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleInputChange}
-                className="w-full px-4 py-2 rounded-lg border border-primary-purple bg-secondary-gray dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-primary-purple focus:border-primary-purple"
-                required
-              />
-            </div>
+    return (
+      <>
+        {/* <h3 className="text-lg font-semibold text-primary-purple mb-4">Personal Information</h3> */}
+        {/* Full Name */}
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-primary-purple dark:text-accent-yellow mb-1">
+            Full Name <span className="text-red-500">*</span>
+          </label>
+          <input
+            type="text"
+            name="name"
+            value={formData.name}
+            onChange={handleInputChange}
+            className="w-full px-4 py-2 rounded-lg border border-primary-purple bg-secondary-gray dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-primary-purple focus:border-primary-purple"
+            required
+          />
+        </div>
 
-            {/* Email */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-primary-purple dark:text-accent-yellow mb-1">
-                Email <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleInputChange}
-                className="w-full px-4 py-2 rounded-lg border border-primary-purple bg-secondary-gray dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-primary-purple focus:border-primary-purple"
-                required
-              />
-            </div>
+        {/* Email */}
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-primary-purple dark:text-accent-yellow mb-1">
+            Email <span className="text-red-500">*</span>
+          </label>
+          <input
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleInputChange}
+            className="w-full px-4 py-2 rounded-lg border border-primary-purple bg-secondary-gray dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-primary-purple focus:border-primary-purple"
+            required
+          />
+        </div>
 
             {/* OTP Verification */}
             <div className="mb-4">
@@ -209,247 +210,24 @@ function Register() {
               </div>
             </div>
 
-            {/* Phone Number */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-primary-purple dark:text-accent-yellow mb-1">
-                Phone Number <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="tel"
-                name="phoneNumber"
-                value={formData.phoneNumber}
-                onChange={handleInputChange}
-                className="w-full px-4 py-2 rounded-lg border border-primary-purple bg-secondary-gray dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-primary-purple focus:border-primary-purple"
-                required
-              />
-            </div>
-          </>
-        );
-
-      case 2:
-        return (
-          <>
-            <h3 className="text-lg font-semibold text-primary-purple mb-4">Address Information</h3>
-            {/* Address */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-primary-purple dark:text-accent-yellow mb-1">
-                Address <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                name="address"
-                value={formData.address}
-                onChange={handleInputChange}
-                className="w-full px-4 py-2 rounded-lg border border-primary-purple bg-secondary-gray dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-primary-purple focus:border-primary-purple"
-                required
-              />
-            </div>
-
-            {/* State */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-primary-purple dark:text-accent-yellow mb-1">
-                State <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                name="state"
-                value={formData.state}
-                onChange={handleInputChange}
-                className="w-full px-4 py-2 rounded-lg border border-primary-purple bg-secondary-gray dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-primary-purple focus:border-primary-purple"
-                required
-              />
-            </div>
-
-            {/* City */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-primary-purple dark:text-accent-yellow mb-1">
-                City <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                name="city"
-                value={formData.city}
-                onChange={handleInputChange}
-                className="w-full px-4 py-2 rounded-lg border border-primary-purple bg-secondary-gray dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-primary-purple focus:border-primary-purple"
-                required
-              />
-            </div>
-
-            {/* Pincode */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-primary-purple dark:text-accent-yellow mb-1">
-                Pincode <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                name="pincode"
-                value={formData.pincode}
-                onChange={handleInputChange}
-                className="w-full px-4 py-2 rounded-lg border border-primary-purple bg-secondary-gray dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-primary-purple focus:border-primary-purple"
-                required
-              />
-            </div>
-          </>
-        );
-
-      case 3:
-        return (
-          <>
-            <h3 className="text-lg font-semibold text-primary-purple mb-4">Educational Information</h3>
-            {/* Class */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-primary-purple dark:text-accent-yellow mb-1">
-                Class <span className="text-red-500">*</span>
-              </label>
-              <div className="relative">
-                <select
-                  name="class"
-                  value={formData.class}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-2 rounded-lg border border-primary-purple bg-secondary-gray dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-primary-purple focus:border-primary-purple appearance-none pr-10"
-                  required
-                >
-                  <option value="" disabled>Select your class</option>
-                  <option value="10th">10th</option>
-                  <option value="11th">11th</option>
-                  <option value="12th">12th</option>
-                  <option value="Graduation">Graduation</option>
-                  <option value="Post Graduation">Post Graduation</option>
-                </select>
-                <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
-                  <ChevronDown className="text-primary-purple dark:text-purple-400" />
-                </div>
-              </div>
-            </div>
-
-            {/* Date of Birth */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-primary-purple dark:text-accent-yellow mb-1">
-                Date of Birth <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="date"
-                name="dob"
-                value={formData.dob}
-                onChange={handleInputChange}
-                className="w-full px-4 py-2 rounded-lg border border-primary-purple bg-secondary-gray dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-primary-purple focus:border-primary-purple"
-                required
-              />
-            </div>
-
-            {/* Exam Registered For */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-primary-purple dark:text-accent-yellow mb-1">
-                Exam Registered For <span className="text-red-500">*</span>
-              </label>
-              <div className="relative">
-                <select
-                  name="selected_exam"
-                  value={formData.selected_exam}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-2 rounded-lg border border-primary-purple bg-secondary-gray dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-primary-purple focus:border-primary-purple appearance-none pr-10"
-                  required
-                >
-                  <option value="" disabled>Select an exam</option>
-                  <option value="JEE">JEE</option>
-                  <option value="NEET">NEET</option>
-                  <option value="GATE">GATE</option>
-                  <option value="CAT">CAT</option>
-                  <option value="UPSC">UPSC</option>
-                  <option value="Other">Other</option>
-                </select>
-                <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
-                  <ChevronDown className="text-primary-purple dark:text-purple-400" />
-                </div>
-              </div>
-            </div>
-          </>
-        );
-
-      // In the renderForm function, update case 4 (document upload step)
-      case 4:
-        return (
-          <>
-            <h3 className="text-lg font-semibold text-primary-purple mb-4">Document Upload</h3>
-
-            {/* 10th Marksheet - show for all students */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-primary-purple dark:text-accent-yellow mb-1">
-                10th Marksheet
-              </label>
-              <input
-                type="file"
-                name="tenth_marksheet_url"
-                onChange={handleFileChange}
-                className="w-full px-4 py-2 rounded-lg border border-primary-purple bg-secondary-gray dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-primary-purple focus:border-primary-purple"
-                accept=".pdf,.jpg,.jpeg,.png"
-              />
-              {formData.tenth_marksheet_url && (
-                <p className="text-xs text-green-600 mt-1">File uploaded successfully</p>
-              )}
-            </div>
-
-            {/* 12th Marksheet - only show if student is in 12th or higher */}
-            {["12th", "Graduation", "Post Graduation"].includes(formData.class) && (
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-primary-purple dark:text-accent-yellow mb-1">
-                  12th Marksheet
-                </label>
-                <input
-                  type="file"
-                  name="twelfth_marksheet_url"
-                  onChange={handleFileChange}
-                  className="w-full px-4 py-2 rounded-lg border border-primary-purple bg-secondary-gray dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-primary-purple focus:border-primary-purple"
-                  accept=".pdf,.jpg,.jpeg,.png"
-                />
-                {formData.twelfth_marksheet_url && (
-                  <p className="text-xs text-green-600 mt-1">File uploaded successfully</p>
-                )}
-              </div>
-            )}
-
-            {/* Graduation Certificate - only show if student is in Graduation or higher */}
-            {["Graduation", "Post Graduation"].includes(formData.class) && (
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-primary-purple dark:text-accent-yellow mb-1">
-                  Graduation Certificate
-                </label>
-                <input
-                  type="file"
-                  name="graduation_url"
-                  onChange={handleFileChange}
-                  className="w-full px-4 py-2 rounded-lg border border-primary-purple bg-secondary-gray dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-primary-purple focus:border-primary-purple"
-                  accept=".pdf,.jpg,.jpeg,.png"
-                />
-                {formData.graduation_url && (
-                  <p className="text-xs text-green-600 mt-1">File uploaded successfully</p>
-                )}
-              </div>
-            )}
-
-            {/* Previous Year Grade Card - show for all students */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-primary-purple dark:text-accent-yellow mb-1">
-                Previous Year Grade Card (optional)
-              </label>
-              <input
-                type="file"
-                name="prev_year_grade_card_url"
-                onChange={handleFileChange}
-                className="w-full px-4 py-2 rounded-lg border border-primary-purple bg-secondary-gray dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-primary-purple focus:border-primary-purple"
-                accept=".pdf,.jpg,.jpeg,.png"
-              />
-              {formData.prev_year_grade_card_url && (
-                <p className="text-xs text-green-600 mt-1">File uploaded successfully</p>
-              )}
-            </div>
-          </>
-        );
-
-      default:
-        return null;
-    }
+        {/* Phone Number */}
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-primary-purple dark:text-accent-yellow mb-1">
+            Phone Number <span className="text-red-500">*</span>
+          </label>
+          <input
+            type="tel"
+            name="phoneNumber"
+            value={formData.phoneNumber}
+            onChange={handleInputChange}
+            className="w-full px-4 py-2 rounded-lg border border-primary-purple bg-secondary-gray dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-primary-purple focus:border-primary-purple"
+            required
+          />
+        </div>
+      </>
+    );
   };
+
 
   return (
     <div className="min-h-screen flex justify-center items-center dark:bg-primary-purple bg-white py-3 px-4 sm:px-6 lg:px-8">
@@ -460,64 +238,26 @@ function Register() {
         </h2>
 
         {/* Progress Bar */}
-        <div className="mb-6">
-          <div className="w-full bg-gray-200 rounded-full h-2.5">
-            <div
-              className="bg-primary-purple h-2.5 rounded-full transition-all duration-300"
-              style={{ width: `${(currentStep / totalSteps) * 100}%` }}
-            ></div>
-          </div>
-          <div className="flex justify-between mt-1 text-xs text-gray-500">
-            <span>Personal</span>
-            <span>Address</span>
-            <span>Education</span>
-            <span>Documents</span>
-          </div>
-        </div>
+        {/* Progress bar removed for single-step form */}
 
         <form onSubmit={handleSubmit}>
           <div className="space-y-2">
             {renderForm()}
-
-            {/* Navigation Buttons */}
-            <div className="flex justify-between mt-6">
-              {currentStep > 1 && (
-                <button
-                  type="button"
-                  onClick={prevStep}
-                  className="flex items-center gap-1 px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-all duration-300"
-                >
-                  <ArrowLeft size={16} />
-                  Back
-                </button>
-              )}
-
-              {currentStep < totalSteps ? (
-                <button
-                  type="button"
-                  onClick={nextStep}
-                  className="flex items-center gap-1 ml-auto px-4 py-2 bg-primary-purple text-white rounded-lg hover:bg-primary-dark transition-all duration-300"
-                >
-                  Next
-                  <ArrowRight size={16} />
-                </button>
-              ) : (
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className={`flex items-center gap-1 ml-auto px-4 py-2 bg-primary-purple text-white rounded-lg hover:bg-primary-dark transition-all duration-300 ${isSubmitting ? "opacity-50 cursor-not-allowed" : ""
-                    }`}
-                >
-                  {isSubmitting ? (
-                    <>
-                      <Loader className="animate-spin w-5 h-5" />
-                      <span>Submitting...</span>
-                    </>
-                  ) : (
-                    "Register"
-                  )}
-                </button>
-              )}
+            <div className="flex justify-end mt-6">
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className={`flex items-center gap-1 ml-auto px-4 py-2 bg-primary-purple text-white rounded-lg hover:bg-primary-dark transition-all duration-300 ${isSubmitting ? "opacity-50 cursor-not-allowed" : ""}`}
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader className="animate-spin w-5 h-5" />
+                    <span>Submitting...</span>
+                  </>
+                ) : (
+                  "Register"
+                )}
+              </button>
             </div>
           </div>
         </form>
