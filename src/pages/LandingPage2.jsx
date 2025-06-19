@@ -52,7 +52,7 @@ const FEATURES = [
     title: "Test Series",
     content:
       "Comprehensive practice tests and mock exams to help learners assess and improve.",
-    image: "/testSeries.jpeg",
+    image: "/testSeries.jpg",
   },
   {
     title: "Course Selling",
