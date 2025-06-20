@@ -28,6 +28,7 @@ const StudentResponse = () => {
     const fetchTestResults = async (studentId) => {
       try {
         const response = await getTestResultDetails(resultId, studentId); // Fetch test results using resultId and studentId
+        console.log("Test results:", response);
         const data = response.data;
         setTestData(data);
         setLoading(false);
@@ -88,13 +89,6 @@ const StudentResponse = () => {
     return `${bgClass} ${borderClass} p-2 rounded`;
   };
 
-  const leaderboardData = [
-    { ranking: 1, name: 'John Smith', marks: 1195 },
-    { ranking: 2, name: 'Jolie Hoskins', marks: 1195 },
-    { ranking: 3, name: 'Pennington Joy', marks: 1196 },
-    { ranking: 4, name: 'Millie Marsden', marks: 1185 },
-    { ranking: 5, name: 'John Smith', marks: 1185 },
-  ];
 
   const rank = '45/100';
   const correct = 30;
@@ -104,77 +98,34 @@ const StudentResponse = () => {
 
 
   return (
-    <div className="p-6 w-full mx-auto space-y-6 bg-gray-50">
+    <div className="p-6 w-full mx-auto space-y-6 bg-gray-50 mt-20">
 
-      <div className="bg-white shadow rounded-md p-6">
+      {/* <div className="bg-white shadow rounded-md p-6">
         <div className="grid sm:grid-cols-5 grid-cols-2 gap-4 text-center">
-          {/* Your Rank */}
           <div className="flex flex-col items-center border p-4 rounded-md">
             <p className="text-2xl font-bold text-gray-900">{rank}</p>
             <p className="text-sm text-gray-600">Your Rank</p>
           </div>
-          {/* Correct Answers */}
           <div className="flex flex-col items-center border p-4 rounded-md">
             <p className="text-2xl font-bold text-green-600">{correct}</p>
             <p className="text-sm text-gray-600">Correct Answers</p>
           </div>
-          {/* Incorrect Answers */}
           <div className="flex flex-col items-center border p-4 rounded-md">
             <p className="text-2xl font-bold text-red-600">{incorrect}</p>
             <p className="text-sm text-gray-600">Incorrect Answers</p>
           </div>
-          {/* Unanswered */}
           <div className="flex flex-col items-center border p-4 rounded-md">
             <p className="text-2xl font-bold text-yellow-600">{unanswered}</p>
             <p className="text-sm text-gray-600">Unanswered</p>
           </div>
-          {/* Mark */}
           <div className="flex flex-col items-center border p-4 rounded-md">
             <p className="text-2xl font-bold text-blue-600">{mark}</p>
             <p className="text-sm text-gray-600">Mark</p>
           </div>
         </div>
-      </div>
+      </div> */}
 
-      <div className="bg-white shadow rounded-md p-6">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-lg font-semibold text-gray-900">Test Result Leaderboard</h2>
-          {/* Placeholder for an options menu */}
-          <button className="text-gray-500 hover:text-gray-700 focus:outline-none" aria-label="Leaderboard Options">
-            <svg
-              className="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              viewBox="0 0 24 24"
-            >
-              <circle cx="12" cy="5" r="1" />
-              <circle cx="12" cy="12" r="1" />
-              <circle cx="12" cy="19" r="1" />
-            </svg>
-          </button>
-        </div>
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="bg-gray-100">
-                <th className="px-4 py-2 text-sm font-medium text-gray-600">Ranking</th>
-                <th className="px-4 py-2 text-sm font-medium text-gray-600">Name</th>
-                <th className="px-4 py-2 text-sm font-medium text-gray-600">Marks</th>
-              </tr>
-            </thead>
-            <tbody>
-              {leaderboardData.map((entry) => (
-                <tr key={entry.ranking} className="border-b last:border-b-0 hover:bg-gray-50">
-                  <td className="px-4 py-2 text-gray-800 font-semibold">{entry.ranking}</td>
-                  <td className="px-4 py-2 text-gray-700">{entry.name}</td>
-                  <td className="px-4 py-2 text-gray-700">{entry.marks}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+
 
       {/* Header Summary */}
       <div className="bg-white shadow rounded p-4 lg:flex justify-between items-center">

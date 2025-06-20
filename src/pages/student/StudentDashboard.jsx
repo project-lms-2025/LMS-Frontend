@@ -49,6 +49,7 @@ export default function StudentDashboard() {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [videoUrl, setVideoUrl] = useState(null);
   const [showVideo, setShowVideo] = useState(false);
+  const [videoLoading, setVideoLoading] = useState(false);
 
   // Initialize empty arrays for test data that will come from API
   const upcomingTests = [];
@@ -445,12 +446,11 @@ export default function StudentDashboard() {
               <Dialog
                 as="div"
                 className="relative z-50"
+                open={showVideo}
                 onClose={() => {
                   setShowVideo(false);
-                  if (videoUrl) {
-                    URL.revokeObjectURL(videoUrl);
-                    setVideoUrl(null);
-                  }
+                  setVideoUrl(null);
+                  setVideoLoading(false);
                 }}
               >
                 <Transition.Child
@@ -462,9 +462,8 @@ export default function StudentDashboard() {
                   leaveFrom="opacity-100"
                   leaveTo="opacity-0"
                 >
-                  <div className="fixed inset-0 bg-black/50" />
+                  <div className="fixed inset-0 bg-black bg-opacity-30 transition-opacity" />
                 </Transition.Child>
-
                 <div className="fixed inset-0 overflow-y-auto">
                   <div className="flex min-h-full items-center justify-center p-4 text-center">
                     <Transition.Child
@@ -476,36 +475,39 @@ export default function StudentDashboard() {
                       leaveFrom="opacity-100 scale-100"
                       leaveTo="opacity-0 scale-95"
                     >
-                      <Dialog.Panel className="w-full max-w-7xl transform overflow-hidden rounded-2xl bg-white dark:bg-gray-800 p-6 text-left align-middle shadow-xl transition-all">
+                      <Dialog.Panel className="w-full max-w-2xl transform overflow-hidden rounded-2xl bg-white dark:bg-gray-800 p-6 text-left align-middle shadow-xl transition-all">
                         <div className="flex justify-between items-center mb-4">
-                          <Dialog.Title
-                            as="h3"
-                            className="text-lg font-medium leading-6 text-gray-900 dark:text-white"
-                          >
+                          <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900 dark:text-white">
                             Class Recording
                           </Dialog.Title>
                           <button
-                            type="button"
-                            className="rounded-md text-gray-400 hover:text-gray-500 dark:text-gray-300 dark:hover:text-gray-200"
                             onClick={() => {
                               setShowVideo(false);
-                              if (videoUrl) {
-                                URL.revokeObjectURL(videoUrl);
-                                setVideoUrl(null);
-                              }
+                              setVideoUrl(null);
+                              setVideoLoading(false);
                             }}
+                            className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
                           >
-                            <X className="h-6 w-6" aria-hidden="true" />
+                            <X className="w-5 h-5" />
                           </button>
                         </div>
-                        <div className="mt-2">
-                          <video
-                            controls
-                            autoPlay
-                            controlsList="nodownload"
-                            className="w-full rounded-lg bg-black aspect-video"
-                            src={videoUrl}
-                          />
+                        <div className="mt-2 min-h-[200px] flex items-center justify-center">
+                          {videoLoading ? (
+                            <div className="flex flex-col items-center justify-center w-full h-full min-h-[200px]">
+                              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-purple mb-4"></div>
+                              <p className="text-gray-600 dark:text-gray-400">Loading video...</p>
+                            </div>
+                          ) : videoUrl ? (
+                            <video
+                              controls
+                              autoPlay
+                              controlsList="nodownload"
+                              className="w-full rounded-lg bg-black aspect-video"
+                              src={videoUrl}
+                            />
+                          ) : (
+                            <p className="text-gray-600 dark:text-gray-400">No video available.</p>
+                          )}
                         </div>
                       </Dialog.Panel>
                     </Transition.Child>
@@ -575,28 +577,29 @@ export default function StudentDashboard() {
                         {cls.recording_url &&
                           cls.recording_url !== "string" && (
                             <button
-                              onClick={async (e) => {
-                                e.preventDefault();
-                                try {
-                                  setLoading(true);
-                                  const blob = await getFileStream(
-                                    cls.recording_url
-                                  );
-                                  const url = URL.createObjectURL(blob);
-                                  setVideoUrl(url);
-                                  setShowVideo(true);
-                                } catch (error) {
-                                  console.error("Error fetching video:", error);
-                                  // Handle error (e.g., show error message)
-                                } finally {
-                                  setLoading(false);
-                                }
+                              onClick={() => {
+                                setShowVideo(true);
+                                setVideoUrl(null);
+                                setVideoLoading(true);
+                                // Start loading the video in the background
+                                getFileStream(cls.recording_url)
+                                  .then((blob) => {
+                                    const url = URL.createObjectURL(blob);
+                                    setVideoUrl(url);
+                                  })
+                                  .catch((error) => {
+                                    console.error("Error fetching video:", error);
+                                    // Optionally, show an error message in the modal
+                                  })
+                                  .finally(() => {
+                                    setVideoLoading(false);
+                                  });
                               }}
                               className="inline-flex items-center px-3 py-1.5 border border-gray-300 text-xs font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-600"
-                              disabled={loading}
+                              disabled={videoLoading}
                             >
                               <Video className="h-3.5 w-3.5 mr-1.5" />
-                              {loading ? "Loading..." : "View Recording"}
+                              View Recording
                             </button>
                           )}
                       </div>

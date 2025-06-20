@@ -7,7 +7,7 @@ const SuccessPopup = () => {
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-      navigate("/resultList");
+      navigate("/studentClass");
     }, 2000); // wait 3 seconds then redirect
     return () => clearTimeout(timeout);
   }, [navigate]);

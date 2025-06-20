@@ -27,7 +27,6 @@ const Classes = () => {
   const [newClass, setNewClass] = useState({
     class_title: "",
     class_date_time: "",
-    recording_url: "",
   });
   const [editingClass, setEditingClass] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -342,7 +341,7 @@ const Classes = () => {
                                 class_title: e.target.value,
                               }))
                             }
-                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-purple focus:ring-primary-purple sm:text-sm"
+                            className="mt-1 block p-2 w-full rounded-md border-gray-300 shadow-sm focus:border-primary-purple focus:ring-primary-purple sm:text-sm"
                             placeholder="Enter class title"
                           />
                         </div>
@@ -360,27 +359,11 @@ const Classes = () => {
                                 class_date_time: e.target.value,
                               }))
                             }
-                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-purple focus:ring-primary-purple sm:text-sm"
+                            className="mt-1 block p-2 w-full rounded-md border-gray-300 shadow-sm focus:border-primary-purple focus:ring-primary-purple sm:text-sm"
                           />
                         </div>
 
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700">
-                            Recording URL (Optional)
-                          </label>
-                          <input
-                            type="text"
-                            value={newClass.recording_url || ""}
-                            onChange={(e) =>
-                              setNewClass((prev) => ({
-                                ...prev,
-                                recording_url: e.target.value,
-                              }))
-                            }
-                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-purple focus:ring-primary-purple sm:text-sm"
-                            placeholder="https://example.com/recording"
-                          />
-                        </div>
+                        
                       </div>
                     </div>
 

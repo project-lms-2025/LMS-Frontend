@@ -40,9 +40,10 @@ const Rank = () => {
         try {
           setLoadingLeaderboard(true);
           const data = await getLeaderboard(selectedTestId);
-          if (data && data.results && Array.isArray(data.results)) {
+          console.log("Leaderboard data:", data);
+          if (data && Array.isArray(data.data)) {
             // Sort leaderboard descending by final_score (as numbers)
-            const sorted = data.results.sort((a, b) => Number(b.final_score) - Number(a.final_score));
+            const sorted = data.data.sort((a, b) => Number(b.final_score) - Number(a.final_score));
             setLeaderboard(sorted);
           } else {
             setLeaderboard([]);

@@ -6,29 +6,37 @@ import toast from 'react-hot-toast';
 
 const BatchCard = ({ batch, onEnroll, isEnrolled }) => {
   return (
-    <div className="bg-secondary-gray p-6 rounded-lg shadow-md">
+    <div className="bg-secondary-gray  rounded-lg shadow-md">
+      <img src={batch.banner} alt="" />
+      <div className="p-6" >
+
       <h2 className="text-2xl font-bold text-primary-purple mb-2">
         {batch.batch_name}
       </h2>
-      <p className="text-gray-600 mb-2">{batch.description}</p>
-      <p className="text-sm text-gray-500 mb-4">
+      <p className="text-black text-lg mb-1">{batch.description}</p>
+      <p className="text-lg text-black mb-1">
         Created on: {new Date(batch.created_at).toLocaleDateString()}
+      </p>
+      <p className="text-xl text-primary-purple mb-3 font-bold ">
+        Cost: ₹{batch.cost} 
+          {/* <span className="strike line-through">₹4000</span> */}
       </p>
       {isEnrolled ? (
         <button
-          disabled
-          className="bg-gray-500 text-white font-semibold py-2 px-4 rounded cursor-not-allowed"
+        disabled
+        className="bg-black text-white font-semibold py-2 px-4 rounded cursor-not-allowed"
         >
           You are already registered
         </button>
       ) : (
         <button
-          onClick={() => onEnroll(batch.batch_id)}
-          className="bg-primary-purple hover:bg-secondary-coral text-primary-white font-semibold py-2 px-4 rounded"
+        onClick={() => onEnroll(batch.batch_id)}
+        className="bg-primary-purple w-full hover:bg-primary-purple/50 text-primary-white font-semibold py-2 px-4 rounded"
         >
           Enroll Now
         </button>
       )}
+      </div>
     </div>
   );
 };
@@ -53,6 +61,7 @@ const EnrollBatch = () => {
     try {
       setLoading(true);
       const response = await getAllBatches();
+      console.log("Available batches:", response);
       if (response && response.success && Array.isArray(response.data)) {
         // console.log("Available batches:", response.data);
         setBatches(response.data);

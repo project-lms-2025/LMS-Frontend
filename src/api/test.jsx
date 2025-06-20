@@ -92,7 +92,7 @@ export const getEnrolledTests = async () => {
 
 // Get leaderboard for a specific test
 export const getLeaderboard = async (testId) => {
-    return fetchAPI(`/test/tests/${testId}/leaderboard`, "GET", null, false);
+    return fetchAPI(`/test/results/${testId}/leaderboard`, "GET", null, false);
 };
 
 // Get tests that have been attempted by the user

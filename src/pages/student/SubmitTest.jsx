@@ -196,20 +196,20 @@ const SubmitTest = () => {
   const handleSubmitTest = async () => {
     // Check if all questions have been answered
     if (!testData || !testData.questions) return;
-    const unansweredQuestions = testData.questions.filter(q => {
-      if (q.question_type === "MSQ") {
-        return !q.studentAnswers || q.studentAnswers.length === 0;
-      } else {
-        return !q.studentAnswer;
-      }
-    });
+    // const unansweredQuestions = testData.questions.filter(q => {
+    //   if (q.question_type === "MSQ") {
+    //     return !q.studentAnswers || q.studentAnswers.length === 0;
+    //   } else {
+    //     return !q.studentAnswer;
+    //   }
+    // });
 
-    if (unansweredQuestions.length > 0) {
-      const confirmation = window.confirm(
-        "You have unanswered questions. Are you sure you want to submit the test?"
-      );
-      if (!confirmation) return;
-    }
+    // if (unansweredQuestions.length > 0) {
+    //   const confirmation = window.confirm(
+    //     "You have unanswered questions. Are you sure you want to submit the test?"
+    //   );
+    //   if (!confirmation) return;
+    // }
 
     // Build responses array from testData
     const responses = testData.questions.map(q => {
@@ -253,7 +253,7 @@ const SubmitTest = () => {
       <div className="lg:flex lg:gap-4  p-0">
         {/* Left: Question Display (70%) */}
         {/* Test Details */}
-        <div className="lg:w-[67%]  ">
+        <div className="lg:w-[67%] pt-16 ">
           <div className="bg-white rounded-lg shadow p-4 my-4 ">
             <div className="flex justify-between md:grid-cols-2 gap-6">
               <div>

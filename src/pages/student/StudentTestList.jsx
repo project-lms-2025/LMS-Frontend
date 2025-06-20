@@ -48,7 +48,14 @@ const StudentTestList = () => {
     return attemptedTests.some(attemptedTest => attemptedTest.test_id === testId);
   };
 
-  if (loading) return <Loading />;
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center h-28 mt-10 ">
+        <div className="w-16 h-16 border-4 border-t-primary-purple border-secondary-gray rounded-full animate-spin"></div>
+        <p className="mt-4 text-xl font-semibold text-primary-purple">Loading...</p>
+      </div>
+    );
+  }
 
   return (
     <div className='m-0'>
@@ -98,7 +105,7 @@ const StudentTestList = () => {
                         onClick={() =>
                           navigate('/instructions', { state: { test_id: test.test_id } })
                         }
-                        className="flex items-center px-4 py-2 text-primary-purple bg-white rounded-lg hover:bg-purple-700 transition-colors duration-200"
+                        className="flex items-center px-4 py-2 text-primary-purple bg-white rounded-lg hover:bg-purple-700 hover:text-white transition-colors duration-200"
                       >
                         Start Test
                         <ChevronRight className="w-4 h-4 ml-2" />
