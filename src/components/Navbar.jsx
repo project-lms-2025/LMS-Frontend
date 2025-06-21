@@ -120,7 +120,7 @@ export const Navbar = () => {
               )}
             </button> */}
 
-            <a href="#contact" className="px-4 py-2 font-medium border bg-primary-purple  dark:text-white text-white rounded-full hover:bg-primary-purple/50 transition-colors">
+            <a href="https://www.teachertech.in/#contact" className="px-4 py-2 font-medium border bg-primary-purple  dark:text-white text-white rounded-full hover:bg-primary-purple/50 transition-colors">
               Get In Touch
             </a>
             {/* Conditionally render Login / Logout button */}
