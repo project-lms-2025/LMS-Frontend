@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { ThemeContext } from "../context/ThemeContext";
-import { GraduationCap, Moon, Sun } from "lucide-react";
+import { GraduationCap, Moon, Sun, Menu, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { logoutUser, getUserProfile } from "../api/auth";
 import { useAuth } from "../context/AuthContext";
@@ -12,6 +12,7 @@ export const Navbar = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const [loadingProfile, setLoadingProfile] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Fetch user data on mount
   useEffect(() => {
@@ -63,7 +64,8 @@ export const Navbar = () => {
               </span>
             </a>
           </div>
-          <div className="flex gap-8  ">
+          {/* Desktop Nav Links */}
+          <div className="flex gap-8">
             <a
               href="https://www.teachertech.in/#product"
               className="hidden md:block  text-primary-purple  hover:text-primary-purple/50  dark:hover:text-accent-yellow transition-colors"
@@ -82,25 +84,56 @@ export const Navbar = () => {
             >
               Contact Us
             </a>
-
-          {/* Navigation Links - Hidden if role is null */}
-          {/* {role && (
-            <nav className="hidden md:flex items-center space-x-8">
-              {navLinks[role]?.map((link) => (
-                <a
-                  key={link.name}
-                  href={link.href}
-                  className="dark:text-black text-primary-purple   hover:text-primary-purple/50 dark:text-primary-white/80 dark:hover:text-accent-yellow transition-colors"
-                >
-                  {link.name}
-                </a>
-              ))}
-            </nav>
-          )} */}
+            {/* Hamburger Icon for Mobile */}
+            <button
+              className="md:hidden flex items-center justify-center p-2 rounded focus:outline-none focus:ring-2 focus:ring-primary-purple"
+              aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
+              onClick={() => setMobileMenuOpen((open) => !open)}
+            >
+              {mobileMenuOpen ? (
+                <X className="w-7 h-7 text-primary-purple" />
+              ) : (
+                <Menu className="w-7 h-7 text-primary-purple" />
+              )}
+            </button>
           </div>
 
+          {/* Mobile Menu */}
+          {mobileMenuOpen && (
+            <div className="fixed inset-0 z-50 bg-black bg-opacity-40 md:hidden" onClick={() => setMobileMenuOpen(false)}>
+              <nav
+                className="absolute top-20 right-4 w-64 bg-white rounded-lg shadow-lg flex flex-col gap-4 p-6 animate-slide-in"
+                onClick={e => e.stopPropagation()}
+              >
+                <a href="https://www.teachertech.in/#product" className="text-primary-purple hover:text-primary-purple/70 transition-colors" onClick={() => setMobileMenuOpen(false)}>
+                  Product & Services
+                </a>
+                <a href="/pricing" className="text-primary-purple hover:text-primary-purple/70 transition-colors" onClick={() => setMobileMenuOpen(false)}>
+                  Pricing
+                </a>
+                <a href="https://www.teachertech.in/#contact" className="text-primary-purple hover:text-primary-purple/70 transition-colors" onClick={() => setMobileMenuOpen(false)}>
+                  Contact Us
+                </a>
+                {/* Role-based nav links */}
+                {role && navLinks[role]?.map((link) => (
+                  <a
+                    key={link.name}
+                    href={link.href}
+                    className="text-primary-purple hover:text-primary-purple/70 transition-colors"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    {link.name}
+                  </a>
+                ))}
+                <a href="https://www.teachertech.in/#contact" className="px-4 py-2 font-medium border bg-primary-purple text-white rounded-full hover:bg-primary-purple/50 transition-colors mt-2" onClick={() => setMobileMenuOpen(false)}>
+                  Get In Touch
+                </a>
+              </nav>
+            </div>
+          )}
+
           {/* Theme Toggle & Logout Button */}
-          <div className="flex items-center space-x-4">
+          <div className="lg:flex items-center space-x-4 hidden">
             {/* Show user name if logged in */}
             {user && !loading && (
               <span className="text-black dark:text-white">
@@ -120,7 +153,7 @@ export const Navbar = () => {
               )}
             </button> */}
 
-            <a href="https://www.teachertech.in/#contact" className="px-4 py-2 font-medium border bg-primary-purple  dark:text-white text-white rounded-full hover:bg-primary-purple/50 transition-colors">
+            <a href="https://www.teachertech.in/#contact" className="px-4 py-2  font-medium border bg-primary-purple  dark:text-white text-white rounded-full hover:bg-primary-purple/50 transition-colors">
               Get In Touch
             </a>
             {/* Conditionally render Login / Logout button */}

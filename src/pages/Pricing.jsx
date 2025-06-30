@@ -7,6 +7,28 @@ import { contactUs } from "../api/auth";
 import toast from "react-hot-toast";
 const plans = [
   {
+    name: "Special Plan (For Rising Teacher)",
+    yearlyPrice: 5400,
+    monthlyPrice: 5999,
+    perstudent: 499,
+    original: 5999,
+    headerClass: "bg-fuchsia-500 text-white",
+    features: [
+      "\uD83D\uDC68\u200D\uD83C\uDFEB Teach up to 100 students",
+      "\uD83C\uDF10 Branded Website",
+      "\uD83C\uDFA5 Live Classes + Class Recordings",
+      "\uD83E\uDDEA Online Test System (Basic)",
+      "\uD83D\uDCB3 Payment Gateway Integration",
+      "\uD83D\uDCE7 Email Support",
+      "\uD83D\uDD12 Encrypted Content & Platform Security",
+      "\uD83C\uDF93 Sell Recorded Courses with Validity Controls",
+      "\uD83D\uDCE4 Upload & Manage up to 10 Courses",
+      "\uD83D\uDDFE Basic Attendance Tracking",
+      "\uD83D\uDCDD Basic Student Progress Reports",
+      "\uD83D\uDCF1 Mobile Browser Compatibility",
+    ],
+  },
+  {
     name: "Starter Plan",
     yearlyPrice: 8999,
     monthlyPrice: 9999,
@@ -14,18 +36,18 @@ const plans = [
     original: 12000,
     headerClass: "bg-purple-200",
     features: [
-      "👨‍🏫 Teach up to 200 students",
-      "🌐 Custom Domain & Branded Website",
-      "🎥 Live Classes + Class Recordings",
-      "🧪 Online Test System (Basic)",
-      "💳 Payment Gateway Integration",
-      "📧 Email Support",
-      "🔒 Encrypted Content & Platform Security",
-      "🎓 Sell Recorded Courses with Validity Controls",
-      "📤 Upload & Manage up to 20 Courses",
-      "🧾 Basic Attendance Tracking",
-      "📝 Basic Student Progress Reports",
-      "📱 Mobile Browser Compatibility",
+      "\uD83D\uDC68\u200D\uD83C\uDFEB Teach up to 200 students",
+      "\uD83C\uDF10 Custom Domain & Branded Website",
+      "\uD83C\uDFA5 Live Classes + Class Recordings",
+      "\uD83E\uDDEA Online Test System (Basic)",
+      "\uD83D\uDCB3 Payment Gateway Integration",
+      "\uD83D\uDCE7 Email Support",
+      "\uD83D\uDD12 Encrypted Content & Platform Security",
+      "\uD83C\uDF93 Sell Recorded Courses with Validity Controls",
+      "\uD83D\uDCE4 Upload & Manage up to 20 Courses",
+      "\uD83D\uDDFE Basic Attendance Tracking",
+      "\uD83D\uDCDD Basic Student Progress Reports",
+      "\uD83D\uDCF1 Mobile Browser Compatibility",
     ],
   },
   {
@@ -252,7 +274,7 @@ export default function Pricing() {
         </div>
 
         <section className="py-16 bg-white">
-          <div className="max-w-7xl mx-auto px-4 grid gap-8 grid-cols-1 md:grid-cols-3">
+          <div className="max-w mx-10  px-4 grid gap-4 grid-cols-1 md:grid-cols-4">
             {plans.map((plan) => {
               let displayPrice, priceLabel;
               if (billing === "yearly") {
