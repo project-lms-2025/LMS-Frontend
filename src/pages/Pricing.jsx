@@ -336,12 +336,26 @@ export default function Pricing() {
                   <div className="p-6 flex-1 flex flex-col">
                     <h4 className="font-semibold mb-4">Plan highlights:</h4>
                     <ul className="space-y-2 flex-1">
-                      {plan.features.map((feat, idx) => (
-                        <li key={idx} className="flex items-start">
-                          <Check className="w-5 h-5 flex-shrink-0 text-green-500 mt-1" />
-                          <span className="ml-2 text-gray-700">{feat}</span>
-                        </li>
-                      ))}
+                      {plan.features.map((feat, idx) => {
+                        const highlight =
+                          feat === "All in Starter Plan +" ||
+                          feat === "All in professional Plan +";
+                        return (
+                          <li key={idx} className="flex items-start">
+                            <Check className="w-5 h-5 flex-shrink-0 text-green-500 mt-1" />
+                            <span
+                              className={
+                                "ml-2 text-gray-700" +
+                                (highlight
+                                  ? " font-bold bg-purple-300 text-black px-2 py-0.5 rounded"
+                                  : "")
+                              }
+                            >
+                              {feat}
+                            </span>
+                          </li>
+                        );
+                      })}
                     </ul>
                   </div>
                 </div>
