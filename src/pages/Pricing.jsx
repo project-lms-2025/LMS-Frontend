@@ -11,7 +11,7 @@ const plans = [
     monthlyPrice: 5999,
     yearlyPrice: 5400,
     perstudent: 499,
-    original: 5999,
+    original: 7999,
     headerClass: "bg-fuchsia-500 text-white",
     features: [
       "\uD83D\uDC68\u200D\uD83C\uDFEB Teach up to 100 students",
@@ -29,10 +29,10 @@ const plans = [
   },
   {
     name: "Professional Plan",
-    monthlyPrice: 12999,
-    yearlyPrice: 11700,
+    monthlyPrice: 10999,
+    yearlyPrice: 9900,
     perstudent: 599,
-    original: 15000,
+    original: 14000,
     headerClass: "bg-gradient-to-r from-purple-700 to-pink-500 text-white",
     features: [
       "🎨 Premium UI Design for Website + Secured App",
@@ -50,10 +50,10 @@ const plans = [
   },
   {
     name: "Premium Plan",
-    monthlyPrice: 19999,
-    yearlyPrice: 17999,
+    monthlyPrice: 15999,
+    yearlyPrice: 14400,
     perstudent: 699,
-    original: 22000,
+    original: 20000,
     headerClass: "bg-purple-200",
     features: [
       "All in professional Plan +",
@@ -368,11 +368,11 @@ export default function Pricing() {
             >
               Contact us
             </a>
-            <div className="  flex items-center gap-4 justify-between text-white text-lg font-semibold ">
-              <div className="flex items-center">
+            <div className="  lg:flex text-center items-center gap-8 justify-between text-white text-lg font-semibold ">
+              <div className="flex items-center justify-center">
                 <Mail className="mr-2" /> contact@teachertech.in
               </div>
-              <div className="flex items-center">
+              <div className="flex items-center justify-center">
                 <Phone className="mr-2" /> 91-0503-0503
               </div>
             </div>
