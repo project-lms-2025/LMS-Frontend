@@ -8,8 +8,8 @@ import toast from "react-hot-toast";
 const plans = [
   {
     name: "Special Plan (For Rising Teacher)",
-    yearlyPrice: 5400,
     monthlyPrice: 5999,
+    yearlyPrice: 5400,
     perstudent: 499,
     original: 5999,
     headerClass: "bg-fuchsia-500 text-white",
@@ -25,43 +25,18 @@ const plans = [
       "\uD83D\uDCE4 Upload & Manage up to 10 Courses",
       "\uD83D\uDDFE Basic Attendance Tracking",
       "\uD83D\uDCDD Basic Student Progress Reports",
-      "\uD83D\uDCF1 Mobile Browser Compatibility",
-    ],
-  },
-  {
-    name: "Starter Plan",
-    yearlyPrice: 8999,
-    monthlyPrice: 9999,
-    perstudent: 599,
-    original: 12000,
-    headerClass: "bg-purple-200",
-    features: [
-      "\uD83D\uDC68\u200D\uD83C\uDFEB Teach up to 200 students",
-      "\uD83C\uDF10 Custom Domain & Branded Website",
-      "\uD83C\uDFA5 Live Classes + Class Recordings",
-      "\uD83E\uDDEA Online Test System (Basic)",
-      "\uD83D\uDCB3 Payment Gateway Integration",
-      "\uD83D\uDCE7 Email Support",
-      "\uD83D\uDD12 Encrypted Content & Platform Security",
-      "\uD83C\uDF93 Sell Recorded Courses with Validity Controls",
-      "\uD83D\uDCE4 Upload & Manage up to 20 Courses",
-      "\uD83D\uDDFE Basic Attendance Tracking",
-      "\uD83D\uDCDD Basic Student Progress Reports",
-      "\uD83D\uDCF1 Mobile Browser Compatibility",
     ],
   },
   {
     name: "Professional Plan",
-    yearlyPrice: 14400,
-    monthlyPrice: 15999,
-    perstudent: 899,
-    original: 18000,
+    monthlyPrice: 12999,
+    yearlyPrice: 11700,
+    perstudent: 599,
+    original: 15000,
     headerClass: "bg-gradient-to-r from-purple-700 to-pink-500 text-white",
     features: [
-      "All in Starter Plan +",
-      "🎨 Premium UI Design for Website",
-      "👥 Teach up to 300 students",
-      "💧 Watermarking in Live Classes",
+      "🎨 Premium UI Design for Website + Secured App",
+      "👥 Teach up to 250 students",
       "💳 Advanced Payment Options (EMI, Partial Payments)",
       "🚀 Launch & Manage Test Series",
       "⏱ Advanced Test Logic with Timers (NTA-style UI)",
@@ -70,22 +45,21 @@ const plans = [
       "📤 Upload & Manage up to 50 Courses",
       "📞 Same-day Email & Phone Support",
       "🔔 Alerts & Push Notifications (App + Email)",
-      "🛑 Screen Recording & Screenshot Protection",
       "📘 Free Digital Notes for Students"
     ],
   },
   {
     name: "Premium Plan",
-    yearlyPrice: 17999,
     monthlyPrice: 19999,
-    perstudent: 1099,
-    original: 25000,
+    yearlyPrice: 17999,
+    perstudent: 699,
+    original: 22000,
     headerClass: "bg-purple-200",
     features: [
       "All in professional Plan +",
       "📱 Custom Branded Mobile App (Android + Web Link)",
       "🧩 Custom Logo Design (1-time professional branding package)",
-      "👨‍🏫 Teach up to 500 students",
+      "👨‍🏫 Teach up to 300 students",
       "👔 Priority Support with Dedicated Success Manager",
       "🎞️ 5 Free Video Edits per Month (Intros, Branding, Trims)",
       "📄 Pro Presentation & Docs Templates",
@@ -93,7 +67,12 @@ const plans = [
       "📅 Schedule-Based Class & Test Reminders",
       "📤 Upload & Manage Unlimited Courses",
       "📈 AI-Powered Batch Recommendations (based on engagement) for students",
-      "📺 Smart Banner Integration for Upcoming Courses & Offers"
+      "📺 Smart Banner Integration for Upcoming Courses & Offers",
+      "🛑 Screen Recording & Screenshot Protection",
+      "📘 Advance Progress report of Student ",
+      "🔔 Alerts for Student Fee, New student Regestration and Many more",
+      "📈 Detailed Test Analysis for student performance",
+      "💧 Watermarking in Live Classes"
     ],
   },
 ];
@@ -274,7 +253,7 @@ export default function Pricing() {
         </div>
 
         <section className="py-16 bg-white">
-          <div className="max-w mx-10  px-4 grid gap-4 grid-cols-1 md:grid-cols-4">
+          <div className="max-w mx-10  px-4 grid gap-4 grid-cols-1 md:grid-cols-3">
             {plans.map((plan) => {
               let displayPrice, priceLabel;
               if (billing === "yearly") {
